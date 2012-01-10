@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" >
+
+<hibernate-reverse-engineering>
+	<!-- 未支援的類別轉換 -->
+<type-mapping>
+	<sql-type jdbc-type="OTHER" hibernate-type='java.sql.Timestamp'
+		not-null="false">
+	</sql-type>
+	<sql-type jdbc-type="OTHER" hibernate-type='java.sql.Timestamp'
+		not-null="true">
+	</sql-type>
+	<sql-type jdbc-type="NUMERIC" hibernate-type="java.math.BigDecimal"
+		precision="10" scale="6" not-null="true">
+	</sql-type>
+	<sql-type jdbc-type="NUMERIC" hibernate-type="java.lang.Long"
+		precision="10" not-null="true">
+	</sql-type>
+
+</type-mapping>
+
+<!-- 把需要執行的項目挪至 [exclude = true]該行之前；若放在後面則不執行/產生 -->
+	<table-filter match-name="TBSOPTCVSMAP"></table-filter>
+	<table-filter match-name="TBSOPTCVSVER"></table-filter>
+	<table-filter match-name="TBSOPTCVSTAG"></table-filter>
+	<table-filter match-name="TBSOPTCVSLOGIN"></table-filter>
+	<table-filter match-name=".*" exclude="true"></table-filter>
+
+	<table name="TBSOPTCVSMAP" schema="SOPAADMIN">
+		<primary-key>
+			<generator class="assigned"></generator>
+			<key-column name="M_SID" />
+		</primary-key>
+		<column name="RCSFILE"></column>
+		<column name="FILENAME"></column>
+		<column name="PROGRAMID"></column>
+		<column name="BROKERID"></column>
+		<column name="MODULE"></column>
+		<column name="CLIENTSERVER"></column>
+		<column name="VERSIONHEAD"></column>
+		<column name="CREATOR"></column>
+		<column name="CREATETIME"></column>
+		<column name="MODIFIER"></column>
+		<column name="LASTUPDATE"></column>
+	</table>
+	<table name="TBSOPTCVSTAG" schema="SOPAADMIN">
+		<primary-key>
+			<generator class="assigned"></generator>
+			<key-column name="T_SID" />
+		</primary-key>
+		<column name="V_SID"></column>
+		<column name="TAGNAME"></column>
+		<column name="CREATOR"></column>
+		<column name="CREATETIME"></column>
+		<column name="MODIFIER"></column>
+		<column name="LASTUPDATE"></column>
+	</table>
+	<table name="TBSOPTCVSVER" schema="SOPAADMIN">
+		<primary-key>
+			<generator class="assigned"></generator>
+			<key-column name="V_SID" />
+		</primary-key>
+		<column name="M_SID"></column>
+		<column name="VERSION"></column>
+		<column name="AUTHOR"></column>
+		<column name="VERDATE"></column>
+		<column name="STATE"></column>
+		<column name="FULLDESC"></column>
+		<column name="DESC_ID"></column>
+		<column name="DESC_DESC"></column>
+		<column name="DESC_STEP"></column>
+		<column name="CREATOR"></column>
+		<column name="CREATETIME"></column>
+		<column name="MODIFIER"></column>
+		<column name="LASTUPDATE"></column>
+	</table>
+	<table name="TBSOPTCVSLOGIN" schema="SOPAADMIN">
+		<primary-key>
+			<generator class="assigned"></generator>
+			<key-column name="SID" />
+		</primary-key>
+		<column name="FLAG"></column>
+		<column name="STATUS"></column>
+		<column name="DESCRIPTION"></column>
+		<column name="CREATOR"></column>
+		<column name="CREATETIME"></column>
+		<column name="MODIFIER"></column>
+		<column name="LASTUPDATE"></column>
+	</table>
+</hibernate-reverse-engineering>
