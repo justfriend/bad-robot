@@ -17,11 +17,11 @@ public class WriteFutureTask {
 	
 	public WriteFutureTask() {}
 	
-	public void execute(Timestamp edate) {
+	public void execute(String hostname, Timestamp edate) {
 		try {
 			CVSModuleHelper moduleHelper = new CVSModuleHelper();
 			for (String module : moduleHelper.getMap().keySet()) {
-				FutureTask<TaskResult> task = new FutureTask<TaskResult>(new WriteCallable(module, edate));
+				FutureTask<TaskResult> task = new FutureTask<TaskResult>(new WriteCallable(hostname, module, edate));
 				taskList.add(task);
 				service.submit(task);
 			}
@@ -44,6 +44,6 @@ public class WriteFutureTask {
 	
 	public static void main(String [] args) {
 		WriteFutureTask logManager = new WriteFutureTask();
-		logManager.execute(TimestampHelper.convertToTimestamp("20120105"));
+		logManager.execute("1000073David", TimestampHelper.convertToTimestamp("20000105"));
 	}
 }

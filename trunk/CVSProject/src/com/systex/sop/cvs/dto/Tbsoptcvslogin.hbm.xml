@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated Jan 10, 2012 7:17:59 PM by Hibernate Tools 3.3.0.GA -->
+<!-- Generated Jan 10, 2012 8:16:51 PM by Hibernate Tools 3.3.0.GA -->
 <hibernate-mapping>
     <class name="com.systex.sop.cvs.dto.Tbsoptcvslogin" table="TBSOPTCVSLOGIN">
         <id name="sid" type="java.lang.Long">
             <column name="SID" precision="10" scale="0" />
-            <generator class="native" />
+            <generator class="assigned" />
         </id>
         <property name="flag" type="char">
             <column name="FLAG" length="1" not-null="true" />

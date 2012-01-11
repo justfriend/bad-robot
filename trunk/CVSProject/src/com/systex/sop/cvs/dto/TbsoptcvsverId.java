@@ -1,6 +1,6 @@
 package com.systex.sop.cvs.dto;
 
-// Generated Jan 10, 2012 7:17:59 PM by Hibernate Tools 3.3.0.GA
+// Generated Jan 10, 2012 8:16:51 PM by Hibernate Tools 3.3.0.GA
 
 import java.math.BigDecimal;
 
@@ -9,23 +9,23 @@ import java.math.BigDecimal;
  */
 public class TbsoptcvsverId implements java.io.Serializable {
 
-	private long MSid;
+	private Tbsoptcvsmap tbsoptcvsmap;
 	private BigDecimal version;
 
 	public TbsoptcvsverId() {
 	}
 
-	public TbsoptcvsverId(long MSid, BigDecimal version) {
-		this.MSid = MSid;
+	public TbsoptcvsverId(Tbsoptcvsmap tbsoptcvsmap, BigDecimal version) {
+		this.tbsoptcvsmap = tbsoptcvsmap;
 		this.version = version;
 	}
 
-	public long getMSid() {
-		return this.MSid;
+	public Tbsoptcvsmap getTbsoptcvsmap() {
+		return this.tbsoptcvsmap;
 	}
 
-	public void setMSid(long MSid) {
-		this.MSid = MSid;
+	public void setTbsoptcvsmap(Tbsoptcvsmap tbsoptcvsmap) {
+		this.tbsoptcvsmap = tbsoptcvsmap;
 	}
 
 	public BigDecimal getVersion() {
@@ -45,7 +45,10 @@ public class TbsoptcvsverId implements java.io.Serializable {
 			return false;
 		TbsoptcvsverId castOther = (TbsoptcvsverId) other;
 
-		return (this.getMSid() == castOther.getMSid())
+		return ((this.getTbsoptcvsmap() == castOther.getTbsoptcvsmap()) || (this
+				.getTbsoptcvsmap() != null
+				&& castOther.getTbsoptcvsmap() != null && this
+				.getTbsoptcvsmap().equals(castOther.getTbsoptcvsmap())))
 				&& ((this.getVersion() == castOther.getVersion()) || (this
 						.getVersion() != null
 						&& castOther.getVersion() != null && this.getVersion()
@@ -55,7 +58,10 @@ public class TbsoptcvsverId implements java.io.Serializable {
 	public int hashCode() {
 		int result = 17;
 
-		result = 37 * result + (int) this.getMSid();
+		result = 37
+				* result
+				+ (getTbsoptcvsmap() == null ? 0 : this.getTbsoptcvsmap()
+						.hashCode());
 		result = 37 * result
 				+ (getVersion() == null ? 0 : this.getVersion().hashCode());
 		return result;

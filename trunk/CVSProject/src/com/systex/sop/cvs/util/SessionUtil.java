@@ -33,6 +33,7 @@ public class SessionUtil {
 		if (session != null) {
 			try {
 				session.flush(); /* AUTO FLUSH */
+				session.clear();
 			} catch (HibernateException e) {
 				e.printStackTrace();
 			} finally {

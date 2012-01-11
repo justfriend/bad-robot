@@ -1,12 +1,14 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated Jan 10, 2012 6:22:03 PM by Hibernate Tools 3.3.0.GA -->
+<!-- Generated Jan 10, 2012 8:15:21 PM by Hibernate Tools 3.3.0.GA -->
 <hibernate-mapping>
     <class name="com.systex.sop.cvs.dto.Tbsoptcvsmap" table="TBSOPTCVSMAP">
         <id name="MSid" type="java.lang.Long">
             <column name="M_SID" precision="10" scale="0" />
-            <generator class="native" />
+            <generator class="sequence">
+				<param name="sequence">CVSMAP_MSID_SEQ</param>
+			</generator>
         </id>
         <property name="rcsfile" type="string">
             <column name="RCSFILE" length="500" not-null="true" unique="true" />
@@ -20,7 +22,7 @@
         <property name="module" type="string">
             <column name="MODULE" length="10" />
         </property>
-        <property name="clientserver" type="string">
+        <property name="clientserver" type="java.lang.Character">
             <column name="CLIENTSERVER" length="1" />
         </property>
         <property name="versionhead" type="java.math.BigDecimal">

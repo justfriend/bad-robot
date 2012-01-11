@@ -3,6 +3,8 @@ package com.systex.sop.cvs.constant;
 public class CVSConst {
 	public static final String ENCODING_IN = "MS950";
 	public static final String ENCODING_OUT = "UTF-8";
+	public static final String SPLIT_DESC = "----------------------------";
+	public static final String BLOCK_END = "=============================================================================";
 
 	public enum FLAG {
 		SESSION('S'), LOG('L');

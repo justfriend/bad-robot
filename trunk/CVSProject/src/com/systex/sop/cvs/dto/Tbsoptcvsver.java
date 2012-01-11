@@ -1,6 +1,6 @@
 package com.systex.sop.cvs.dto;
 
-// Generated Jan 10, 2012 7:17:59 PM by Hibernate Tools 3.3.0.GA
+// Generated Jan 10, 2012 8:16:51 PM by Hibernate Tools 3.3.0.GA
 
 import java.sql.Timestamp;
 import java.util.HashSet;
@@ -12,7 +12,6 @@ import java.util.Set;
 public class Tbsoptcvsver implements java.io.Serializable {
 
 	private TbsoptcvsverId id;
-	private Tbsoptcvsmap tbsoptcvsmap;
 	private String author;
 	private Timestamp verdate;
 	private char state;
@@ -29,22 +28,19 @@ public class Tbsoptcvsver implements java.io.Serializable {
 	public Tbsoptcvsver() {
 	}
 
-	public Tbsoptcvsver(TbsoptcvsverId id, Tbsoptcvsmap tbsoptcvsmap,
-			String author, Timestamp verdate, char state) {
+	public Tbsoptcvsver(TbsoptcvsverId id, String author, Timestamp verdate,
+			char state) {
 		this.id = id;
-		this.tbsoptcvsmap = tbsoptcvsmap;
 		this.author = author;
 		this.verdate = verdate;
 		this.state = state;
 	}
 
-	public Tbsoptcvsver(TbsoptcvsverId id, Tbsoptcvsmap tbsoptcvsmap,
-			String author, Timestamp verdate, char state, String fulldesc,
-			String descId, String descDesc, String descStep, String creator,
-			Timestamp createtime, String modifier, Timestamp lastupdate,
-			Set tbsoptcvstags) {
+	public Tbsoptcvsver(TbsoptcvsverId id, String author, Timestamp verdate,
+			char state, String fulldesc, String descId, String descDesc,
+			String descStep, String creator, Timestamp createtime,
+			String modifier, Timestamp lastupdate, Set tbsoptcvstags) {
 		this.id = id;
-		this.tbsoptcvsmap = tbsoptcvsmap;
 		this.author = author;
 		this.verdate = verdate;
 		this.state = state;
@@ -65,14 +61,6 @@ public class Tbsoptcvsver implements java.io.Serializable {
 
 	public void setId(TbsoptcvsverId id) {
 		this.id = id;
-	}
-
-	public Tbsoptcvsmap getTbsoptcvsmap() {
-		return this.tbsoptcvsmap;
-	}
-
-	public void setTbsoptcvsmap(Tbsoptcvsmap tbsoptcvsmap) {
-		this.tbsoptcvsmap = tbsoptcvsmap;
 	}
 
 	public String getAuthor() {

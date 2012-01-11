@@ -27,11 +27,13 @@
 	<table-filter match-name=".*" exclude="true"></table-filter>
 
 	<table name="TBSOPTCVSMAP" schema="SOPAADMIN">
-		<primary-key>
-			<generator class="assigned"></generator>
-			<key-column name="M_SID" />
-		</primary-key>
-		<column name="RCSFILE"></column>
+<primary-key>
+	<generator class="sequence">
+		<param name="sequence">CVSMAP_MSID_SEQ</param>
+	</generator>
+	<key-column name="M_SID" />
+</primary-key>
+<column name="RCSFILE"></column>
 		<column name="FILENAME"></column>
 		<column name="PROGRAMID"></column>
 		<column name="BROKERID"></column>

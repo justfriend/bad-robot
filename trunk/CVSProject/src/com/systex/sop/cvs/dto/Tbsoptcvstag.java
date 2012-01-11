@@ -1,6 +1,6 @@
 package com.systex.sop.cvs.dto;
 
-// Generated Jan 10, 2012 7:17:59 PM by Hibernate Tools 3.3.0.GA
+// Generated Jan 10, 2012 8:16:51 PM by Hibernate Tools 3.3.0.GA
 
 import java.sql.Timestamp;
 
@@ -10,7 +10,6 @@ import java.sql.Timestamp;
 public class Tbsoptcvstag implements java.io.Serializable {
 
 	private TbsoptcvstagId id;
-	private Tbsoptcvsver tbsoptcvsver;
 	private String creator;
 	private Timestamp createtime;
 	private String modifier;
@@ -19,16 +18,13 @@ public class Tbsoptcvstag implements java.io.Serializable {
 	public Tbsoptcvstag() {
 	}
 
-	public Tbsoptcvstag(TbsoptcvstagId id, Tbsoptcvsver tbsoptcvsver) {
+	public Tbsoptcvstag(TbsoptcvstagId id) {
 		this.id = id;
-		this.tbsoptcvsver = tbsoptcvsver;
 	}
 
-	public Tbsoptcvstag(TbsoptcvstagId id, Tbsoptcvsver tbsoptcvsver,
-			String creator, Timestamp createtime, String modifier,
-			Timestamp lastupdate) {
+	public Tbsoptcvstag(TbsoptcvstagId id, String creator,
+			Timestamp createtime, String modifier, Timestamp lastupdate) {
 		this.id = id;
-		this.tbsoptcvsver = tbsoptcvsver;
 		this.creator = creator;
 		this.createtime = createtime;
 		this.modifier = modifier;
@@ -41,14 +37,6 @@ public class Tbsoptcvstag implements java.io.Serializable {
 
 	public void setId(TbsoptcvstagId id) {
 		this.id = id;
-	}
-
-	public Tbsoptcvsver getTbsoptcvsver() {
-		return this.tbsoptcvsver;
-	}
-
-	public void setTbsoptcvsver(Tbsoptcvsver tbsoptcvsver) {
-		this.tbsoptcvsver = tbsoptcvsver;
 	}
 
 	public String getCreator() {
