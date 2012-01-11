@@ -44,6 +44,6 @@ public class WriteFutureTask {
 	
 	public static void main(String [] args) {
 		WriteFutureTask logManager = new WriteFutureTask();
-		logManager.execute("1000073David", TimestampHelper.convertToTimestamp("20000105"));
+		logManager.execute("1000073David", TimestampHelper.convertToTimestamp("20120105"));
 	}
 }

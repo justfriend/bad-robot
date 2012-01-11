@@ -1,6 +1,5 @@
 package com.systex.sop.cvs.logic;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,13 +24,13 @@ public class CVSParserLogic {
 	
 	/** the structure that collects tags **/
 	static class VERTAG {
-		public BigDecimal version;
+		public String version;
 		public String tagname;
 	}
 	
 	/** the structure that collects versiion description **/
 	static class VERDESC {
-		public BigDecimal revision;
+		public String revision;
 		public Timestamp date;
 		public String author;
 		public String state;
@@ -89,7 +88,7 @@ public class CVSParserLogic {
 			if (line.startsWith("keyword")) { break; }
 			VERTAG tag = new VERTAG();
 			tag.tagname = line.split(": ")[0].trim();
-			tag.version = new BigDecimal(line.split(": ")[1]);
+			tag.version = line.split(": ")[1];
 			tagList.add(tag);
 		}
 		
@@ -116,7 +115,7 @@ public class CVSParserLogic {
 			if (line.startsWith("revision")) {
 				verdesc = new VERDESC();
 				try {
-					verdesc.revision = new BigDecimal(line.substring(9));
+					verdesc.revision = line.substring(9);
 				}catch(NumberFormatException e){
 					System.out.println (line);
 					throw e;
@@ -183,7 +182,7 @@ public class CVSParserLogic {
 		char csCode = fxClientServer(module);
 		
 		// head version
-		BigDecimal head = new BigDecimal(lineList.get(2).substring(6));
+		String head = lineList.get(2).substring(6);
 		
 		// collects tag data list
 		List<VERTAG> vertagList = fxCollectTagList(lineList, 7);
@@ -219,10 +218,8 @@ public class CVSParserLogic {
 		
 		List<Tbsoptcvstag> tagList = new ArrayList<Tbsoptcvstag>();
 		for (VERTAG vertag : vertagList) {
-			Tbsoptcvsver ver = new Tbsoptcvsver();
-			ver.setId(new TbsoptcvsverId(map, vertag.version));
 			Tbsoptcvstag tag = new Tbsoptcvstag();
-			tag.setId(new TbsoptcvstagId(ver, vertag.tagname));
+			tag.setId(new TbsoptcvstagId(map.getMSid(), vertag.version, vertag.tagname));
 			tag.setCreator(hostname);
 			tag.setCreatetime(TimestampHelper.now());
 			tag.setModifier(tag.getCreator());
@@ -232,7 +229,7 @@ public class CVSParserLogic {
 		commonDAO.saveDTO(tagList, 500);
 		
 		for (VERDESC verdesc : verdescList) {
-			TbsoptcvsverId verId = new TbsoptcvsverId(map, verdesc.revision);
+			TbsoptcvsverId verId = new TbsoptcvsverId(map.getMSid(), verdesc.revision);
 			Tbsoptcvsver ver = (Tbsoptcvsver) commonDAO.getDTO(Tbsoptcvsver.class, verId);
 			ver = (ver == null)? new Tbsoptcvsver(): ver;
 			ver.setAuthor(verdesc.author);

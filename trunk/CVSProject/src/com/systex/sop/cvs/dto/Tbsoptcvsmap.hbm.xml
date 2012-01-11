@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated Jan 10, 2012 8:15:21 PM by Hibernate Tools 3.3.0.GA -->
+<!-- Generated Jan 11, 2012 3:55:55 PM by Hibernate Tools 3.3.0.GA -->
 <hibernate-mapping>
     <class name="com.systex.sop.cvs.dto.Tbsoptcvsmap" table="TBSOPTCVSMAP">
         <id name="MSid" type="java.lang.Long">
@@ -25,8 +25,8 @@
         <property name="clientserver" type="java.lang.Character">
             <column name="CLIENTSERVER" length="1" />
         </property>
-        <property name="versionhead" type="java.math.BigDecimal">
-            <column name="VERSIONHEAD" precision="10" scale="6" not-null="true" />
+        <property name="versionhead" type="string">
+            <column name="VERSIONHEAD" length="20" not-null="true" />
         </property>
         <property name="creator" type="string">
             <column name="CREATOR" length="50" />
