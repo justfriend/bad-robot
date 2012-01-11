@@ -3,23 +3,19 @@
 
 <hibernate-reverse-engineering>
 	<!-- 未支援的類別轉換 -->
-<type-mapping>
-	<sql-type jdbc-type="OTHER" hibernate-type='java.sql.Timestamp'
-		not-null="false">
-	</sql-type>
-	<sql-type jdbc-type="OTHER" hibernate-type='java.sql.Timestamp'
-		not-null="true">
-	</sql-type>
-	<sql-type jdbc-type="NUMERIC" hibernate-type="java.math.BigDecimal"
-		precision="10" scale="6" not-null="true">
-	</sql-type>
-	<sql-type jdbc-type="NUMERIC" hibernate-type="java.lang.Long"
-		precision="10" not-null="true">
-	</sql-type>
+	<type-mapping>
+		<sql-type jdbc-type="OTHER" hibernate-type='java.sql.Timestamp'
+			not-null="false">
+		</sql-type>
+		<sql-type jdbc-type="OTHER" hibernate-type='java.sql.Timestamp'
+			not-null="true">
+		</sql-type>
+		<sql-type jdbc-type="NUMERIC" hibernate-type="java.lang.Long"
+			precision="10" not-null="true">
+		</sql-type>
+	</type-mapping>
 
-</type-mapping>
-
-<!-- 把需要執行的項目挪至 [exclude = true]該行之前；若放在後面則不執行/產生 -->
+	<!-- 把需要執行的項目挪至 [exclude = true]該行之前；若放在後面則不執行/產生 -->
 	<table-filter match-name="TBSOPTCVSMAP"></table-filter>
 	<table-filter match-name="TBSOPTCVSVER"></table-filter>
 	<table-filter match-name="TBSOPTCVSTAG"></table-filter>
@@ -27,13 +23,13 @@
 	<table-filter match-name=".*" exclude="true"></table-filter>
 
 	<table name="TBSOPTCVSMAP" schema="SOPAADMIN">
-<primary-key>
-	<generator class="sequence">
-		<param name="sequence">CVSMAP_MSID_SEQ</param>
-	</generator>
-	<key-column name="M_SID" />
-</primary-key>
-<column name="RCSFILE"></column>
+		<primary-key>
+			<generator class="sequence">
+				<param name="sequence">CVSMAP_MSID_SEQ</param>
+			</generator>
+			<key-column name="M_SID" />
+		</primary-key>
+		<column name="RCSFILE"></column>
 		<column name="FILENAME"></column>
 		<column name="PROGRAMID"></column>
 		<column name="BROKERID"></column>
