@@ -45,6 +45,6 @@ public class LogFutureTask {
 	
 	public static void main(String [] args) {
 		LogFutureTask logManager = new LogFutureTask();
-		logManager.execute(TimestampHelper.convertToTimestamp("20120105"));
+		logManager.execute(TimestampHelper.convertToTimestamp("20000105"));
 	}
 }

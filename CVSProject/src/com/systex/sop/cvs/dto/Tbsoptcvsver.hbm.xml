@@ -1,20 +1,17 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated Jan 10, 2012 7:17:59 PM by Hibernate Tools 3.3.0.GA -->
+<!-- Generated Jan 10, 2012 8:16:51 PM by Hibernate Tools 3.3.0.GA -->
 <hibernate-mapping>
     <class name="com.systex.sop.cvs.dto.Tbsoptcvsver" table="TBSOPTCVSVER">
         <composite-id name="id" class="com.systex.sop.cvs.dto.TbsoptcvsverId">
-            <key-property name="MSid" type="long">
+            <key-many-to-one name="tbsoptcvsmap" class="com.systex.sop.cvs.dto.Tbsoptcvsmap">
                 <column name="M_SID" precision="10" scale="0" />
-            </key-property>
+            </key-many-to-one>
             <key-property name="version" type="java.math.BigDecimal">
                 <column name="VERSION" precision="10" scale="6" />
             </key-property>
         </composite-id>
-        <many-to-one name="tbsoptcvsmap" class="com.systex.sop.cvs.dto.Tbsoptcvsmap" update="false" insert="false" fetch="select">
-            <column name="M_SID" precision="10" scale="0" not-null="true" />
-        </many-to-one>
         <property name="author" type="string">
             <column name="AUTHOR" length="50" not-null="true" />
         </property>

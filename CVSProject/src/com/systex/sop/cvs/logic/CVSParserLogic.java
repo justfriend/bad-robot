@@ -7,26 +7,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-
+import com.systex.sop.cvs.constant.CVSConst;
 import com.systex.sop.cvs.dao.CVSParserDAO;
+import com.systex.sop.cvs.dao.CommonDAO;
 import com.systex.sop.cvs.dto.Tbsoptcvsmap;
 import com.systex.sop.cvs.dto.Tbsoptcvstag;
+import com.systex.sop.cvs.dto.TbsoptcvstagId;
 import com.systex.sop.cvs.dto.Tbsoptcvsver;
+import com.systex.sop.cvs.dto.TbsoptcvsverId;
 import com.systex.sop.cvs.helper.CVSLog;
-import com.systex.sop.cvs.util.SessionUtil;
+import com.systex.sop.cvs.util.StringUtil;
 import com.systex.sop.cvs.util.TimestampHelper;
 
 public class CVSParserLogic {
-//	private CommonDAO dao = new CommonDAO();
+	private CommonDAO commonDAO = new CommonDAO();
 	private CVSParserDAO dao = new CVSParserDAO();
 	
+	/** the structure that collects tags **/
 	static class VERTAG {
 		public BigDecimal version;
 		public String tagname;
 	}
 	
+	/** the structure that collects versiion description **/
 	static class VERDESC {
 		public BigDecimal revision;
 		public Timestamp date;
@@ -39,6 +42,7 @@ public class CVSParserLogic {
 		public StringBuffer rawdesc = new StringBuffer();
 	}
 	
+	/** verify date **/
 	private void checkParserData(List<String> lineList) {
 		if (lineList == null || lineList.size() < 1) {
 			throw new RuntimeException("傳入的解析資料為空");
@@ -100,8 +104,8 @@ public class CVSParserLogic {
 			String line = lineList.get(i);
 			
 			if (isDescArea == true) {
-				if (line.startsWith("----------------------------") ||
-					line.startsWith("=============================================================================")) {
+				if (line.startsWith(CVSConst.SPLIT_DESC) ||
+					line.startsWith(CVSConst.BLOCK_END)) {
 					isDescArea = false;
 				}else{
 					verdesc.rawdesc.append(line).append(System.getProperty("line.separator"));
@@ -111,7 +115,12 @@ public class CVSParserLogic {
 			
 			if (line.startsWith("revision")) {
 				verdesc = new VERDESC();
-				verdesc.revision = new BigDecimal(line.substring(9));
+				try {
+					verdesc.revision = new BigDecimal(line.substring(9));
+				}catch(NumberFormatException e){
+					System.out.println (line);
+					throw e;
+				}
 				verdescList.add(verdesc);
 				continue;
 			}
@@ -183,74 +192,69 @@ public class CVSParserLogic {
 		List<VERDESC> verdescList = fxCollectDescList(lineList, 7 + vertagList.size());
 		
 		/** Convert to DTO and SAVE into DB **/
-		Tbsoptcvsmap map = null;
-		List<Tbsoptcvsver> verList = new ArrayList<Tbsoptcvsver>();
-		List<Tbsoptcvstag> tagList = new ArrayList<Tbsoptcvstag>();
-		
-		// MAP
-		map = dao.queryMapByRcsfile(rcsfile);
+		Tbsoptcvsmap map = dao.queryMapByRcsfile(rcsfile);
 		if (map == null) {
 			map = new Tbsoptcvsmap();
 			map.setRcsfile(rcsfile);
 			map.setFilename(filename);
 			map.setProgramid(programid);
 			map.setModule(moduleName);
-			map.setVersionhead(head);
 			map.setClientserver(csCode);
+			map.setVersionhead(head);
 			map.setCreator(hostname);
 			map.setCreatetime(TimestampHelper.now());
 			map.setModifier(map.getCreator());
 			map.setLastupdate(map.getCreatetime());
+			commonDAO.saveDTO(map);
 		}else{
 			map.setVersionhead(head);
 			map.setModifier(hostname);
 			map.setLastupdate(TimestampHelper.now());
+			commonDAO.updateDTO(map);
 		}
 		
-		// VER
-//		Tbsoptcvsver ver = null;
-//		for (VERDESC desc : verdescList) {
-//			ver = dao.queryVerByVer(map.getMSid(), desc.revision);
-//			if (ver == null) {
-//				ver = new Tbsoptcvsver();
-//				ver.setTbsoptcvsmap(map);
-//				ver.setVersion(desc.revision);
-//				ver.setAuthor(desc.author);
-//				ver.setVerdate(desc.date);
-//				ver.setState(("Exp".equalsIgnoreCase(desc.state)? '0': '1'));
-//				ver.setFulldesc(desc.rawdesc.toString());
-//				ver.setDescId(desc.desc_ID);
-//				ver.setDescDesc(desc.desc_DESC);
-//				ver.setDescStep(desc.desc_STEP);
-//				ver.setCreator(hostname);
-//				ver.setCreatetime(TimestampHelper.now());
-//				ver.setModifier(ver.getCreator());
-//				ver.setLastupdate(ver.getCreatetime());
-//			}else{
-//				ver.setModifier(hostname);
-//				ver.setLastupdate(TimestampHelper.now());
-//			}
-//			verList.add(ver);
+//		synchronized(this) {
+			commonDAO.deleteHQL(StringUtil.concat("delete from Tbsoptcvstag where m_sid = ", map.getMSid()));
 //		}
 		
-		// TAG
-		
-		/** TEST **/
-		Session session = null;
-		Transaction txn = null;
-		try {
-			session = SessionUtil.openSession();
-			txn = session.beginTransaction();
-			session.save(map);
-			SessionUtil.commit(txn);
-		}catch(Exception e){
-			CVSLog.getLogger().error(this, e);
-			e.printStackTrace();
-			SessionUtil.rollBack(txn);
-		}finally{
-			SessionUtil.closeSession(session);
+		List<Tbsoptcvstag> tagList = new ArrayList<Tbsoptcvstag>();
+		for (VERTAG vertag : vertagList) {
+			Tbsoptcvsver ver = new Tbsoptcvsver();
+			ver.setId(new TbsoptcvsverId(map, vertag.version));
+			Tbsoptcvstag tag = new Tbsoptcvstag();
+			tag.setId(new TbsoptcvstagId(ver, vertag.tagname));
+			tag.setCreator(hostname);
+			tag.setCreatetime(TimestampHelper.now());
+			tag.setModifier(tag.getCreator());
+			tag.setLastupdate(tag.getCreatetime());
+			tagList.add(tag);
 		}
-		/** TEST **/
+		commonDAO.saveDTO(tagList, 500);
+		
+		for (VERDESC verdesc : verdescList) {
+			TbsoptcvsverId verId = new TbsoptcvsverId(map, verdesc.revision);
+			Tbsoptcvsver ver = (Tbsoptcvsver) commonDAO.getDTO(Tbsoptcvsver.class, verId);
+			ver = (ver == null)? new Tbsoptcvsver(): ver;
+			ver.setAuthor(verdesc.author);
+			ver.setVerdate(verdesc.date);
+			ver.setState("Exp".equalsIgnoreCase(verdesc.state)? '0': '1');
+			ver.setDescId(verdesc.desc_ID);
+			ver.setDescDesc(verdesc.desc_DESC);
+			ver.setDescStep(verdesc.desc_STEP);
+			ver.setFulldesc(verdesc.rawdesc.toString());
+			ver.setModifier(hostname);
+			ver.setLastupdate(TimestampHelper.now());
+			if (ver.getId() == null) {
+				ver.setId(verId);
+				ver.setCreator(hostname);
+				ver.setCreatetime(TimestampHelper.now());
+				ver.setModifier(ver.getCreator());
+				ver.setLastupdate(ver.getCreatetime());
+				commonDAO.saveDTO(ver);
+			}else{
+				commonDAO.updateDTO(ver);
+			}
+		}
 		
 		return null;
 	}

@@ -17,10 +17,12 @@ import com.systex.sop.cvs.util.StreamCloseHelper;
 import com.systex.sop.cvs.util.StringUtil;
 
 public class WriteCallable implements Callable<TaskResult> {
+	private String hostname;
 	private String module;
 	private Timestamp edate;
 	
-	public WriteCallable(String module, Timestamp edate) {
+	public WriteCallable(String hostname, String module, Timestamp edate) {
+		this.hostname = hostname;
 		this.module = module;
 		this.edate = edate;
 	}
@@ -45,8 +47,8 @@ public class WriteCallable implements Callable<TaskResult> {
 			while ((line = br.readLine()) != null) {
 				if (StringUtil.isEmpty(line)) continue;
 				tmpList.add(line);
-				if (line.startsWith("=============================================================================")) {
-					logic.parser("1000073", module, tmpList);
+				if (line.startsWith(CVSConst.BLOCK_END)) {
+					logic.parser(hostname, module, tmpList);
 					tmpList.clear();
 				}
 			}

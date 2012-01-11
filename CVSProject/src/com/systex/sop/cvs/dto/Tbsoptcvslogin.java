@@ -1,6 +1,6 @@
 package com.systex.sop.cvs.dto;
 
-// Generated Jan 10, 2012 7:17:59 PM by Hibernate Tools 3.3.0.GA
+// Generated Jan 10, 2012 8:16:51 PM by Hibernate Tools 3.3.0.GA
 
 import java.sql.Timestamp;
 
