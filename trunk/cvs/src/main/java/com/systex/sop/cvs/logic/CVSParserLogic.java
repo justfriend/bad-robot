@@ -23,13 +23,13 @@ public class CVSParserLogic {
 	private CVSParserDAO dao = new CVSParserDAO();
 	
 	/** the structure that collects tags **/
-	static class VERTAG {
+	class VERTAG {
 		public String version;
 		public String tagname;
 	}
 	
-	/** the structure that collects versiion description **/
-	static class VERDESC {
+	/** the structure that collects version description **/
+	class VERDESC {
 		public String revision;
 		public Timestamp date;
 		public String author;
@@ -57,7 +57,7 @@ public class CVSParserLogic {
 		}
 	}
 	
-	private static String fxProgramID(String rcsfile) {
+	private String fxProgramID(String rcsfile) {
 		String programid = null;
 		String [] pArray = rcsfile.split("/");
 		for (int i=0; i<pArray.length; i++) {
@@ -68,7 +68,7 @@ public class CVSParserLogic {
 		return (programid == null)? " ": programid;
 	}
 	
-	private static char fxClientServer(String module) {
+	private char fxClientServer(String module) {
 		char csCode = ' ';
 		String cs = module.split("-")[2];
 		if ("client".equalsIgnoreCase(cs)) {
@@ -81,7 +81,7 @@ public class CVSParserLogic {
 		return csCode;
 	}
 	
-	private static List<VERTAG> fxCollectTagList(List<String> lineList, int beginLine) {
+	private List<VERTAG> fxCollectTagList(List<String> lineList, int beginLine) {
 		List<VERTAG> tagList = new ArrayList<VERTAG>();
 		for (int i = beginLine; i < lineList.size(); i++) {
 			String line = lineList.get(i);
@@ -95,7 +95,7 @@ public class CVSParserLogic {
 		return tagList;
 	}
 	
-	private static List<VERDESC> fxCollectDescList(List<String> lineList, int beginLine) {
+	private List<VERDESC> fxCollectDescList(List<String> lineList, int beginLine) {
 		List<VERDESC> verdescList = new ArrayList<VERDESC>();
 		VERDESC verdesc = null;
 		boolean isDescArea = false;

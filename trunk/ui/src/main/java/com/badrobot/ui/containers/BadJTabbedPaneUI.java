@@ -325,7 +325,6 @@ public class BadJTabbedPaneUI extends BasicTabbedPaneUI {
 	@Override
 	protected void paintText(Graphics g, int tabPlacement, Font font, FontMetrics metrics, int tabIndex, String title,
 			Rectangle textRect, boolean isSelected) {
-
 		g.setFont(font);
 
 		View v = getTextViewForTab(tabIndex);
