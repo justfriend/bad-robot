@@ -59,6 +59,8 @@ public class BadTrafficLabelUI extends BasicLabelUI {
 	}
 	
 	public void setLight(LIGHT light) {
+		light = (light == null)? LIGHT.RED: light;
+		
 		if (light == LIGHT.RED) {
 			fillColor = color_fill_RED;
 			borderColor = color_border_RED;

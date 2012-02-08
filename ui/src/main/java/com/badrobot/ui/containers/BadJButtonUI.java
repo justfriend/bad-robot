@@ -45,7 +45,6 @@ public class BadJButtonUI extends BasicButtonUI implements MouseListener {
 	}
 
 	private BufferedImage createButtonImage(AbstractButton button, String text) {
-		System.err.println ("createButtonImage");
 		BufferedImage buttonImage = new BufferedImage(button.getWidth(), button.getHeight(),
 				BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = buttonImage.createGraphics();
@@ -113,7 +112,7 @@ public class BadJButtonUI extends BasicButtonUI implements MouseListener {
 			Point2D center = new Point2D.Float((button.getWidth() / 2), (button.getHeight() / 2));
 			float[] dist = { 0.0f, 1.0f };
 			Color[] colors = { fadingColor, new Color(1.0f, 1.0f, 1.0f, 0.0f) };
-			int radius = button.getWidth() / 3;
+			int radius = button.getWidth() / 2;
 			RadialGradientPaint gradient = new RadialGradientPaint(center, radius, dist, colors);
 			g2.setPaint(gradient);
 			g2.fill(getBackgroundShape(button));
@@ -186,7 +185,7 @@ public class BadJButtonUI extends BasicButtonUI implements MouseListener {
 
 	@Override
 	public void paint(Graphics g, JComponent comp) {
-		System.err.println ("paint");
+//		System.err.println ("paint");
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		RenderingHints rh = g2.getRenderingHints();
@@ -234,11 +233,11 @@ public class BadJButtonUI extends BasicButtonUI implements MouseListener {
 					if (fadeIn) {
 						while (fadingAlpha < 100) {
 							Thread.sleep(50);
-							fadingColor = new java.awt.Color(255, 199, 0, fadingAlpha);
+							fadingColor = new java.awt.Color(255, 133, 0, fadingAlpha);
 							fadingAlpha += 15;
 							button.repaint();
 						}
-						fadingColor = new java.awt.Color(255, 199, 0, 100);
+						fadingColor = new java.awt.Color(255, 133, 0, 100);
 						button.repaint();
 					}
 				} catch (java.lang.NullPointerException exception) {
@@ -280,7 +279,6 @@ public class BadJButtonUI extends BasicButtonUI implements MouseListener {
 
 	@Override
 	public void mousePressed(final MouseEvent e) {
-		System.err.println ("mousePressed");
 		if (enabled) {
 			armed = true;
 		}
@@ -295,7 +293,6 @@ public class BadJButtonUI extends BasicButtonUI implements MouseListener {
 
 	@Override
 	public void mouseReleased(final MouseEvent e) {
-		System.err.println ("mouseReleased");
 		armed = false;
 		javax.swing.SwingUtilities.invokeLater(new java.lang.Runnable() {
 			@Override

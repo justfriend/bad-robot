@@ -6,6 +6,7 @@ import javax.swing.JTabbedPane;
 public class BadJTabbedPane extends JTabbedPane {
 	public BadJTabbedPane() {
 		super();
-		setUI(new BadJTabbedPaneUI());
+		setUI(new BadJTabbedPaneUI(this));
+		setFocusable(false);
 	}
 }
