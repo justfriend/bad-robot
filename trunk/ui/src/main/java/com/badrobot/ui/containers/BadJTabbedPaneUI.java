@@ -22,11 +22,13 @@ import javax.swing.text.View;
 import sun.swing.SwingUtilities2;
 
 public class BadJTabbedPaneUI extends BasicTabbedPaneUI {
-	
+	private BadJTabbedPane c;
 	private Color [] selected_TOP_Y_Color;
 	private Color [] selected_TOP_N_Color;
 	private Color [] selected_BOM_Y_Color;
 	private Color [] selected_BOM_N_Color;
+	private Color [] enable_TOP_Color;
+	private Color [] enable_BOM_Color;
 	private Color selectedColor;
 	private Color borderTopEdgeColor;
 	private Color borderLeftEdgeColor;
@@ -34,6 +36,7 @@ public class BadJTabbedPaneUI extends BasicTabbedPaneUI {
 	private Color contentAreaColor;
 	private Color border_Y_Color;
 	private Color border_N_Color;
+	private Color border_D_Color;
 	protected Color lightHighlight = new Color(255, 0, 0);
 	protected Color shadow = new Color(0, 255, 0);
 	
@@ -43,9 +46,14 @@ public class BadJTabbedPaneUI extends BasicTabbedPaneUI {
 	
 	private boolean contentOpaque = true;
 	
-	public BadJTabbedPaneUI() {
+	public BadJTabbedPaneUI(BadJTabbedPane c) {
+		this.c = c;
+		enable_TOP_Color = new Color [] {new Color(255, 223, 83), new Color(255, 223, 83)};
+		enable_BOM_Color = new Color [] {new Color(255, 201, 0), new Color(255, 201, 0)};
 		selected_TOP_Y_Color = new Color [] {new Color(252, 252, 252), new Color(241, 242, 242)};
-		selected_BOM_Y_Color = new Color [] {new Color(239, 240, 241), new Color(227, 229, 230)};
+		selected_BOM_Y_Color = new Color [] {new Color(252, 252, 252), new Color(241, 242, 242)};
+//		selected_BOM_Y_Color = new Color [] {new Color(239, 240, 241), new Color(227, 229, 230)};
+		
 		selected_TOP_N_Color = new Color [] {new Color(198, 226, 165), new Color(150, 195,  98)};
 		selected_BOM_N_Color = new Color [] {new Color(136, 186,  78), new Color(116, 168,  56)};
 		selectedColor = UIManager.getColor("TabbedPane.selected");
@@ -56,6 +64,7 @@ public class BadJTabbedPaneUI extends BasicTabbedPaneUI {
 //		contentAreaColor = new Color(255, 0, 0);
 		border_Y_Color = new Color( 58, 126,  20);
 		border_N_Color = new Color(166, 172, 174);
+		border_D_Color = new Color(255, 140, 0);
 		
 		tabsOverlapBorder = UIManager.getBoolean("TabbedPane.tabsOverlapBorder");
 		contentOpaque = UIManager.getBoolean("TabbedPane.contentOpaque");
@@ -201,7 +210,7 @@ public class BadJTabbedPaneUI extends BasicTabbedPaneUI {
 			// Break line to show visual connection to selected tab
 			g.drawLine(x, y, x, selRect.y - 1);
 			if (selRect.y + selRect.height < y + h - 2) {
-				g.drawLine(x, selRect.y + selRect.height, x, y + h - 2);
+				g.drawLine(x, selRect.y + selRect.height - 1, x, y + h - 2);
 			}
 		}
 	}
@@ -240,6 +249,10 @@ public class BadJTabbedPaneUI extends BasicTabbedPaneUI {
 		}else{
 			g2d.setPaint(new GradientPaint(x, 0, selected_TOP_N_Color[0], x, h/2, selected_TOP_N_Color[1]));
 		}
+		if (!c.isEnabledAt(tabIndex)) {
+			g2d.setPaint(new GradientPaint(x, 0, enable_TOP_Color[0], x, h/2, enable_TOP_Color[1]));
+		}
+		
 		switch (tabPlacement) {
 		case LEFT:
 			g2d.fill(fxShape(x + 1, y, w - 1, h/2 - 1));
@@ -261,9 +274,13 @@ public class BadJTabbedPaneUI extends BasicTabbedPaneUI {
 		}else{
 			g2d.setPaint(new GradientPaint(x, h/2, selected_BOM_N_Color[0], x, h, selected_BOM_N_Color[1]));
 		}
+		if (!c.isEnabledAt(tabIndex)) {
+			g2d.setPaint(new GradientPaint(x, 0, enable_BOM_Color[0], x, h/2, enable_BOM_Color[1]));
+		}
+		
 		switch (tabPlacement) {
 		case LEFT:
-			g2d.fill(fxShape(x + 1, y + h/2, w - 1, h/2 - 1));
+			g2d.fill(fxShape(x + 1, y + h/2, w - 1, h/2 - 1 -1));
 			break;
 		case RIGHT:
 			g2d.fill(fxShape(x, y + h/2, w - 1, h/2 - 1));
@@ -280,19 +297,23 @@ public class BadJTabbedPaneUI extends BasicTabbedPaneUI {
 	@Override
 	protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h,
 			boolean isSelected) {
-		if (!isSelected) {
-			g.setColor(border_Y_Color);
+		if (!c.isEnabledAt(tabIndex)) {
+			g.setColor(border_D_Color);
 		}else{
-			g.setColor(border_N_Color);
+			if (!isSelected) {
+				g.setColor(border_Y_Color);
+			}else{
+				g.setColor(border_N_Color);
+			}
 		}
 
 		switch (tabPlacement) {
 		case LEFT:
-			g.drawLine(x + 2, y, x + w - 1, y);							// 上面的線
+			g.drawLine(x + 2, y, x + w, y);								// 上面的線
 			g.drawLine(x + 1, y + 1, x + 1, y + 1);						// 左上角的點
-			g.drawLine(x + 1, y + h - 2, x + 1, y + h - 2);				// 左下角的點
-			g.drawLine(x, y + 2, x, y + h - 3);							// 左邊的線
-			g.drawLine(x + 2, y + h - 1, x + w - 1, y + h - 1);			// 下面的線
+			g.drawLine(x + 1, y + h - 2 -1, x + 1, y + h - 2-1);		// 左下角的點 -1
+			g.drawLine(x, y + 2, x, y + h - 3-1);						// 左邊的線
+			g.drawLine(x + 2, y + h - 1-1, x + w, y + h - 1-1);			// 下面的線
 			break;
 		case RIGHT:
 			g.drawLine(x, y, x + w - 3, y);								// 上面的線
@@ -348,12 +369,13 @@ public class BadJTabbedPaneUI extends BasicTabbedPaneUI {
 						+ metrics.getAscent());
 
 			} else { // tab disabled
-				g.setColor(tabPane.getBackgroundAt(tabIndex).brighter());
+//				g.setColor(tabPane.getBackgroundAt(tabIndex).brighter());
+				g.setColor(new Color(255, 140, 0));
 				SwingUtilities2.drawStringUnderlineCharAt(tabPane, g, title, mnemIndex, textRect.x, textRect.y
 						+ metrics.getAscent());
-				g.setColor(tabPane.getBackgroundAt(tabIndex).darker());
-				SwingUtilities2.drawStringUnderlineCharAt(tabPane, g, title, mnemIndex, textRect.x - 1, textRect.y
-						+ metrics.getAscent() - 1);
+//				g.setColor(tabPane.getBackgroundAt(tabIndex).darker());
+//				SwingUtilities2.drawStringUnderlineCharAt(tabPane, g, title, mnemIndex, textRect.x, textRect.y
+//						+ metrics.getAscent());
 
 			}
 		}
