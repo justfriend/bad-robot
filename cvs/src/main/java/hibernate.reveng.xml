@@ -74,7 +74,9 @@
 	</table>
 	<table name="TBSOPTCVSLOGIN" schema="SOPAADMIN">
 		<primary-key>
-			<generator class="assigned"></generator>
+			<generator class="sequence">
+				<param name="sequence">CVSLOGIN_SID_SEQ</param>
+			</generator>
 			<key-column name="SID" />
 		</primary-key>
 		<column name="FLAG"></column>

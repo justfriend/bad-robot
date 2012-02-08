@@ -13,14 +13,13 @@ import javax.swing.SwingUtilities;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
-import com.systex.sop.cvs.dao.CVSLoginDAO;
-import com.systex.sop.cvs.dto.Tbsoptcvslogin;
 import com.systex.sop.cvs.helper.CVSLog;
 import com.systex.sop.cvs.helper.CVSModuleHelper;
-import com.systex.sop.cvs.ui.StartUI;
+import com.systex.sop.cvs.ui.SyncPage;
+import com.systex.sop.cvs.ui.Workspace;
+import com.systex.sop.cvs.ui.Workspace.PAGE;
 import com.systex.sop.cvs.ui.tableClass.CVSTableModel;
 import com.systex.sop.cvs.ui.tableClass.LogResultDO;
-import com.systex.sop.cvs.util.HostnameUtil;
 import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.TimestampHelper;
 
@@ -35,25 +34,10 @@ public class WriteFutureTask {
 	private Map<String, FutureTask<TaskResult>> taskMap = new HashMap<String, FutureTask<TaskResult>>();
 	private Map<String, Boolean> taskDoneMap = new HashMap<String, Boolean>();
 	private ExecutorService service = Executors.newCachedThreadPool();
-	private CVSLoginDAO loginDAO = new CVSLoginDAO();
 	
 	public WriteFutureTask() {}
 	
 	public boolean execute(String hostname, Timestamp edate, boolean isFullSync) {
-		
-		/** 登入 **/
-		Tbsoptcvslogin login = null;
-		try {
-			// 登入 CVS (直至登出前都不允許其他人作業)
-			login = loginDAO.doLogin(HostnameUtil.getHostname());
-			if (login != null) {
-				CVSLog.getLogger().error("登入失敗, 目前正在執行之使用者為" + login.getCreator());
-				return false;
-			}
-		}catch(Exception e){
-			CVSLog.getLogger().error(this, e);
-			return false;
-		}
 		
 		/** 執行 **/
 		try {
@@ -73,22 +57,23 @@ public class WriteFutureTask {
 				try {
 					Thread.sleep(PropReader.getPropertyInt("CVS.EXEC_INTERVAL"));	// 休息間隔
 				} catch (InterruptedException e) {
+					CVSLog.getLogger().warn(this, e);
 				}
 
 				tList.clear();														// 清空執行結果 (執行結果每次都重新產生)
 				
 				// 逐個模組去取得執行結果並轉成輸出至JTABLE之結構 (extends CVSTableClass)
-				for (String module : getTaskMap().keySet()) {
+				for (String module : taskMap.keySet()) {
 					LogResultDO t = new LogResultDO();
 					TaskResult tempResult = TaskResult.getResultMap().get(module);	// 取得即時之結果 (可能尚未完成)
 					if (tempResult == null) {
 						tempResult = new TaskResult();
 						tempResult.setModule(module);
 					}
-					FutureTask<TaskResult> task = getTaskMap().get(module);			// 取得該模組之FUTURE TASK
+					FutureTask<TaskResult> task = taskMap.get(module);				// 取得該模組之FUTURE TASK
 					PropertyUtils.copyProperties(t, tempResult);
 					if (task.isDone()) {
-						getTaskDoneMap().put(module, Boolean.TRUE);
+						taskDoneMap.put(module, Boolean.TRUE);
 						tempResult = task.get();									// 取得已完成之結果 (從TaskResult.getResultMap()也可以)
 						t.setEndedTime2(tempResult.getEndedTime2());
 					}
@@ -98,14 +83,15 @@ public class WriteFutureTask {
 				SwingUtilities.invokeLater(new java.lang.Runnable() {
 					@Override
 					public void run() {
-						StartUI.getInstance().getTable().setModel(new CVSTableModel(tList));
+						SyncPage page = (SyncPage) Workspace.getPage(PAGE.SYNC_CVS);
+						page.getTable().setModel(new CVSTableModel(tList));
 					}
 				});
 				
 				// Check is finish or not
 				boolean isFinish = true;
-				for (String module : getTaskDoneMap().keySet()) {
-					if (!getTaskDoneMap().get(module)) {
+				for (String module : taskDoneMap.keySet()) {
+					if (!taskDoneMap.get(module)) {
 						isFinish = false;
 						break;
 					}
@@ -120,23 +106,9 @@ public class WriteFutureTask {
 		}finally{
 			service.shutdown();
 			taskMap.clear();
-			/** 登出 **/
-			Tbsoptcvslogin logout = loginDAO.doLogout(HostnameUtil.getHostname());
-			if (logout != null) {
-				CVSLog.getLogger().error("登出失敗, 目前使用者為" + logout.getCreator());
-				return false;
-			}
 		}
 		
 		return true;
-	}
-	
-	public Map<String, FutureTask<TaskResult>> getTaskMap() {
-		return taskMap;
-	}
-
-	public Map<String, Boolean> getTaskDoneMap() {
-		return taskDoneMap;
 	}
 	
 	public static void main(String [] args) {

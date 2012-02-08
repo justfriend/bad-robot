@@ -13,14 +13,13 @@ import javax.swing.SwingUtilities;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
-import com.systex.sop.cvs.dao.CVSLoginDAO;
-import com.systex.sop.cvs.dto.Tbsoptcvslogin;
 import com.systex.sop.cvs.helper.CVSLog;
 import com.systex.sop.cvs.helper.CVSModuleHelper;
-import com.systex.sop.cvs.ui.StartUI;
+import com.systex.sop.cvs.ui.SyncPage;
+import com.systex.sop.cvs.ui.Workspace;
+import com.systex.sop.cvs.ui.Workspace.PAGE;
 import com.systex.sop.cvs.ui.tableClass.CVSTableModel;
 import com.systex.sop.cvs.ui.tableClass.LogResultDO;
-import com.systex.sop.cvs.util.HostnameUtil;
 import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.TimestampHelper;
 
@@ -35,25 +34,10 @@ public class LogFutureTask {
 	private Map<String, FutureTask<TaskResult>> taskMap = new HashMap<String, FutureTask<TaskResult>>();
 	private Map<String, Boolean> taskDoneMap = new HashMap<String, Boolean>();
 	private ExecutorService service = Executors.newCachedThreadPool();
-	private CVSLoginDAO loginDAO = new CVSLoginDAO();
 	
 	public LogFutureTask() {}
 	
 	public boolean execute(Timestamp edate) {
-		
-		/** 登入 **/
-		Tbsoptcvslogin login = null;
-		try {
-			// 登入 CVS (直至登出前都不允許其他人作業)
-			login = loginDAO.doLogin(HostnameUtil.getHostname());
-			if (login != null) {
-				CVSLog.getLogger().error("登入失敗, 目前正在執行之使用者為" + login.getCreator());
-				return false;
-			}
-		}catch(Exception e){
-			CVSLog.getLogger().error(this, e);
-			return false;
-		}
 		
 		/** 執行 **/
 		try {
@@ -98,7 +82,8 @@ public class LogFutureTask {
 				SwingUtilities.invokeLater(new java.lang.Runnable() {
 					@Override
 					public void run() {
-						StartUI.getInstance().getTable().setModel(new CVSTableModel(tList));
+						SyncPage page = (SyncPage) Workspace.getPage(PAGE.SYNC_CVS);
+						page.getTable().setModel(new CVSTableModel(tList));
 					}
 				});
 				
@@ -120,12 +105,6 @@ public class LogFutureTask {
 		}finally{
 			service.shutdown();
 			taskMap.clear();
-			/** 登出 **/
-			Tbsoptcvslogin logout = loginDAO.doLogout(HostnameUtil.getHostname());
-			if (logout != null) {
-				CVSLog.getLogger().error("登出失敗, 目前使用者為" + logout.getCreator());
-				return false;
-			}
 		}
 		
 		return true;
