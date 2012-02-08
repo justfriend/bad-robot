@@ -22,6 +22,8 @@ public class TimestampHelper {
 	}
 	
 	public static String convertToHHMISS(Timestamp ts) {
+		if (ts == null) return "";
+		
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(ts.getTime());
 		StringBuffer dateTime = new StringBuffer();

@@ -30,8 +30,10 @@ public class LogCallable implements Callable<TaskResult> {
 	
 	@Override
 	public TaskResult call() throws Exception {
-		TaskResult result = new TaskResult();
-		result.setModule(this.module);
+		TaskResult result = TaskResult.getResultMap().get(module);
+		result = (result == null)? new TaskResult(): result;
+		result.setModule(module);
+		TaskResult.getResultMap().put(module, result);	// keep ref. by itself
 		
 		/**
 		 *  收集更新資訊 (CVS LOG) 並輸至指定路徑 (LOG PATH)
@@ -54,20 +56,25 @@ public class LogCallable implements Callable<TaskResult> {
 		BufferedWriter wr = null;
 		
 		String line = null;
+		int currentLine = 0;
 		try {
 			result.setBeginTime(new Timestamp(System.currentTimeMillis()));	// [START]
 			p = pb.start();
 			is = p.getInputStream();
 			isr = new InputStreamReader(is, CVSConst.ENCODING_IN);
 			br = new BufferedReader(isr);
+			result.setTotalLines(-1);
 			
 			os = new FileOutputStream(new File(CVSFunc.fxLogFilePath(module, edate)));
 			osw = new OutputStreamWriter(os, CVSConst.ENCODING_OUT);
 			wr = new BufferedWriter(osw);
+			
 			while ((line = br.readLine()) != null) {
+				result.setCurrentLine(++currentLine);
 				if (StringUtil.isEmpty(line) || line.startsWith("?")) continue;
 				wr.write(line);
-				wr.newLine(); //  equals wr.write(System.getProperty("line.separator"));
+				wr.newLine(); // same as wr.write(System.getProperty("line.separator"));
+				
 			}
 		}catch(Exception e){
 			CVSLog.getLogger().error(this, e);
@@ -82,5 +89,5 @@ public class LogCallable implements Callable<TaskResult> {
 
 		return result;
 	}
-
+	
 }
