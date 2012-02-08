@@ -161,6 +161,7 @@ public class CVSParserLogic {
 	}
 	
 	public Tbsoptcvsmap parser(String hostname, String module, List<String> lineList, boolean isFullSync) {
+		System.err.println ("parser");
 		
 		/** Check DATA **/
 		checkParserData(lineList);

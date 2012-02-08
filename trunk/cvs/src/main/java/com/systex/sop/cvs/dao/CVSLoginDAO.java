@@ -15,6 +15,71 @@ import com.systex.sop.cvs.util.TimestampHelper;
 public class CVSLoginDAO {
 	
 	/**
+	 * 查詢登入資訊
+	 * <p>
+	 */
+	public Tbsoptcvslogin retrieveLogin() {
+		Session session = null;
+		try {
+			session = SessionUtil.openSession();
+			Criteria cri = session.createCriteria(Tbsoptcvslogin.class);
+			cri.add(Restrictions.eq("flag", CVSConst.LOGIN_FLAG.SESSION.getText()));
+			cri.setMaxResults(1);
+			Tbsoptcvslogin oldObj = (Tbsoptcvslogin) cri.uniqueResult();
+			
+			if (oldObj == null) {
+				return null;
+			}else{
+				return oldObj;
+			}
+		}catch(HibernateException e){
+			CVSLog.getLogger().error(this, e);
+			throw e;
+		}finally{
+			SessionUtil.closeSession(session);
+		}
+	}
+	
+	/**
+	 * 重置登入
+	 * <p>
+	 * 登入卡死時可以進行重置
+	 * @param hostname
+	 * @return
+	 */
+	public Tbsoptcvslogin doResetLogin(String hostname) {
+		Session session = null;
+		Transaction txn = null;
+		try {
+			session = SessionUtil.openSession();
+			txn = session.beginTransaction();
+			Criteria cri = session.createCriteria(Tbsoptcvslogin.class);
+			cri.add(Restrictions.eq("flag", CVSConst.LOGIN_FLAG.SESSION.getText()));
+			cri.setMaxResults(1);
+			Tbsoptcvslogin oldObj = (Tbsoptcvslogin) cri.uniqueResult();
+			
+			if (oldObj == null) {
+				return null;
+			}else{
+				if (CVSConst.LOGIN_STATUS.LOGIN.getText() == oldObj.getStatus()) {
+					session.delete(oldObj);
+				}else{
+					return oldObj;	// 登入資訊存在但無須刪除
+				}
+			}
+			SessionUtil.commit(txn);
+		}catch(HibernateException e){
+			CVSLog.getLogger().error(this, e);
+			SessionUtil.rollBack(txn);
+			throw e;
+		}finally{
+			SessionUtil.closeSession(session);
+		}
+		
+		return null;
+	}
+	
+	/**
 	 * 進行登入
 	 * <p>
 	 * 若已有其他使用者登入則回傳該使用者之登入資訊反之則回傳NULL

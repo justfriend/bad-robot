@@ -1,8 +1,8 @@
 package com.systex.sop.cvs.task;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.systex.sop.cvs.util.StringUtil;
 import com.systex.sop.cvs.util.TimestampHelper;
@@ -11,7 +11,7 @@ public class TaskResult {
 	/**
 	 * Future task 只在處理結束時才能取得結果，在此將處理中的結果亦儲存起來
 	 */
-	private static Map<String, TaskResult> resultMap = new HashMap<String, TaskResult>();
+	private static ConcurrentHashMap<String, TaskResult> resultMap = new ConcurrentHashMap<String, TaskResult>();
 	private String module;				// 模組名稱
 	private Timestamp beginTime;		// 開始時間(LOG)
 	private Timestamp endedTime;		// 結束時間(LOG)

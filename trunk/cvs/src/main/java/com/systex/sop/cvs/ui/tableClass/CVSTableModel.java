@@ -12,6 +12,8 @@ import javax.swing.table.AbstractTableModel;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
+import com.systex.sop.cvs.helper.CVSLog;
+
 @SuppressWarnings({ "unchecked", "serial" })
 public class CVSTableModel extends AbstractTableModel {
 	private List<? extends CVSBaseDO> tList;
@@ -72,6 +74,7 @@ public class CVSTableModel extends AbstractTableModel {
 		try {
 			return PropertyUtils.getSimpleProperty(tList.get(rowIndex), methodName[columnIndex]);
 		} catch (Exception e) {
+			CVSLog.getLogger().error("rowIndex is " + rowIndex + ", columnIndex is " + columnIndex);
 			throw new RuntimeException(e);
 		}
 	}
