@@ -6,7 +6,7 @@
     <class name="com.systex.sop.cvs.dto.Tbsoptcvslogin" table="TBSOPTCVSLOGIN">
         <id name="sid" type="java.lang.Long">
             <column name="SID" precision="10" scale="0" />
-            <generator class="assigned" />
+            <generator class="native" />
         </id>
         <property name="flag" type="char">
             <column name="FLAG" length="1" not-null="true" />

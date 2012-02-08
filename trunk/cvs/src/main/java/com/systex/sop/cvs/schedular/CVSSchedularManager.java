@@ -4,6 +4,7 @@ import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
@@ -17,7 +18,6 @@ public class CVSSchedularManager {
 	{
 		try {
 			s = new StdSchedulerFactory().getScheduler();
-			
 			JobDetail job = JobBuilder.newJob()
 			.ofType(CVSJob.class)
 			.withIdentity("CVSJob", "DefaultGroup")
@@ -46,17 +46,29 @@ public class CVSSchedularManager {
 		return instance;
 	}
 	
-	public static void start() throws Exception {
+	public void start() throws SchedulerException {
 		getInstance().s.start();
 	}
 	
-	public static void suspend() throws Exception {
+	public void suspend() throws SchedulerException {
 		getInstance().s.standby();
 	}
 	
-	public static void shutdown() throws Exception {
+	public void shutdown() throws SchedulerException {
 		getInstance().s.shutdown();
 		instance = null;
+	}
+	
+	public boolean isStarted() throws SchedulerException {
+		return getInstance().s.isStarted();
+	}
+	
+	public boolean isStandby() throws SchedulerException {
+		return getInstance().s.isInStandbyMode();
+	}
+	
+	public boolean isShutdown() throws SchedulerException {
+		return getInstance().s.isShutdown();
 	}
 	
 }

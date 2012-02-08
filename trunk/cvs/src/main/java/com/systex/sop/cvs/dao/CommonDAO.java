@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -14,7 +15,20 @@ import com.systex.sop.cvs.util.SessionUtil;
 @SuppressWarnings("unchecked")
 public class CommonDAO {
 	
-	public int deleteHQL(String hql) {
+	public int executeSQL(String sql) {
+		Session session = null;
+		try {
+			session = SessionUtil.openSession();
+			SQLQuery query = session.createSQLQuery(sql);
+			return query.executeUpdate();
+		}catch(HibernateException e){
+			throw e;
+		}finally{
+			SessionUtil.closeSession(session);
+		}
+	}
+	
+	public int executeHQL(String hql) {
 		Session session = null;
 		try {
 			session = SessionUtil.openSession();

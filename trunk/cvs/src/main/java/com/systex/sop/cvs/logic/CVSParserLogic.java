@@ -160,7 +160,7 @@ public class CVSParserLogic {
 		return verdescList;
 	}
 	
-	public Tbsoptcvsmap parser(String hostname, String module, List<String> lineList) {
+	public Tbsoptcvsmap parser(String hostname, String module, List<String> lineList, boolean isFullSync) {
 		
 		/** Check DATA **/
 		checkParserData(lineList);
@@ -212,8 +212,10 @@ public class CVSParserLogic {
 			commonDAO.updateDTO(map);
 		}
 		
-		synchronized(CVSParserLogic.class) {
-			commonDAO.deleteHQL(StringUtil.concat("delete from Tbsoptcvstag where m_sid = ", map.getMSid()));
+		if (!isFullSync) {
+			synchronized (CVSParserLogic.class) {
+				commonDAO.executeHQL(StringUtil.concat("delete from Tbsoptcvstag where m_sid = ", map.getMSid()));
+			}
 		}
 		
 		List<Tbsoptcvstag> tagList = new ArrayList<Tbsoptcvstag>();

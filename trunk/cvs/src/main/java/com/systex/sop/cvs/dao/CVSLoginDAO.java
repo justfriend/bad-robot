@@ -1,9 +1,7 @@
 package com.systex.sop.cvs.dao;
 
-import java.sql.Timestamp;
-import java.util.Date;
-
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -12,6 +10,7 @@ import com.systex.sop.cvs.constant.CVSConst;
 import com.systex.sop.cvs.dto.Tbsoptcvslogin;
 import com.systex.sop.cvs.helper.CVSLog;
 import com.systex.sop.cvs.util.SessionUtil;
+import com.systex.sop.cvs.util.TimestampHelper;
 
 public class CVSLoginDAO {
 	
@@ -31,34 +30,38 @@ public class CVSLoginDAO {
 			session = SessionUtil.openSession();
 			txn = session.beginTransaction();
 			Criteria cri = session.createCriteria(Tbsoptcvslogin.class);
-			cri.add(Restrictions.eq("flag", "S"));
+			cri.add(Restrictions.eq("flag", CVSConst.LOGIN_FLAG.SESSION.getText()));
 			cri.setMaxResults(1);
 			Tbsoptcvslogin oldObj = (Tbsoptcvslogin) cri.uniqueResult();
 			
 			if (oldObj == null) {
 				Tbsoptcvslogin newObj = new Tbsoptcvslogin();
-				newObj.setFlag(CVSConst.FLAG.SESSION.getText());
-				newObj.setStatus(CVSConst.STATUS.LOGIN.getText());
+				newObj.setFlag(CVSConst.LOGIN_FLAG.SESSION.getText());
+				newObj.setStatus(CVSConst.LOGIN_STATUS.LOGIN.getText());
 				newObj.setDescription(" ");
 				newObj.setCreator(hostname);
+				newObj.setCreatetime(TimestampHelper.now());
 				newObj.setModifier(hostname);
+				newObj.setLastupdate(null);
 				session.save(newObj);
 			}else{
-				if (CVSConst.STATUS.LOGIN.getText() == oldObj.getStatus()) {
+				if (CVSConst.LOGIN_STATUS.LOGIN.getText() == oldObj.getStatus()) {
 					return oldObj;
 				}else{
-					oldObj.setStatus(CVSConst.STATUS.LOGIN.getText());
+					oldObj.setStatus(CVSConst.LOGIN_STATUS.LOGIN.getText());
 					oldObj.setDescription("Login");
 					oldObj.setCreator(hostname);
 					oldObj.setModifier(hostname);
-					oldObj.setCreatetime(null); // reset
+					oldObj.setCreatetime(TimestampHelper.now());
+					oldObj.setLastupdate(null);
 					session.update(oldObj);
 				}
 			}
 			SessionUtil.commit(txn);
-		}catch(Exception e){
+		}catch(HibernateException e){
 			CVSLog.getLogger().error(this, e);
 			SessionUtil.rollBack(txn);
+			throw e;
 		}finally{
 			SessionUtil.closeSession(session);
 		}
@@ -75,33 +78,36 @@ public class CVSLoginDAO {
 	 * @return
 	 * @throws Exception
 	 */
-	public Tbsoptcvslogin doLogout(String hostname) throws Exception {
+	public Tbsoptcvslogin doLogout(String hostname) {
 		Session session = null;
 		Transaction txn = null;
 		try {
 			session = SessionUtil.openSession();
 			txn = session.beginTransaction();
 			Criteria cri = session.createCriteria(Tbsoptcvslogin.class);
-			cri.add(Restrictions.eq("flag", "S"));
+			cri.add(Restrictions.eq("flag", CVSConst.LOGIN_FLAG.SESSION.getText()));
 			cri.setMaxResults(1);
 			Tbsoptcvslogin oldObj = (Tbsoptcvslogin) cri.uniqueResult();
 			
 			if (oldObj == null) {
+				// 未登入則登出 (在此儘做警告)
+				CVSLog.getLogger().warn("進行登出，但未發現登入紀錄...");
 			}else{
-				if (CVSConst.STATUS.LOGIN.getText() == oldObj.getStatus()) {
+				if (CVSConst.LOGIN_STATUS.LOGOUT.getText() == oldObj.getStatus()) {
 					return oldObj;
 				}else{
-					oldObj.setStatus(CVSConst.STATUS.LOGOUT.getText());
+					oldObj.setStatus(CVSConst.LOGIN_STATUS.LOGOUT.getText());
 					oldObj.setDescription("Logout");
 					oldObj.setModifier(hostname);
-					oldObj.setLastupdate(new Timestamp(new Date().getTime()));
+					oldObj.setLastupdate(TimestampHelper.now());
 					session.update(oldObj);
 				}
 			}
 			SessionUtil.commit(txn);
-		}catch(Exception e){
+		}catch(HibernateException e){
 			CVSLog.getLogger().error(this, e);
 			SessionUtil.rollBack(txn);
+			throw e;
 		}finally{
 			SessionUtil.closeSession(session);
 		}
