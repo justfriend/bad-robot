@@ -61,7 +61,7 @@ public class CVSParserLogic {
 		String programid = null;
 		String [] pArray = rcsfile.split("/");
 		for (int i=0; i<pArray.length; i++) {
-			if ("view".equalsIgnoreCase(pArray[i]) || "module".equalsIgnoreCase(pArray[i])) {
+			if ("view".equalsIgnoreCase(pArray[i]) || "model".equalsIgnoreCase(pArray[i])) {
 				programid = pArray[i+1];
 			}
 		}
@@ -161,7 +161,7 @@ public class CVSParserLogic {
 	}
 	
 	public Tbsoptcvsmap parser(String hostname, String module, List<String> lineList, boolean isFullSync) {
-		System.err.println ("parser");
+		CVSLog.getLogger().info(StringUtil.concat("Parsing... [module]", module, ", [lineList]", lineList.size(), ", [isFullSync]", isFullSync));
 		
 		/** Check DATA **/
 		checkParserData(lineList);
@@ -231,6 +231,8 @@ public class CVSParserLogic {
 		}
 		commonDAO.saveDTO(tagList, 500);
 		
+		List<Tbsoptcvsver> insertVerList = new ArrayList<Tbsoptcvsver>();
+		List<Tbsoptcvsver> updateVerList = new ArrayList<Tbsoptcvsver>();
 		for (VERDESC verdesc : verdescList) {
 			TbsoptcvsverId verId = new TbsoptcvsverId(map.getMSid(), verdesc.revision);
 			Tbsoptcvsver ver = (Tbsoptcvsver) commonDAO.getDTO(Tbsoptcvsver.class, verId);
@@ -250,11 +252,13 @@ public class CVSParserLogic {
 				ver.setCreatetime(TimestampHelper.now());
 				ver.setModifier(ver.getCreator());
 				ver.setLastupdate(ver.getCreatetime());
-				commonDAO.saveDTO(ver);
+				insertVerList.add(ver);
 			}else{
-				commonDAO.updateDTO(ver);
+				updateVerList.add(ver);
 			}
 		}
+		commonDAO.saveDTO(insertVerList, 500);
+		commonDAO.updateDTO(updateVerList, 500);
 		
 		return null;
 	}

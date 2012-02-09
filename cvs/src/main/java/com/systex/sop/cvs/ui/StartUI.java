@@ -3,6 +3,8 @@ package com.systex.sop.cvs.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Hashtable;
@@ -26,8 +28,6 @@ import com.systex.sop.cvs.ui.customize.comp.SSSJButton;
 import com.systex.sop.cvs.ui.customize.comp.SSSJSplitPane;
 import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.ScreenSize;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 /**
  * CVS 主程式
@@ -42,7 +42,7 @@ public class StartUI {
 	private static StartUI instance;
 	
 	private final float frameWidthRate = 0.8f;	// 框架起始的大小比率 (寬)
-	private final float frameHeightRate = 0.8f;	// 框架起始的大小比率 (高)
+	private final float frameHeightRate = 0.7f;	// 框架起始的大小比率 (高)
 	private SSSFrame frame;
 	private SSSJButton qryNormal_jBtn;			// 一般查詢按鈕
 	private SSSJButton sync_jBtn;				// 同步執行按鈕

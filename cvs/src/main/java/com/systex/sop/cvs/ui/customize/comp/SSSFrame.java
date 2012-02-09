@@ -4,17 +4,23 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -28,13 +34,29 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 import com.systex.sop.cvs.ui.customize.SSSPalette;
+import com.systex.sop.cvs.util.PropReader;
+import com.systex.sop.cvs.util.StringUtil;
 
 @SuppressWarnings({ "unchecked", "serial" })
 public class SSSFrame extends IFrame {
-	private JLabel msgjL = new JLabel();	// message label
-	private JPanel panel;					// container panel
+	private SSSJLabel msgjL = new SSSJLabel();	// message label (框架最下方左下角的訊息提示)
+	private SSSJLabel cxtjL = new SSSJLabel();	// content warning message (畫面中間的明顯警示-字大)
+	private Timer cxtTimer = null;
+	private JPanel panel;						// container panel
 	private TitleBar titleBar;
-
+	
+	{
+		cxtjL.setFont(new Font(SSSPalette.fontFamily, Font.BOLD, PropReader.getPropertyInt("CVS.WARNINGSIZE")));
+		cxtjL.setOpaque(false);
+		cxtjL.setForeground(Color.PINK);
+		cxtTimer = new Timer(1500, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setCxtMessage(null);
+			}
+		});
+	}
+	
 	public class TitleBar extends IWindowTitleBar implements ChangeListener {
 		private Image frameIcon;
 		private JButton titleIcon;
@@ -184,18 +206,38 @@ public class SSSFrame extends IFrame {
 		panel = new JPanel();
 		iContentPane.add(panel, BorderLayout.CENTER);
 		panel.setLayout(new BorderLayout(0, 0));
+		
+		/** 添加一層用來於畫面中顯示訊息 (超顯眼) **/
+		JLayeredPane layerPane = this.getLayeredPane();
+		layerPane.add(cxtjL, 101);	// 最上層顯示
 	}
 
 	public JPanel getPanel() {
 		return panel;
 	}
-
-	public void setMsgjL(JLabel msgjL) {
-		this.msgjL = msgjL;
+	
+	/** 設定左下角訊息文字 **/
+	public void setMessage(String msg) {
+		msgjL.setText(msg);
 	}
 	
-	public JLabel getMsgjL() {
-		return this.msgjL;
+	public void setCxtMessage(String msg) {
+		if (StringUtil.isEmpty(msg)) {
+			cxtjL.setText("");
+		}else{
+			cxtTimer.stop();
+			
+			// 動態重新定位
+			Rectangle size = this.getBounds();
+			cxtjL.setHorizontalAlignment(SwingConstants.CENTER);
+			cxtjL.setVerticalAlignment(SwingConstants.CENTER);
+			cxtjL.setBounds( (int) (size.width * 0.2), (int) (size.height * 0.2), (int) (size.width * 0.6), (int) (size.height * 0.6));
+			cxtjL.setText(msg);
+			
+			// 自動消逝
+			cxtTimer.restart();
+		}
+		cxtjL.repaint();
 	}
 
 	public TitleBar getFrameTitleBar() {
