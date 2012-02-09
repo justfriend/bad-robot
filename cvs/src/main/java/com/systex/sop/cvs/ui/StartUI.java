@@ -82,6 +82,9 @@ public class StartUI {
 			// 指定主容器 (用來切換頁面)
 			Workspace.registerBody(window.getBody_jPanel());
 			
+			// 設定預設畫面
+			Workspace.changePage(PAGE.SYNC_CVS);
+			
 			// 定位主畫面
 			window.frame.setBounds(100, 100,
 					ScreenSize.getDynamicScreenWidth(window.frameWidthRate),
