@@ -59,7 +59,7 @@ public class SyncPage extends JPanel {
 
 		SSSJSplitPane sync_jSplit = new SSSJSplitPane();
 		sync_jSplit.setBackground(new Color(127, 125, 123));
-		sync_jSplit.setDividerLocation(150);
+		sync_jSplit.setDividerLocation(130);
 		sync_jSplit.setOneTouchExpandable(false);
 		sync_jSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		scrollPane.setViewportView(sync_jSplit);
@@ -95,6 +95,7 @@ public class SyncPage extends JPanel {
 		autoCron_jTxtF.setColumns(10);
 
 		autoExec_jBtn = new SSSJButton(SSSJButton.ITEM_LITE);
+		autoExec_jBtn.setBackground(Color.WHITE);
 		autoExec_jBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// 執行「自動同步」(啟動 / 停止)
@@ -142,6 +143,7 @@ public class SyncPage extends JPanel {
 		manualSyncTab.add(label_3, "2, 4, right, default");
 
 		fullSync_jChkB = new JCheckBox("完全同步");
+		fullSync_jChkB.setBackground(Color.ORANGE);
 		fullSync_jChkB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// 切換「完整同步」按鈕
@@ -151,6 +153,7 @@ public class SyncPage extends JPanel {
 		manualSyncTab.add(fullSync_jChkB, "4, 4");
 
 		manualExec_jBtn = new SSSJButton(SSSJButton.ITEM_LITE);
+		manualExec_jBtn.setBackground(Color.WHITE);
 		manualExec_jBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// 執行「手動同步」
@@ -161,6 +164,7 @@ public class SyncPage extends JPanel {
 		manualSyncTab.add(manualExec_jBtn, "8, 4");
 
 		JScrollPane syncResult_jScrP = new JScrollPane();
+		syncResult_jScrP.setBackground(Color.ORANGE);
 		syncResult_jScrP.setBorder(null);
 		sync_jSplit.setRightComponent(syncResult_jScrP);
 
@@ -174,7 +178,7 @@ public class SyncPage extends JPanel {
 		getAutoDate_jTxtF().setText(TimestampHelper.convertToyyyyMMdd2(CVSJob.getAutoSyncDate()));
 		
 		/** 初始化「手動同步」 **/
-		getManualDate_jTxtF().setText(TimestampHelper.convertToyyyyMMdd2(CVSJob.getAutoSyncDate()));
+		getManualDate_jTxtF().setText(TimestampHelper.convertToyyyyMMdd2(CVSJob.getAutoSyncDate())); 
 	}
 
 	/**
