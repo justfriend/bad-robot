@@ -33,12 +33,17 @@ public class WriteCallable implements Callable<TaskResult> {
 	
 	@Override
 	public TaskResult call() throws Exception {
-		CVSParserLogic logic = new CVSParserLogic();
-		TaskResult result = TaskResult.getResultMap().get(module);
-		result = (result == null)? new TaskResult(): result;
-		result.setModule(module);
-		TaskResult.getResultMap().put(module, result);	// keep ref. by itself
+		TaskResult result = null;
+		synchronized(WriteCallable.class) {
+			result = TaskResult.getTaskResult(module);
+			if (result == null) {
+				result = new TaskResult();
+				result.setModule(module);
+				TaskResult.putTaskResult(module, result);	// keep ref. by itself
+			}
+		}
 		
+		CVSParserLogic logic = new CVSParserLogic();
 		File f = new File(CVSFunc.fxLogFilePath(module, edate));
 		FileInputStream fis = null;
 		InputStreamReader isr = null;
@@ -69,9 +74,10 @@ public class WriteCallable implements Callable<TaskResult> {
 			br = new BufferedReader(isr);
 			List<String> tmpList = new ArrayList<String>();
 			while ((line = br.readLine()) != null) {
-				result.setCurrentLine2(++currentLine);
 				if (StringUtil.isEmpty(line)) continue;
+				result.setCurrentLine2(++currentLine);
 				tmpList.add(line);
+				CVSLog.getLogger().debug(line);
 				if (line.startsWith(CVSConst.BLOCK_END)) {
 					logic.parser(hostname, module, tmpList, isFullSync);
 					tmpList.clear();
@@ -79,7 +85,6 @@ public class WriteCallable implements Callable<TaskResult> {
 			}
 		}catch(Exception e){
 			CVSLog.getLogger().error(this, e);
-			e.printStackTrace();
 		}finally{
 			result.setEndedTime2(new Timestamp(System.currentTimeMillis()));	// [ENDED]
 			StreamCloseHelper.closeReader(br, isr);

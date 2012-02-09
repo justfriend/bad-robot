@@ -58,6 +58,7 @@ public class SyncPage extends JPanel {
 		add(scrollPane, BorderLayout.CENTER);
 
 		SSSJSplitPane sync_jSplit = new SSSJSplitPane();
+		sync_jSplit.setBorder(null);
 		sync_jSplit.setBackground(new Color(127, 125, 123));
 		sync_jSplit.setDividerLocation(130);
 		sync_jSplit.setOneTouchExpandable(false);
@@ -70,13 +71,24 @@ public class SyncPage extends JPanel {
 		JPanel autoSyncTab = new JPanel();
 		autoSyncTab.setBackground(Color.WHITE);
 		sync_jTab.addTab("自動同步", null, autoSyncTab, null);
-		autoSyncTab.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("30dlu"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50dlu"),
-				FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("30dlu"), FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("50dlu"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("20dlu"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC, }));
+		autoSyncTab.setLayout(new FormLayout(new ColumnSpec[] {
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("30dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("50dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("30dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("50dlu"),},
+			new RowSpec[] {
+				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("20dlu"),
+				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("20dlu"),
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,}));
 
 		SSSJLabel label = new SSSJLabel("日期");
 		autoSyncTab.add(label, "2, 2, right, default");
@@ -108,12 +120,22 @@ public class SyncPage extends JPanel {
 		JPanel manualSyncTab = new JPanel();
 		manualSyncTab.setBackground(Color.WHITE);
 		sync_jTab.addTab("手動同步", null, manualSyncTab, null);
-		manualSyncTab.setLayout(new FormLayout(new ColumnSpec[] { FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("30dlu"), FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("50dlu"),
-				FormFactory.RELATED_GAP_COLSPEC, ColumnSpec.decode("left:30dlu"), FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("50dlu"), }, new RowSpec[] { FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("20dlu"), FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC, FormFactory.DEFAULT_ROWSPEC, }));
+		manualSyncTab.setLayout(new FormLayout(new ColumnSpec[] {
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("30dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("50dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("left:30dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("50dlu"),},
+			new RowSpec[] {
+				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("20dlu"),
+				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("20dlu"),
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,}));
 
 		SSSJLabel label_2 = new SSSJLabel("日期");
 		manualSyncTab.add(label_2, "2, 2, right, default");
@@ -143,7 +165,7 @@ public class SyncPage extends JPanel {
 		manualSyncTab.add(label_3, "2, 4, right, default");
 
 		fullSync_jChkB = new JCheckBox("完全同步");
-		fullSync_jChkB.setBackground(Color.ORANGE);
+		fullSync_jChkB.setBackground(Color.PINK);
 		fullSync_jChkB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// 切換「完整同步」按鈕
@@ -185,6 +207,7 @@ public class SyncPage extends JPanel {
 	 * Create the panel.
 	 */
 	public SyncPage() {
+		setBorder(null);
 		initial();
 		initUI();
 	}

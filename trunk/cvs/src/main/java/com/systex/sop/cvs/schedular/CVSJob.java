@@ -34,13 +34,13 @@ public class CVSJob implements Job {
 			if (login != null) {
 				String msg = "登入失敗, 目前正在執行之使用者為" + login.getCreator();
 				CVSLog.getLogger().error(msg);
-				StartUI.getInstance().getFrame().getMsgjL().setText(msg);
+				StartUI.getInstance().getFrame().setMessage(msg);
 				return;
 			}
 			TaskResult.clearResult();
 		}catch(Exception e){
 			CVSLog.getLogger().error(this, e);
-			StartUI.getInstance().getFrame().getMsgjL().setText("登入發生異常...(" + e.getMessage() + ")");
+			StartUI.getInstance().getFrame().setMessage("登入發生異常...(" + e.getMessage() + ")");
 			return;
 		}
 		
@@ -48,14 +48,14 @@ public class CVSJob implements Job {
 		try {
 			// 清空資料表 (完全同步)
 			if (isFullSync) {
-				StartUI.getInstance().getFrame().getMsgjL().setText("清空所有資料中...");
+				StartUI.getInstance().getFrame().setMessage("清空所有資料中...");
 				try {
 					commonDAO.executeSQL("truncate table tbsoptcvstag");
 					commonDAO.executeSQL("truncate table tbsoptcvsver");
 					commonDAO.executeSQL("truncate table tbsoptcvsmap");
-					StartUI.getInstance().getFrame().getMsgjL().setText("所有資料已清完成");
+					StartUI.getInstance().getFrame().setMessage("所有資料已清完成");
 				}catch(Exception e) {
-					StartUI.getInstance().getFrame().getMsgjL().setText("清空所有資料失敗");
+					StartUI.getInstance().getFrame().setMessage("清空所有資料失敗");
 					CVSLog.getLogger().error(this, e);
 					return;
 				}
@@ -63,21 +63,21 @@ public class CVSJob implements Job {
 			
 			// 取得紀錄檔
 			LogFutureTask logFuture = new LogFutureTask();
-			StartUI.getInstance().getFrame().getMsgjL().setText("同步紀錄檔中...");
+			StartUI.getInstance().getFrame().setMessage("同步紀錄檔中...");
 			if (logFuture.execute(date)) {
-				StartUI.getInstance().getFrame().getMsgjL().setText("同步紀錄檔完成");
+				StartUI.getInstance().getFrame().setMessage("同步紀錄檔完成");
 				
 				// 寫入紀錄檔至資料庫
 				WriteFutureTask writeFuture = new WriteFutureTask();
-				StartUI.getInstance().getFrame().getMsgjL().setText("寫入紀錄檔中...");
+				StartUI.getInstance().getFrame().setMessage("寫入紀錄檔中...");
 				if (writeFuture.execute(HostnameUtil.getHostname(), date, isFullSync)) {
-					StartUI.getInstance().getFrame().getMsgjL().setText("寫入紀錄檔完成 (同步完成)");
+					StartUI.getInstance().getFrame().setMessage("寫入紀錄檔完成 (同步完成)");
 				}else{
-					StartUI.getInstance().getFrame().getMsgjL().setText("寫入紀錄檔失敗");
+					StartUI.getInstance().getFrame().setMessage("寫入紀錄檔失敗");
 				}
 			}else{
-				StartUI.getInstance().getFrame().getMsgjL().setText("同步紀錄檔失敗");
-				StartUI.getInstance().getFrame().getMsgjL().setText("發生異常...");
+				StartUI.getInstance().getFrame().setMessage("同步紀錄檔失敗");
+				StartUI.getInstance().getFrame().setMessage("發生異常...");
 			}
 		}catch(Exception e){
 			CVSLog.getLogger().error(this, e);
@@ -87,7 +87,7 @@ public class CVSJob implements Job {
 			if (logout != null) {
 				String msg = "登出失敗, 目前使用者為" + logout.getCreator();
 				CVSLog.getLogger().error(msg);
-				StartUI.getInstance().getFrame().getMsgjL().setText(msg);
+				StartUI.getInstance().getFrame().setMessage(msg);
 			}
 		}
 	}

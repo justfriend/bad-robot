@@ -4,6 +4,9 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 import com.systex.sop.cvs.util.StringUtil;
 
 public class LogResultDO extends CVSBaseDO {
@@ -23,6 +26,13 @@ public class LogResultDO extends CVSBaseDO {
 	
 	static {
 		columnName = new String [] {"模組名稱", "處理行數(L)", "總行數(L)", "起始時間(L)", "結束時間(L)", "耗時(L)", "處理行數(W)", "總行數(W)", "起始時間(W)", "結束時間(W)", "耗時(W)"};
+	}
+	
+	{
+		currentLine = 0;
+		totalLines = 0;
+		currentLine2 = 0;
+		totalLines2 = 0;
 	}
 
 	public String getModule() {
@@ -67,7 +77,10 @@ public class LogResultDO extends CVSBaseDO {
 		}else{
 			Calendar c = Calendar.getInstance();
 			c.setTimeInMillis(endedTime.getTime() - beginTime.getTime());
-			elapseTime = StringUtil.concat(c.get(Calendar.MINUTE), ":", c.get(Calendar.SECOND), ".", c.get(Calendar.MILLISECOND));
+			elapseTime = StringUtil.concat(
+					String.format("%02d", c.get(Calendar.MINUTE)), ":", 
+					String.format("%02d", c.get(Calendar.SECOND)), ".",
+					String.format("%03d", c.get(Calendar.MILLISECOND)) );
 		}
 		
 		return elapseTime;
@@ -103,7 +116,10 @@ public class LogResultDO extends CVSBaseDO {
 		}else{
 			Calendar c = Calendar.getInstance();
 			c.setTimeInMillis(endedTime2.getTime() - beginTime2.getTime());
-			elapseTime2 = StringUtil.concat(c.get(Calendar.MINUTE), ":", c.get(Calendar.SECOND), ".", c.get(Calendar.MILLISECOND));
+			elapseTime2 = StringUtil.concat(
+					String.format("%02d", c.get(Calendar.MINUTE)), ":", 
+					String.format("%02d", c.get(Calendar.SECOND)), ".",
+					String.format("%03d", c.get(Calendar.MILLISECOND)) );
 		}
 		
 		return elapseTime2;
@@ -127,6 +143,11 @@ public class LogResultDO extends CVSBaseDO {
 
 	public void setTotalLines2(Integer totalLines2) {
 		this.totalLines2 = totalLines2;
+	}
+	
+	@Override
+	public String toString() {
+		return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 	@Override

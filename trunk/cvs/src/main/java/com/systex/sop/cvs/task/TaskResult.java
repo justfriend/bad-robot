@@ -1,11 +1,10 @@
 package com.systex.sop.cvs.task;
 
 import java.sql.Timestamp;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.systex.sop.cvs.util.StringUtil;
-import com.systex.sop.cvs.util.TimestampHelper;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 public class TaskResult {
 	/**
@@ -22,88 +21,102 @@ public class TaskResult {
 	private Integer currentLine2;		// 當前處理行數(WRITE)
 	private Integer totalLines2;		// 總行數(WRITE)
 	
+	{
+		currentLine = 0;
+		totalLines = 0;
+		currentLine2 = 0;
+		totalLines2 = 0;
+	}
+
 	/** 清空處理結果 **/
 	public static void clearResult() {
 		resultMap.clear();
 	}
-
-	public String getModule() {
-		return module;
+	
+	/** 取得處理結果 **/
+	public static TaskResult getTaskResult(String module) {
+		return resultMap.get(module);
 	}
-
-	public void setModule(String module) {
-		this.module = module;
+	
+	/** 放入處理結果 **/
+	public static void putTaskResult(String module, TaskResult result) {
+		resultMap.put(module, result);
 	}
 
 	public Timestamp getBeginTime() {
 		return beginTime;
 	}
 
-	public void setBeginTime(Timestamp beginTime) {
-		this.beginTime = beginTime;
-	}
-
-	public Timestamp getEndedTime() {
-		return endedTime;
-	}
-
-	public void setEndedTime(Timestamp endedTime) {
-		this.endedTime = endedTime;
-	}
-
 	public Timestamp getBeginTime2() {
 		return beginTime2;
-	}
-
-	public void setBeginTime2(Timestamp beginTime2) {
-		this.beginTime2 = beginTime2;
-	}
-
-	public Timestamp getEndedTime2() {
-		return endedTime2;
-	}
-
-	public void setEndedTime2(Timestamp endedTime2) {
-		this.endedTime2 = endedTime2;
 	}
 
 	public Integer getCurrentLine() {
 		return currentLine;
 	}
 
-	public void setCurrentLine(Integer currentLine) {
-		this.currentLine = currentLine;
+	public Integer getCurrentLine2() {
+		return currentLine2;
+	}
+
+	public Timestamp getEndedTime() {
+		return endedTime;
+	}
+
+	public Timestamp getEndedTime2() {
+		return endedTime2;
+	}
+
+	public String getModule() {
+		return module;
 	}
 
 	public Integer getTotalLines() {
 		return totalLines;
 	}
 
-	public void setTotalLines(Integer totalLines) {
-		this.totalLines = totalLines;
+	public Integer getTotalLines2() {
+		return totalLines2;
 	}
 
-	public Integer getCurrentLine2() {
-		return currentLine2;
+	public void setBeginTime(Timestamp beginTime) {
+		this.beginTime = beginTime;
+	}
+
+	public void setBeginTime2(Timestamp beginTime2) {
+		this.beginTime2 = beginTime2;
+	}
+
+	public void setCurrentLine(Integer currentLine) {
+		this.currentLine = currentLine;
 	}
 
 	public void setCurrentLine2(Integer currentLine2) {
 		this.currentLine2 = currentLine2;
 	}
 
-	public Integer getTotalLines2() {
-		return totalLines2;
+	public void setEndedTime(Timestamp endedTime) {
+		this.endedTime = endedTime;
+	}
+
+	public void setEndedTime2(Timestamp endedTime2) {
+		this.endedTime2 = endedTime2;
+	}
+
+	public void setModule(String module) {
+		this.module = module;
+	}
+
+	public void setTotalLines(Integer totalLines) {
+		this.totalLines = totalLines;
 	}
 
 	public void setTotalLines2(Integer totalLines2) {
 		this.totalLines2 = totalLines2;
 	}
-
-	public static Map<String, TaskResult> getResultMap() {
-		return resultMap;
-	}
-
+	
+	@Override
 	public String toString() {
-		return StringUtil.concat("[Module]", module, " [BEGIN]", TimestampHelper.convertToHHMISS(beginTime), " [ENDED]", TimestampHelper.convertToHHMISS(endedTime));
+		return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 }
