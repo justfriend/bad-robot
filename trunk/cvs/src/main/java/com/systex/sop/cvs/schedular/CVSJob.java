@@ -19,6 +19,8 @@ import com.systex.sop.cvs.util.HostnameUtil;
 public class CVSJob implements Job {
 	private CommonDAO commonDAO = new CommonDAO();
 	private CVSLoginDAO loginDAO = new CVSLoginDAO();
+	private LogFutureTask logFuture = null;
+	private WriteFutureTask writeFuture = null;
 	
 	public static Timestamp getAutoSyncDate() {
 		return new Timestamp(System.currentTimeMillis() - 86400000L);	// 自動同步需包含前一日 (避免漏掉前日尾段)
@@ -62,13 +64,13 @@ public class CVSJob implements Job {
 			}
 			
 			// 取得紀錄檔
-			LogFutureTask logFuture = new LogFutureTask();
+			logFuture = new LogFutureTask();
 			StartUI.getInstance().getFrame().setMessage("同步紀錄檔中...");
 			if (logFuture.execute(date)) {
 				StartUI.getInstance().getFrame().setMessage("同步紀錄檔完成");
 				
 				// 寫入紀錄檔至資料庫
-				WriteFutureTask writeFuture = new WriteFutureTask();
+				writeFuture = new WriteFutureTask();
 				StartUI.getInstance().getFrame().setMessage("寫入紀錄檔中...");
 				if (writeFuture.execute(HostnameUtil.getHostname(), date, isFullSync)) {
 					StartUI.getInstance().getFrame().setMessage("寫入紀錄檔完成 (同步完成)");
@@ -77,7 +79,6 @@ public class CVSJob implements Job {
 				}
 			}else{
 				StartUI.getInstance().getFrame().setMessage("同步紀錄檔失敗");
-				StartUI.getInstance().getFrame().setMessage("發生異常...");
 			}
 		}catch(Exception e){
 			CVSLog.getLogger().error(this, e);
@@ -102,6 +103,25 @@ public class CVSJob implements Job {
 				doSync(date, isFullSync);
 			}
 		}).start();
+	}
+	
+	/**
+	 * 立即終止一切同步
+	 */
+	public void shutdownNow() {
+		if (logFuture != null) {
+			if (! (logFuture.getService().isTerminated() || logFuture.getService().isShutdown()) ) {
+				logFuture.getService().shutdownNow();
+				StartUI.getInstance().getFrame().setCxtMessage("Interrupt");
+			}
+		}
+		
+		if (writeFuture != null) {
+			if (! (writeFuture.getService().isTerminated() || writeFuture.getService().isShutdown()) ) {
+				writeFuture.getService().shutdownNow();
+				StartUI.getInstance().getFrame().setCxtMessage("Interrupt");
+			}
+		}
 	}
 	
 	/**

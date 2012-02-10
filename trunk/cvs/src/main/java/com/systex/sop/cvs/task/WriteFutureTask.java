@@ -61,6 +61,8 @@ public class WriteFutureTask {
 				} catch (InterruptedException e) {
 					CVSLog.getLogger().warn(this, e);
 				}
+				
+				if (service.isShutdown() || service.isTerminated()) return false;	// 供中斷後之判斷
 
 				tList.clear();														// 清空執行結果 (執行結果每次都重新產生)
 				
@@ -132,6 +134,10 @@ public class WriteFutureTask {
 		return true;
 	}
 	
+	public ExecutorService getService() {
+		return service;
+	}
+
 	public static void main(String [] args) {
 		WriteFutureTask logManager = new WriteFutureTask();
 		logManager.execute("1000073David", TimestampHelper.convertToTimestamp("20000105"), true);

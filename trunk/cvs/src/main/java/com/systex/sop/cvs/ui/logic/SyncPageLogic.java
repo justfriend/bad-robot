@@ -18,6 +18,7 @@ import com.systex.sop.cvs.util.TimestampHelper;
  */
 public class SyncPageLogic {
 	private SyncPage page;
+	private CVSJob job = null;
 	
 	public SyncPageLogic(SyncPage page) {
 		this.page = page;
@@ -54,7 +55,7 @@ public class SyncPageLogic {
 	
 	/** 執行「手動同步」 **/
 	public void doManualSyncExecute() {
-		CVSJob job = new CVSJob();
+		if (job == null) job = new CVSJob();
 		Timestamp date = null;
 		try {
 			date = TimestampHelper.convertToTimestamp2(page.getManualDate_jTxtF().getText());
@@ -64,5 +65,10 @@ public class SyncPageLogic {
 		}
 		
 		job.execute(date, page.getFullSync_jChkB().isSelected());
+	}
+	
+	/** 執行「手動同步之中斷」 **/
+	public void doInterrupt() {
+		if (job != null) job.shutdownNow();
 	}
 }
