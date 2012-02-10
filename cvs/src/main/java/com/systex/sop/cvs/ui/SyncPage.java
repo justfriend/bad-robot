@@ -17,7 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -28,10 +27,12 @@ import com.systex.sop.cvs.ui.customize.comp.SSSJButton;
 import com.systex.sop.cvs.ui.customize.comp.SSSJLabel;
 import com.systex.sop.cvs.ui.customize.comp.SSSJSplitPane;
 import com.systex.sop.cvs.ui.customize.comp.SSSJTabbedPane;
+import com.systex.sop.cvs.ui.customize.comp.SSSJTable;
 import com.systex.sop.cvs.ui.customize.comp.SSSJTextField;
 import com.systex.sop.cvs.ui.customize.other.ObservingTextField;
 import com.systex.sop.cvs.ui.customize.other.SSSDatePicker;
 import com.systex.sop.cvs.ui.logic.SyncPageLogic;
+import com.systex.sop.cvs.ui.tableClass.CVSColumnModel;
 import com.systex.sop.cvs.ui.tableClass.CVSTableModel;
 import com.systex.sop.cvs.ui.tableClass.LogResultDO;
 import com.systex.sop.cvs.util.PropReader;
@@ -50,8 +51,7 @@ public class SyncPage extends JPanel {
 	private SSSJTextField autoDate_jTxtF;
 	private SSSJButton autoExec_jBtn;
 	private ObservingTextField manualDate_jTxtF;
-	private JTable syncResult_jTbl;
-	private DefaultTableModel model = new DefaultTableModel();
+	private SSSJTable table;
 	private JCheckBox fullSync_jChkB;
 	private SSSJButton manualExec_jBtn;
 	private SyncPageLogic logic = new SyncPageLogic(this);
@@ -202,11 +202,10 @@ public class SyncPage extends JPanel {
 
 		JScrollPane syncResult_jScrP = new JScrollPane();
 		syncResult_jScrP.setBackground(Color.ORANGE);
-		syncResult_jScrP.setBorder(null);
 		sync_jSplit.setRightComponent(syncResult_jScrP);
 
-		syncResult_jTbl = new JTable(model);
-		syncResult_jScrP.setViewportView(syncResult_jTbl);
+		table = new SSSJTable();
+		syncResult_jScrP.setViewportView(table);
 	}
 	
 	private void initUI() {
@@ -219,7 +218,8 @@ public class SyncPage extends JPanel {
 		
 		List<LogResultDO> tList = new ArrayList<LogResultDO>();
 		tList.add(new LogResultDO());
-		getTable().setModel(new CVSTableModel(tList));
+		getTable().setColumnModel(new CVSColumnModel(new LogResultDO()));
+		getTable().setModel(new CVSTableModel(getTable(), tList));
 	}
 
 	/**
@@ -256,7 +256,7 @@ public class SyncPage extends JPanel {
 	}
 
 	public JTable getTable() {
-		return syncResult_jTbl;
+		return table;
 	}
 
 }

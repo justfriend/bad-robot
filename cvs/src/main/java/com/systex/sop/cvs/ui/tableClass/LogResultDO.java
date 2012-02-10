@@ -1,7 +1,6 @@
 package com.systex.sop.cvs.ui.tableClass;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -12,7 +11,6 @@ import com.systex.sop.cvs.util.StringUtil;
 public class LogResultDO extends CVSBaseDO {
 	private String module;
 	private Integer currentLine;	// log process current line
-	private Integer totalLines;		// log process total lines
 	private Timestamp beginTime;	// log process begin time
 	private Timestamp endedTime;	// log process ended time
 	private String elapseTime;		// log process elapse time
@@ -25,14 +23,11 @@ public class LogResultDO extends CVSBaseDO {
 	private static final String [] columnName;
 	
 	static {
-		columnName = new String [] {"模組名稱", "處理行數(L)", "總行數(L)", "起始時間(L)", "結束時間(L)", "耗時(L)", "處理行數(W)", "總行數(W)", "起始時間(W)", "結束時間(W)", "耗時(W)"};
-	}
-	
-	{
-//		currentLine = 0;
-//		totalLines = 0;
-//		currentLine2 = 0;
-//		totalLines2 = 0;
+		columnName = new String [] {
+				"模組名稱",
+				"處理行數(L)", "起始時間(L)", "結束時間(L)", "耗時(L)",
+				"處理行數(W)", "總行數(W)", "起始時間(W)", "結束時間(W)", "耗時(W)"
+		};
 	}
 
 	public String getModule() {
@@ -129,14 +124,6 @@ public class LogResultDO extends CVSBaseDO {
 		this.elapseTime2 = elapseTime2;
 	}
 
-	public Integer getTotalLines() {
-		return totalLines;
-	}
-
-	public void setTotalLines(Integer totalLines) {
-		this.totalLines = totalLines;
-	}
-
 	public Integer getTotalLines2() {
 		return totalLines2;
 	}
@@ -151,13 +138,27 @@ public class LogResultDO extends CVSBaseDO {
 	}
 
 	@Override
-	public SimpleDateFormat[] getColumnFormat() {
-		return new SimpleDateFormat[] {null, null, null, new SimpleDateFormat("yyyy/MM/dd HH:mi:ss"), new SimpleDateFormat("yyyy/MM/dd HH:mi:ss"), null, null, null, new SimpleDateFormat("yyyy/MM/dd HH:mi:ss"), new SimpleDateFormat("yyyy/MM/dd HH:mi:ss"), null};
+	public String[] getColumnFormat() {
+		return new String[] {
+				null,
+				null, "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss", null,
+				null, null, "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss", null};
 	}
 
 	@Override
 	public String[] getColumnName() {
 		return columnName;
+	}
+
+	@Override
+	public int[] getColumnWidth() {
+//		"模組名稱",
+//		"處理行數(L)", "起始時間(L)", "結束時間(L)", "耗時(L)",
+//		"處理行數(W)", "總行數(W)", "起始時間(W)", "結束時間(W)", "耗時(W)"
+		return new int[] {
+				100,
+				80, 140, 140, 70,
+				80, 80, 140, 140, 70};
 	}
 
 }

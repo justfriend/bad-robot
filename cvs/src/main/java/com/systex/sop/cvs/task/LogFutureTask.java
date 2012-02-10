@@ -89,7 +89,7 @@ public class LogFutureTask {
 					@Override
 					public void run() {
 						SyncPage page = (SyncPage) Workspace.getPage(PAGE.SYNC_CVS);
-						page.getTable().setModel(new CVSTableModel(tList));
+						page.getTable().setModel(new CVSTableModel(page.getTable(), tList));
 					}
 				});
 				
