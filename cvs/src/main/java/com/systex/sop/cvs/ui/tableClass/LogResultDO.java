@@ -29,10 +29,10 @@ public class LogResultDO extends CVSBaseDO {
 	}
 	
 	{
-		currentLine = 0;
-		totalLines = 0;
-		currentLine2 = 0;
-		totalLines2 = 0;
+//		currentLine = 0;
+//		totalLines = 0;
+//		currentLine2 = 0;
+//		totalLines2 = 0;
 	}
 
 	public String getModule() {

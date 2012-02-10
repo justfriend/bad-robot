@@ -5,7 +5,9 @@ import java.awt.Color;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.swing.ImageIcon;
@@ -15,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -29,6 +32,8 @@ import com.systex.sop.cvs.ui.customize.comp.SSSJTextField;
 import com.systex.sop.cvs.ui.customize.other.ObservingTextField;
 import com.systex.sop.cvs.ui.customize.other.SSSDatePicker;
 import com.systex.sop.cvs.ui.logic.SyncPageLogic;
+import com.systex.sop.cvs.ui.tableClass.CVSTableModel;
+import com.systex.sop.cvs.ui.tableClass.LogResultDO;
 import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.TimestampHelper;
 
@@ -46,6 +51,7 @@ public class SyncPage extends JPanel {
 	private SSSJButton autoExec_jBtn;
 	private ObservingTextField manualDate_jTxtF;
 	private JTable syncResult_jTbl;
+	private DefaultTableModel model = new DefaultTableModel();
 	private JCheckBox fullSync_jChkB;
 	private SSSJButton manualExec_jBtn;
 	private SyncPageLogic logic = new SyncPageLogic(this);
@@ -199,7 +205,7 @@ public class SyncPage extends JPanel {
 		syncResult_jScrP.setBorder(null);
 		sync_jSplit.setRightComponent(syncResult_jScrP);
 
-		syncResult_jTbl = new JTable();
+		syncResult_jTbl = new JTable(model);
 		syncResult_jScrP.setViewportView(syncResult_jTbl);
 	}
 	
@@ -209,7 +215,11 @@ public class SyncPage extends JPanel {
 		getAutoDate_jTxtF().setText(TimestampHelper.convertToyyyyMMdd2(CVSJob.getAutoSyncDate()));
 		
 		/** 初始化「手動同步」 **/
-		getManualDate_jTxtF().setText(TimestampHelper.convertToyyyyMMdd2(CVSJob.getAutoSyncDate())); 
+		getManualDate_jTxtF().setText(TimestampHelper.convertToyyyyMMdd2(CVSJob.getAutoSyncDate()));
+		
+		List<LogResultDO> tList = new ArrayList<LogResultDO>();
+		tList.add(new LogResultDO());
+		getTable().setModel(new CVSTableModel(tList));
 	}
 
 	/**
