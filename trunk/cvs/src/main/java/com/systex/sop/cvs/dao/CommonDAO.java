@@ -15,6 +15,19 @@ import com.systex.sop.cvs.util.SessionUtil;
 @SuppressWarnings("unchecked")
 public class CommonDAO {
 	
+	public List querySQL(String sql) {
+		Session session = null;
+		try {
+			session = SessionUtil.openSession();
+			SQLQuery query = session.createSQLQuery(sql);
+			return query.list();
+		}catch(HibernateException e){
+			throw e;
+		}finally{
+			SessionUtil.closeSession(session);
+		}
+	}
+	
 	public int executeSQL(String sql) {
 		Session session = null;
 		try {

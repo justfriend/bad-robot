@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 
@@ -18,16 +19,20 @@ import com.systex.sop.cvs.ui.customize.comp.SSSJButton;
 import com.systex.sop.cvs.ui.customize.comp.SSSJLabel;
 import com.systex.sop.cvs.ui.customize.comp.SSSJSplitPane;
 import com.systex.sop.cvs.ui.customize.comp.SSSJTabbedPane;
+import com.systex.sop.cvs.ui.customize.comp.SSSJTable;
 import com.systex.sop.cvs.ui.customize.comp.SSSJTextField;
+import com.systex.sop.cvs.ui.logic.QueryClassicPageLogic;
+import com.systex.sop.cvs.ui.tableClass.CVSColumnModel;
+import com.systex.sop.cvs.ui.tableClass.NewVerNoTagDO;
 
 @SuppressWarnings("serial")
 public class QueryClassicPage extends JPanel {
-	private JTable table;
-
-	/**
-	 * Create the panel.
-	 */
-	public QueryClassicPage() {
+	private QueryClassicPageLogic logic = new QueryClassicPageLogic(this);
+	private SSSJTable table;
+	private SSSJTextField author_jTxtF;
+	private JCheckBox ignoreDel_jChkB;
+	
+	private void initial() {
 		setBackground(new Color(127, 125, 123));
 		setLayout(new BorderLayout(0, 0));
 		
@@ -47,6 +52,7 @@ public class QueryClassicPage extends JPanel {
 		panel.add(splitPane, BorderLayout.CENTER);
 		
 		JPanel panel_4 = new JPanel();
+		panel_4.setBackground(Color.WHITE);
 		splitPane.setLeftComponent(panel_4);
 		panel_4.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
@@ -67,36 +73,33 @@ public class QueryClassicPage extends JPanel {
 		label.setText("作者");
 		panel_4.add(label, "2, 2, right, default");
 		
-		SSSJTextField textField = new SSSJTextField();
-		panel_4.add(textField, "4, 2, fill, default");
-		
-		SSSJButton button_1 = new SSSJButton();
-		button_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				StartUI.getInstance().getFrame().setCxtMessage("哈囉1234567890");
-			}
-		});
-		button_1.setText("5555");
-		panel_4.add(button_1, "8, 2");
+		author_jTxtF = new SSSJTextField();
+		panel_4.add(author_jTxtF, "4, 2, fill, default");
 		
 		SSSJLabel label_1 = new SSSJLabel();
 		label_1.setText("忽略");
 		panel_4.add(label_1, "2, 4, right, default");
 		
-		JCheckBox checkBox = new JCheckBox("忽略已刪除檔案");
-		panel_4.add(checkBox, "4, 4, 3, 1");
+		ignoreDel_jChkB = new JCheckBox("忽略已刪除");
+		ignoreDel_jChkB.setSelected(true);
+		ignoreDel_jChkB.setBackground(Color.PINK);
+		panel_4.add(ignoreDel_jChkB, "4, 4");
 		
-		SSSJButton button = new SSSJButton();
-		button.addActionListener(new ActionListener() {
+		SSSJButton qry_jBtn = new SSSJButton();
+		qry_jBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				StartUI.getInstance().getFrame().setCxtMessage("");
+				// 查詢最新版本未上TAG
+				logic.doQueryNewVerNoTag(getAuthor_jTxtF().getText(), getIgnoreDel_jChkB().isSelected());
 			}
 		});
-		button.setText("查詢");
-		panel_4.add(button, "8, 4");
+		qry_jBtn.setText("查詢");
+		panel_4.add(qry_jBtn, "8, 4");
 		
-		table = new JTable();
-		splitPane.setRightComponent(table);
+		JScrollPane scrollPane = new JScrollPane();
+		splitPane.setRightComponent(scrollPane);
+		
+		table = new SSSJTable();
+		scrollPane.setViewportView(table);
 		
 		JPanel panel_1 = new JPanel();
 		tabbedPane.addTab("提交註記錯誤或遺漏", null, panel_1, null);
@@ -127,7 +130,28 @@ public class QueryClassicPage extends JPanel {
 		splitPane_3.setLeftComponent(panel_7);
 		panel_7.setLayout(new FormLayout(new ColumnSpec[] {},
 			new RowSpec[] {}));
-
+	}
+	
+	public void initUI() {
+		getTable().setColumnModel(new CVSColumnModel(new NewVerNoTagDO()));
 	}
 
+	public JTable getTable() {
+		return table;
+	}
+
+	/**
+	 * Create the panel.
+	 */
+	public QueryClassicPage() {
+		initial();
+		initUI();
+	}
+
+	public SSSJTextField getAuthor_jTxtF() {
+		return author_jTxtF;
+	}
+	public JCheckBox getIgnoreDel_jChkB() {
+		return ignoreDel_jChkB;
+	}
 }
