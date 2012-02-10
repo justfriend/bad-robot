@@ -61,6 +61,8 @@ public class LogFutureTask {
 				} catch (InterruptedException e) {
 					CVSLog.getLogger().warn(this, e);
 				}
+				
+				if (service.isShutdown() || service.isTerminated()) return false;	// 供中斷後之判斷
 
 				tList.clear();														// 清空執行結果 (執行結果每次都重新產生)
 				
@@ -75,7 +77,6 @@ public class LogFutureTask {
 					PropertyUtils.copyProperties(t, tempResult);
 					FutureTask<TaskResult> task = taskMap.get(module);				// 取得該模組之FUTURE TASK
 					if (task.isDone()) {
-						System.err.println (module + " is done");
 						taskDoneMap.put(module, Boolean.TRUE);						// 標記該模組為完成
 						tempResult = task.get();									// 取得已完成之結果 (從TaskResult.getResultMap()也可以)
 						t.setEndedTime(tempResult.getEndedTime());
@@ -133,6 +134,10 @@ public class LogFutureTask {
 		}
 		
 		return true;
+	}
+
+	public ExecutorService getService() {
+		return service;
 	}
 
 	public static void main(String [] args) {

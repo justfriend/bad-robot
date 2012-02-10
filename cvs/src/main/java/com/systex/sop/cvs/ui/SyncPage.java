@@ -159,6 +159,15 @@ public class SyncPage extends JPanel {
 			}
 		});
 		manualSyncTab.add(datePicker_jBtn, "6, 2");
+		
+		SSSJButton button = new SSSJButton();
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				logic.doInterrupt();
+			}
+		});
+		button.setText("中斷");
+		manualSyncTab.add(button, "8, 2");
 
 		SSSJLabel label_3 = new SSSJLabel();
 		label_3.setText("範圍");
