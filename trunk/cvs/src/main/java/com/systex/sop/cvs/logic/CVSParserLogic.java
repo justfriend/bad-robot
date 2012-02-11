@@ -36,8 +36,8 @@ public class CVSParserLogic {
 		public String state;
 		public String filename;
 		public String desc_ID;
-		public String desc_DESC;
-		public String desc_STEP;
+		public StringBuffer desc_DESC = null;
+		public StringBuffer desc_STEP = null;
 		public StringBuffer rawdesc = new StringBuffer();
 	}
 	
@@ -63,6 +63,11 @@ public class CVSParserLogic {
 		for (int i=0; i<pArray.length; i++) {
 			if ("view".equalsIgnoreCase(pArray[i]) || "model".equalsIgnoreCase(pArray[i])) {
 				programid = pArray[i+1];
+				if (!StringUtil.isEmpty(programid))  {
+					if (!programid.toUpperCase().startsWith("SOP")) {
+						programid = null;
+					}
+				}
 			}
 		}
 		return (programid == null)? " ": programid;
@@ -117,7 +122,7 @@ public class CVSParserLogic {
 				try {
 					verdesc.revision = line.substring(9);
 				}catch(NumberFormatException e){
-					System.out.println (line);
+					CVSLog.getLogger().error(this, e);
 					throw e;
 				}
 				verdescList.add(verdesc);
@@ -140,21 +145,47 @@ public class CVSParserLogic {
 		} // for
 		
 		// Extract ID, DESC and STEP
+		final int ID = 1;
+		final int DESC = 2;
+		final int STEP = 3;
 		for (VERDESC vd : verdescList) {
-			Map<String, String> descMap = new HashMap<String, String>();
-			String [] descArray = vd.rawdesc.toString().split(";");
-			for (String desc : descArray) {
-				String [] kvArray = desc.split(":");
-				if (kvArray.length == 2) {
-					descMap.put(kvArray[0].trim().toUpperCase(), kvArray[1].trim());
+			int CURRENT = 0;
+			String [] lineArray = vd.rawdesc.toString().replaceAll(";", System.getProperty("line.separator")).split(System.getProperty("line.separator"));
+			for (String line : lineArray) {
+				if (StringUtil.isEmpty(line)) continue;
+				
+				/** DESC_ID **/
+				if (line.startsWith("ID:")) {
+					CURRENT = ID;
+					if (line.indexOf(";") >= 0) {
+						vd.desc_ID = line.substring(3, line.indexOf(";")).trim();
+					}else{
+						vd.desc_ID = line.substring(3).trim();
+					}
 				}
-			}
-			vd.desc_ID = (descMap.containsKey("ID"))? descMap.get("ID"): "";
-			vd.desc_DESC = (descMap.containsKey("DESC"))? descMap.get("DESC"): "";
-			vd.desc_STEP = (descMap.containsKey("STEP"))? descMap.get("STEP"): "";
-			vd.desc_ID = (vd.desc_ID == null)? " ": vd.desc_ID;
-			vd.desc_DESC = (vd.desc_DESC == null)? " ": vd.desc_DESC;
-			vd.desc_STEP = (vd.desc_STEP == null)? " ": vd.desc_STEP;
+				
+				/** DESC_DESC **/
+				if (line.startsWith("DESC:") || CURRENT == DESC) {
+					CURRENT = DESC;
+					if (line.startsWith("DESC:")) {
+						vd.desc_DESC = new StringBuffer();
+						vd.desc_DESC.append(line.substring(5));
+					}else{
+						vd.desc_DESC.append(line);
+					}
+				}
+				
+				/** DESC_STEP **/
+				if (line.startsWith("STEP:") || CURRENT == STEP) {
+					CURRENT = STEP;
+					if (line.startsWith("STEP:")) {
+						vd.desc_STEP = new StringBuffer();
+						vd.desc_STEP.append(line.substring(5));
+					}else{
+						vd.desc_STEP.append(line);
+					}
+				}
+			} // for
 		}
 		
 		return verdescList;
@@ -241,8 +272,8 @@ public class CVSParserLogic {
 			ver.setVerdate(verdesc.date);
 			ver.setState("Exp".equalsIgnoreCase(verdesc.state)? '0': '1');
 			ver.setDescId(verdesc.desc_ID);
-			ver.setDescDesc(verdesc.desc_DESC);
-			ver.setDescStep(verdesc.desc_STEP);
+			ver.setDescDesc( (verdesc.desc_DESC == null)? null: verdesc.desc_DESC.toString() );
+			ver.setDescStep( (verdesc.desc_STEP == null)? null: verdesc.desc_STEP.toString() );
 			ver.setFulldesc(verdesc.rawdesc.toString());
 			ver.setModifier(hostname);
 			ver.setLastupdate(TimestampHelper.now());

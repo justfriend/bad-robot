@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-public class NewVerNoTagDO extends CVSBaseDO {
+public class CommentMissDO extends CVSBaseDO {
 	private Long MSid;
 	private String filename;
 	private String versionhead;

@@ -6,7 +6,7 @@ public class CVSConst {
 	public static final String ENCODING_IN = "MS950";
 	public static final String ENCODING_OUT = "UTF-8";
 	public static final String SPLIT_DESC = "----------------------------";
-	public static final String BLOCK_END = "=============================================================================";
+	public static final String BLOCK_END = "===========================================================================";
 	
 	public enum CMDTYPE {
 		CHK_CVS, CHK_MODULE, CHK_LOGPATH, CHK_DBCONN, CHK_CRON,

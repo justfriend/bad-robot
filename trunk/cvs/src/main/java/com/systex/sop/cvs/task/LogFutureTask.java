@@ -19,9 +19,9 @@ import com.systex.sop.cvs.ui.StartUI;
 import com.systex.sop.cvs.ui.SyncPage;
 import com.systex.sop.cvs.ui.Workspace;
 import com.systex.sop.cvs.ui.Workspace.PAGE;
-import com.systex.sop.cvs.ui.tableClass.CVSTableModel;
 import com.systex.sop.cvs.ui.tableClass.LogResultDO;
 import com.systex.sop.cvs.util.PropReader;
+import com.systex.sop.cvs.util.TableUtil;
 import com.systex.sop.cvs.util.TimestampHelper;
 
 /**
@@ -89,7 +89,7 @@ public class LogFutureTask {
 					@Override
 					public void run() {
 						SyncPage page = (SyncPage) Workspace.getPage(PAGE.SYNC_CVS);
-						page.getTable().setModel(new CVSTableModel(page.getTable(), tList));
+						TableUtil.addRows(page.getTable(), tList);
 					}
 				});
 				

@@ -2,12 +2,9 @@ package com.systex.sop.cvs.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import javax.swing.ImageIcon;
@@ -32,8 +29,6 @@ import com.systex.sop.cvs.ui.customize.comp.SSSJTextField;
 import com.systex.sop.cvs.ui.customize.other.ObservingTextField;
 import com.systex.sop.cvs.ui.customize.other.SSSDatePicker;
 import com.systex.sop.cvs.ui.logic.SyncPageLogic;
-import com.systex.sop.cvs.ui.tableClass.CVSColumnModel;
-import com.systex.sop.cvs.ui.tableClass.CVSTableModel;
 import com.systex.sop.cvs.ui.tableClass.LogResultDO;
 import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.TimestampHelper;
@@ -152,16 +147,15 @@ public class SyncPage extends JPanel {
 		manualDate_jTxtF.setColumns(10);
 
 		JButton datePicker_jBtn = new JButton();
-		datePicker_jBtn.setMargin(new Insets(0, 0, 0, 0));
 		datePicker_jBtn.setBorder(null);
 		datePicker_jBtn.setBackground(Color.WHITE);
 		datePicker_jBtn.setIcon(new ImageIcon(StartUI.class.getResource("/resource/search-calendar.png")));
 		datePicker_jBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				SSSDatePicker dp = new SSSDatePicker(manualDate_jTxtF, Locale.TAIWAN);
-				Date selectedDate = dp.parseDate(autoDate_jTxtF.getText());
+				Date selectedDate = dp.parseDate(manualDate_jTxtF.getText());
 				dp.setSelectedDate(selectedDate);
-				dp.start(autoDate_jTxtF);
+				dp.start(manualDate_jTxtF);
 			}
 		});
 		manualSyncTab.add(datePicker_jBtn, "6, 2");
@@ -204,7 +198,7 @@ public class SyncPage extends JPanel {
 		syncResult_jScrP.setBackground(Color.ORANGE);
 		sync_jSplit.setRightComponent(syncResult_jScrP);
 
-		table = new SSSJTable();
+		table = new SSSJTable(new LogResultDO());
 		syncResult_jScrP.setViewportView(table);
 	}
 	
@@ -215,11 +209,6 @@ public class SyncPage extends JPanel {
 		
 		/** 初始化「手動同步」 **/
 		getManualDate_jTxtF().setText(TimestampHelper.convertToyyyyMMdd2(CVSJob.getAutoSyncDate()));
-		
-		List<LogResultDO> tList = new ArrayList<LogResultDO>();
-		tList.add(new LogResultDO());
-		getTable().setColumnModel(new CVSColumnModel(new LogResultDO()));
-		getTable().setModel(new CVSTableModel(getTable(), tList));
 	}
 
 	/**

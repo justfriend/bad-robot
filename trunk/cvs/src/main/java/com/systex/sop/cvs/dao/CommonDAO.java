@@ -54,12 +54,12 @@ public class CommonDAO {
 		}
 	}
 	
-	public Iterator queryDTO(Class<? extends Object> loadClass, String hql) {
+	public List queryDTO(Class<? extends Object> loadClass, String hql) {
 		Session session = null;
 		try {
 			session = SessionUtil.openSession();
 			Query qry = session.createQuery(hql);
-			return qry.list().iterator();
+			return qry.list();
 		}catch(HibernateException e){
 			throw e;
 		}finally{
