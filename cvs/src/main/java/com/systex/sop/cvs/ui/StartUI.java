@@ -23,7 +23,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 import com.systex.sop.cvs.helper.CVSLog;
 import com.systex.sop.cvs.ui.Workspace.PAGE;
-import com.systex.sop.cvs.ui.customize.comp.SSSFrame;
+import com.systex.sop.cvs.ui.customize.comp.SSSJFrameBase;
 import com.systex.sop.cvs.ui.customize.comp.SSSJButton;
 import com.systex.sop.cvs.ui.customize.comp.SSSJSplitPane;
 import com.systex.sop.cvs.util.PropReader;
@@ -43,7 +43,7 @@ public class StartUI {
 	
 	private final float frameWidthRate = 0.8f;	// 框架起始的大小比率 (寬)
 	private final float frameHeightRate = 0.7f;	// 框架起始的大小比率 (高)
-	private SSSFrame frame;
+	private SSSJFrameBase frame;
 	private SSSJButton qryNormal_jBtn;			// 一般查詢按鈕
 	private SSSJButton sync_jBtn;				// 同步執行按鈕
 	private SSSJButton sysInfo_jBtn;			// 系統說明按鈕
@@ -118,7 +118,7 @@ public class StartUI {
 		return envChk_jBtn;
 	}
 
-	public SSSFrame getFrame() {
+	public SSSJFrameBase getFrame() {
 		return frame;
 	}
 
@@ -155,7 +155,7 @@ public class StartUI {
 			e.printStackTrace();
 		}
 
-		frame = new SSSFrame(frameIcon, titleIcon, PropReader.getProperty("CVS.TITLE"), true, true, true);
+		frame = new SSSJFrameBase(frameIcon, titleIcon, PropReader.getProperty("CVS.TITLE"), true, true, true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		UIManager.put("SplitPane.dividerSize", 3);

@@ -38,7 +38,7 @@ import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.StringUtil;
 
 @SuppressWarnings({ "unchecked", "serial" })
-public class SSSFrame extends IFrame {
+public class SSSJFrameBase extends IFrame {
 	private SSSJLabel msgjL = new SSSJLabel();	// message label (框架最下方左下角的訊息提示)
 	private SSSJLabel cxtjL = new SSSJLabel();	// content warning message (畫面中間的明顯警示-字大)
 	private Timer cxtTimer = null;
@@ -128,7 +128,7 @@ public class SSSFrame extends IFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					SSSFrame frame = new SSSFrame();
+					SSSJFrameBase frame = new SSSJFrameBase();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -137,14 +137,14 @@ public class SSSFrame extends IFrame {
 		});
 	}
 	
-	public SSSFrame() {
+	public SSSJFrameBase() {
 		this(null, null, "", true, true, true);
 	}
 
 	/**
 	 * Create the frame.
 	 */
-	public SSSFrame(Image frameIcon, Icon titleIcon, String title, boolean minButton, boolean maxButton, boolean closeButton) {
+	public SSSJFrameBase(Image frameIcon, Icon titleIcon, String title, boolean minButton, boolean maxButton, boolean closeButton) {
 		/** TITLE BAR 及最外圍邊框 **/
 		IWTUtilities.setApplicationBorderSize(this, new Insets(1, 1, 1, 1));
 		titleBar = new TitleBar(frameIcon, titleIcon, title, minButton, maxButton, closeButton);
@@ -178,7 +178,7 @@ public class SSSFrame extends IFrame {
 		drawBtn.setVerticalAlignment(SwingConstants.BOTTOM);
 		drawBtn.setBorder(null);
 		drawBtn.setBackground(SSSPalette.FRAME_BG);
-		drawBtn.setIcon(new ImageIcon(SSSFrame.class.getResource("/resource/drawIcon.png")));
+		drawBtn.setIcon(new ImageIcon(SSSJFrameBase.class.getResource("/resource/drawIcon.png")));
 		drawBtn.setMargin(new Insets(0, 0, 0, 0));
 		sPanel.add(drawBtn, "4, 1, center, bottom");
 		

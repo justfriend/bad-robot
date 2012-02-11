@@ -32,4 +32,7 @@ public class SSSPalette {
 	public static final Color TBTN_DARK_RIGHT = new Color(242, 166, 34);// 標題按鈕下方色彩（淡）
 	
 	public static final String fontFamily = "微軟正黑體";
+	
+	public static final Color TBL_ROW_ODD_BG = new Color(240, 240, 240);	// 表格列基數底色
+	public static final Color TBL_ROW_EVEN_BG = new Color(255, 255, 255);	// 表格列偶數底色
 }

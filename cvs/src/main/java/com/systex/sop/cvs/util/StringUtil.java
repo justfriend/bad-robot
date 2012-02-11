@@ -11,6 +11,19 @@ package com.systex.sop.cvs.util;
  * 
  */
 public class StringUtil {
+	
+	public static boolean anyEmpty(Object ...objs) {
+		for (Object obj : objs) {
+			if (obj == null) {
+				return true;
+			}else{
+				if (isEmpty(obj.toString()))
+					return true;
+			}
+		}
+		
+		return false;
+	}
 
 	public static boolean anyEqual(Object src, Object ...compares) {
 		boolean isMatch = false;

@@ -1,8 +1,7 @@
 package com.systex.sop.cvs.util;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import javax.naming.ConfigurationException;
@@ -28,15 +27,16 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
  *
  */
 public class PropReader {
-	private static String PROPERTY_HOME;							// 屬性檔所在目錄
-	private static String PROPERTY_EXTENSION;						// 屬性檔之副檔名
-	private static Map<String, PropertiesConfiguration> PROP_MAP;	// 屬性檔靜態保存
-	private static Pattern PATTERN_PROPERTY_NAME;					// 驗證屬性名稱之型樣
+	private static String PROPERTY_HOME;											// 屬性檔所在目錄
+	private static String PROPERTY_EXTENSION;										// 屬性檔之副檔名
+	private static ConcurrentHashMap<String, PropertiesConfiguration> PROP_MAP;		// 屬性檔靜態保存
+	private static Pattern PATTERN_PROPERTY_NAME;									// 驗證屬性名稱之型樣
+	private static FileChangedReloadingStrategy fcrs = new FileChangedReloadingStrategy();
 	
 	static {
 		PATTERN_PROPERTY_NAME = Pattern.compile("^[\\w]+[.][\\w]+$");
 		PROPERTY_EXTENSION = ".properties";
-		PROP_MAP = new HashMap<String, PropertiesConfiguration>();
+		PROP_MAP = new ConcurrentHashMap<String, PropertiesConfiguration>();
 		
 		// 取得屬性檔所在目錄之環境變數之值
 		PROPERTY_HOME = System.getenv("PROPERTY_HOME");
@@ -141,10 +141,10 @@ public class PropReader {
 		PROPERTY prop = splitPropertyName(propertyName);
 		
 		// 判斷屬性物件是否已存在於靜態保存
-		if (PROP_MAP.containsKey(propertyName)) {
+		if (PROP_MAP.containsKey(prop.getPropertyFileName())) {
 			
 			// 取得屬性物件從靜態保存
-			config = PROP_MAP.get(propertyName);
+			config = PROP_MAP.get(prop.getPropertyFileName());
 		}
 		else {
 			
@@ -153,7 +153,7 @@ public class PropReader {
 				config = new PropertiesConfiguration(new File(prop.getPropertyFileName()));
 				
 				// 設定屬性檔變動時重載
-				config.setReloadingStrategy(new FileChangedReloadingStrategy());
+				config.setReloadingStrategy(fcrs);
 				
 				// 判斷屬性檔案是否存在(空)
 				if (config.isEmpty()) throw new ConfigurationException ("Property file is empty");
@@ -170,7 +170,7 @@ public class PropReader {
 			}
 			
 			// 保存屬性檔案於靜態儲存
-			PROP_MAP.put(propertyName, config);
+			PROP_MAP.put(prop.getPropertyFileName(), config);
 		}
 		
 		// 取得屬性值
@@ -207,10 +207,10 @@ public class PropReader {
 		prop.value = value;
 		
 		// 判斷屬性物件是否已存在於靜態保存
-		if (PROP_MAP.containsKey(propertyName)) {
+		if (PROP_MAP.containsKey(prop.getPropertyFileName())) {
 			
 			// 取得屬性物件從靜態保存
-			config = PROP_MAP.get(propertyName);
+			config = PROP_MAP.get(prop.getPropertyFileName());
 		}
 		else {
 			
@@ -229,13 +229,13 @@ public class PropReader {
 			}
 			
 			// 保存屬性檔案於靜態儲存
-			PROP_MAP.put(propertyName, config);
+			PROP_MAP.put(prop.getPropertyFileName(), config);
 		}
 		
 		// 設定屬性值
-		config.setReloadingStrategy(new FileChangedReloadingStrategy());
-		config.setAutoSave(true);
 		config.setProperty(prop.key, prop.value);
+		config.setReloadingStrategy(fcrs);
+		config.setAutoSave(true);
 	}
 	
 	public static void main(String [] args) {

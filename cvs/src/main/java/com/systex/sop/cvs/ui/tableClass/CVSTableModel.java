@@ -14,7 +14,8 @@ import java.util.Map;
 
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
@@ -22,17 +23,14 @@ import com.systex.sop.cvs.helper.CVSLog;
 
 @SuppressWarnings({ "unchecked", "serial" })
 public class CVSTableModel extends AbstractTableModel {
-	private List<? extends CVSBaseDO> tList;
-	private JTable table;
-	private CVSBaseDO t;
-	private String [] methodName;
-	private Class [] methodType;
-	private String [] dateFormat;
-	private int [] columnWidth;
+	private List<? extends CVSBaseDO> tList;	// DATA LIST
+	private CVSBaseDO t;						// JUST A BASEDO TEMPLATE
+	private String [] methodName;				// 欄位名稱
+	private Class [] methodType;				// 欄位型態
+	private String [] dateFormat;				// 資料格式 (NULL 代表不進行格式；若有值則依型態進行轉換並以字串呈現)
 	private static Map<String, SimpleDateFormat> sdfMap = new HashMap<String, SimpleDateFormat>();
 	
 	public CVSTableModel(JTable table, List<? extends CVSBaseDO> tList) {
-		this.table = table;
 		this.tList = (tList == null)? new ArrayList<CVSBaseDO>(): tList;
 		this.t = (tList.size() > 0)? tList.get(0): null;
 		if (t != null) {
@@ -40,7 +38,6 @@ public class CVSTableModel extends AbstractTableModel {
 			methodName = new String [getColumnCount()];
 			methodType = new Class [getColumnCount()];
 			dateFormat = t.getColumnFormat();
-			columnWidth = t.getColumnWidth();
 			int i = 0;
 			for (Field field : fields) {
 				if (Modifier.isStatic(field.getModifiers())) continue;	// skip static field
@@ -48,6 +45,9 @@ public class CVSTableModel extends AbstractTableModel {
 				methodType[i] = getTypeClass(field.getType());
 				i++;
 			}
+			
+			// TABLE SUPPORT SORTING
+			table.setRowSorter(new TableRowSorter<TableModel>(this));
 		}
 	}
 	
@@ -57,18 +57,6 @@ public class CVSTableModel extends AbstractTableModel {
 		}
 		
 		return sdfMap.get(format);
-	}
-	
-	private void setttingColumnWidth(int column) {
-		TableColumnModel model = table.getColumnModel();
-		if (column == columnWidth.length -1) {
-			for (int i=0; i<columnWidth.length; i++) {
-				model.getColumn(i).setPreferredWidth(columnWidth[i]);
-				model.getColumn(i).setMinWidth(1);
-			}
-		}
-		
-		System.err.println ("dkfjslfdjls");
 	}
 	
 	private Class<? extends Object> getTypeClass(Type type) {
@@ -94,6 +82,10 @@ public class CVSTableModel extends AbstractTableModel {
 		throw new RuntimeException ("Type " + type + " do not support");
 	}
 	
+	public List<? extends CVSBaseDO> getDataList() {
+		return tList;
+	}
+
 	@Override
 	public String getColumnName(int column) {
 		return (t == null)? "": t.getColumnName()[column];
@@ -133,8 +125,6 @@ public class CVSTableModel extends AbstractTableModel {
 	
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
-//		setttingColumnWidth(columnIndex);
-		
 		if (dateFormat[columnIndex] != null) {
 			return String.class;
 		}else{
