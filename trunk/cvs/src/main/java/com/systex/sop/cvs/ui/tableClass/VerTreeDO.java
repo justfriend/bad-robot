@@ -82,7 +82,7 @@ public class VerTreeDO extends CVSBaseDO implements Comparable<VerTreeDO>{
 
 	@Override
 	public int compareTo(VerTreeDO o) {
-		return StringUtil.concat(getVersion(), getTagname()).compareTo(StringUtil.concat(o.getVersion(), o.getTagname()));
+		return StringUtil.concat(getVerdate(), getTagname()).compareTo(StringUtil.concat(o.getVerdate(), o.getTagname()));
 	}
 
 }

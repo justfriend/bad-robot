@@ -52,6 +52,9 @@ public class StartUI {
 	private SSSJButton envChk_jBtn;				// 環境檢查按鈕
 	private SSSJSplitPane contentSplitPane;		// 主要之分割窗(*)(點選左方按鈕時利用此來進行套用不同的頁面)
 	private JPanel body_jPanel;
+	private TagDialog tagDialog = new TagDialog();				// 呈現 TAG 清單的對話框
+	private ModifyDialog modifyDialog = new ModifyDialog();		// 呈現修改註記的對話框
+	private VersionDialog versionDialog = new VersionDialog();	// 呈現版本樹的對話框
 	ServerSocket socket;
 
 	public static StartUI getInstance() {
@@ -287,4 +290,17 @@ public class StartUI {
 	public JPanel getBody_jPanel() {
 		return body_jPanel;
 	}
+
+	public TagDialog getTagDialog() {
+		return tagDialog;
+	}
+
+	public ModifyDialog getModifyDialog() {
+		return modifyDialog;
+	}
+
+	public VersionDialog getVersionDialog() {
+		return versionDialog;
+	}
+	
 }

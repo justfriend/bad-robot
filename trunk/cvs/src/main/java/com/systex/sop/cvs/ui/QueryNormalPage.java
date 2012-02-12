@@ -45,9 +45,6 @@ public class QueryNormalPage extends JPanel {
 	private QueryPageLogic logic = new QueryPageLogic();
 	
 	// 元件項目
-	private TagDialog tagDialog = new TagDialog();				// 呈現 TAG 清單的對話框
-	private ModifyDialog modifyDialog = new ModifyDialog();		// 呈現修改註記的對話框
-	private VersionDialog versionDialog = new VersionDialog();	// 呈現版本樹的對話框
 	private SSSJTextField filename_jTxtF;
 	private SSSJTextField author_jTxtF;
 	private JCheckBox ignoreDel_jChkB;
@@ -69,7 +66,7 @@ public class QueryNormalPage extends JPanel {
 	private void initUI() {
 		setBackground(new Color(127, 125, 123));
 		tag_jTxtF.setText(PropReader.getProperty("CVS.SOPATAG"));
-		logic.registerPopupMenu(getTable(), getTagDialog(), getModifyDialog(), getVersionDialog());
+		logic.registerPopupMenu(getTable());
 	}
 	
 	private void initial() {
@@ -293,7 +290,7 @@ public class QueryNormalPage extends JPanel {
 					Long rcsid = (Long) getTable().getSelectValueAt("RCSID");
 					String ver = (String) getTable().getSelectValueAt("最新版號");
 					String filename = (String) getTable().getSelectValueAt("檔案名稱");
-					logic.doRetrieveTagInfo(rcsid, ver, filename, getTagDialog());
+					logic.doRetrieveTagInfo(rcsid, ver, filename);
 				}
 			}
 		});
@@ -303,18 +300,6 @@ public class QueryNormalPage extends JPanel {
 		tabbedPane.addTab("關聯查詢", null, panel_1, null);
 		panel_1.setLayout(new BorderLayout(0, 0));
 
-	}
-
-	public TagDialog getTagDialog() {
-		return tagDialog;
-	}
-
-	public ModifyDialog getModifyDialog() {
-		return modifyDialog;
-	}
-
-	public VersionDialog getVersionDialog() {
-		return versionDialog;
 	}
 
 	public SSSJTextField getFilename_jTxtF() {
