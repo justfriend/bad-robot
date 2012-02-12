@@ -24,6 +24,7 @@ import com.systex.sop.cvs.ui.customize.other.PWindowDragger;
 public class SSSJDialogBase extends JDialog {
 	private JPanel mainPane;
 	private SSSJLabel title_jL;
+	private JPanel titleBar;
 
 	/**
 	 * Launch the application.
@@ -54,10 +55,10 @@ public class SSSJDialogBase extends JDialog {
 		getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(new BorderLayout(0, 0));
 		
-		JPanel panel_1 = new JPanel();
-		panel_1.setBackground(new Color(207, 199, 188));
-		panel.add(panel_1, BorderLayout.NORTH);
-		panel_1.setLayout(new FormLayout(new ColumnSpec[] {
+		titleBar = new JPanel();
+		titleBar.setBackground(new Color(207, 199, 188));
+		panel.add(titleBar, BorderLayout.NORTH);
+		titleBar.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.UNRELATED_GAP_COLSPEC,
 				FormFactory.DEFAULT_COLSPEC,
 				FormFactory.RELATED_GAP_COLSPEC,
@@ -82,16 +83,16 @@ public class SSSJDialogBase extends JDialog {
 		JPanel panel_5 = new JPanel();
 		panel_5.setBorder(new MatteBorder(0, 0, 1, 0, new Color(230, 226, 219)));
 		panel_5.setBackground(new Color(207, 199, 188));
-		panel_1.add(panel_5, "1, 1, 7, 1, fill, fill");
+		titleBar.add(panel_5, "1, 1, 7, 1, fill, fill");
 		
 		title_jL = new SSSJLabel();
 		title_jL.setFont(new Font(SSSPalette.fontFamily, Font.BOLD, 14));
 		title_jL.setText("TITLE");
-		panel_1.add(title_jL, "2, 2, default, center");
-		panel_1.add(btnX, "6, 2");
+		titleBar.add(title_jL, "2, 2, default, center");
+		titleBar.add(btnX, "6, 2");
 		
 		// 允許視窗拖移
-		new PWindowDragger(this, panel_1);
+		new PWindowDragger(this, getTitleBar());
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBackground(new Color(207, 199, 188));
@@ -134,5 +135,8 @@ public class SSSJDialogBase extends JDialog {
 	
 	public void setTitle(String text) {
 		getTitle_jL().setText(text);
+	}
+	public JPanel getTitleBar() {
+		return titleBar;
 	}
 }

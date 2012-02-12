@@ -1,25 +1,22 @@
 package com.systex.sop.cvs.ui.customize.comp;
 
+import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
 
 import com.systex.sop.cvs.ui.customize.SSSPalette;
 import com.systex.sop.cvs.ui.tableClass.CVSBaseDO;
 import com.systex.sop.cvs.ui.tableClass.CVSColumnModel;
 import com.systex.sop.cvs.ui.tableClass.CVSTableModel;
 
-@SuppressWarnings( { "serial", "unchecked" })
+@SuppressWarnings( "serial" )
 public class SSSJTable extends JTable implements MouseListener {
 	private JPopupMenu popup = new JPopupMenu();
 
@@ -28,35 +25,13 @@ public class SSSJTable extends JTable implements MouseListener {
 //	}
 	
 	public SSSJTable(CVSBaseDO baseDO) {
+		setFont(new Font(SSSPalette.fontFamily, Font.PLAIN, 13));
+		setRowHeight(22);
 		setColumnModel(new CVSColumnModel(baseDO));
 		
 		List<CVSBaseDO> tList = new ArrayList<CVSBaseDO>();
 		tList.add(baseDO);
 		setModel(new CVSTableModel(this, tList));
-	}
-
-	public SSSJTable(int numRows, int numColumns) {
-		super(numRows, numColumns);
-	}
-
-	public SSSJTable(Object[][] rowData, Object[] columnNames) {
-		super(rowData, columnNames);
-	}
-
-	public SSSJTable(TableModel dm, TableColumnModel cm, ListSelectionModel sm) {
-		super(dm, cm, sm);
-	}
-
-	public SSSJTable(TableModel dm, TableColumnModel cm) {
-		super(dm, cm);
-	}
-
-	public SSSJTable(TableModel dm) {
-		super(dm);
-	}
-
-	public SSSJTable(Vector rowData, Vector columnNames) {
-		super(rowData, columnNames);
 	}
 
 	{

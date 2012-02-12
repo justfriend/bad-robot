@@ -21,10 +21,10 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
-import com.systex.sop.cvs.helper.CVSLog;
+import com.systex.sop.cvs.message.CxtMessageConsumer;
 import com.systex.sop.cvs.ui.Workspace.PAGE;
-import com.systex.sop.cvs.ui.customize.comp.SSSJFrameBase;
 import com.systex.sop.cvs.ui.customize.comp.SSSJButton;
+import com.systex.sop.cvs.ui.customize.comp.SSSJFrameBase;
 import com.systex.sop.cvs.ui.customize.comp.SSSJSplitPane;
 import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.ScreenSize;
@@ -79,6 +79,9 @@ public class StartUI {
 			// 檢查是否重覆啟動
 			window.checkSingleApp();
 			
+			// 啟用內內警示訊息消費者 (收佇列訊息將之呈現在畫面中間)
+			new Thread(new CxtMessageConsumer(getInstance().getFrame())).start();
+			
 			// 指定主容器 (用來切換頁面)
 			Workspace.registerBody(window.getBody_jPanel());
 			
@@ -101,7 +104,7 @@ public class StartUI {
 		try {
 			socket = new ServerSocket(PropReader.getPropertyInt("CVS.PORT"));
 		} catch (IOException e) {
-			CVSLog.getLogger().warn("系統重覆執行");
+			getFrame().showMessageBox("系統重覆執行");
 			System.exit(0);
 		}
 	}

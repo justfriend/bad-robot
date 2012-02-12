@@ -21,17 +21,14 @@ public class TimestampHelper {
 		return new Timestamp(System.currentTimeMillis());
 	}
 	
-	public static String convertToHHMISS(Timestamp ts) {
-		if (ts == null) return "";
-		
+	public static Timestamp addTime(Timestamp ts, int year, int month, int day) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(ts.getTime());
-		StringBuffer dateTime = new StringBuffer();
-		dateTime.append(String.format("%02d", cal.get(Calendar.HOUR_OF_DAY))).append(":")
-		        .append(String.format("%02d", cal.get(Calendar.MINUTE))).append(":")
-		        .append(String.format("%02d", cal.get(Calendar.SECOND)));
+		cal.add(Calendar.YEAR, year);
+		cal.add(Calendar.MONTH, month);
+		cal.add(Calendar.DAY_OF_MONTH, day);
 		
-		return dateTime.toString();
+		return new Timestamp(cal.getTimeInMillis());
 	}
 	
 	/**

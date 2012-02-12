@@ -1,5 +1,6 @@
 package com.systex.sop.cvs.ui.logic;
 
+import com.systex.sop.cvs.constant.CVSConst;
 import com.systex.sop.cvs.dao.CVSLoginDAO;
 import com.systex.sop.cvs.dto.Tbsoptcvslogin;
 import com.systex.sop.cvs.helper.CVSLog;
@@ -36,7 +37,11 @@ public class ResetPageLogic {
 		if (login == null) {
 			page.getLoginMsg_jL().setText("系統無登入資訊");
 		}else{
-			String msg = StringUtil.concat("使用者[", login.getCreator(), "], 狀態[", login.getStatus(), "], 登入時間[", login.getCreatetime(), "]");
+			String status = CVSConst.LOGIN_STATUS.findDesc(login.getStatus()).getDesc();
+			String msg = StringUtil.concat(
+					"使用者[", login.getCreator(),
+					"], 狀態[", status,
+					"], 登入時間[", login.getCreatetime(), "]");
 			page.getLoginMsg_jL().setText(msg);
 		}
 	}

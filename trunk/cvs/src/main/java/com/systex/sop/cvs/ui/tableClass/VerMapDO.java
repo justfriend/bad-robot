@@ -5,9 +5,10 @@ import java.sql.Timestamp;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-public class CommentMissDO extends CVSBaseDO {
+public class VerMapDO extends CVSBaseDO {
 	private Long MSid;
 	private String filename;
+	private String version;
 	private String versionhead;
 	private String module;
 	private String programid;
@@ -26,7 +27,7 @@ public class CommentMissDO extends CVSBaseDO {
 	static {
 		columnName = new String [] {
 				"RCSID",
-				"檔案名稱", "最新版號", "模組名稱", "程式名稱", "作者", "提交時間", "同步時間", "狀態",
+				"檔案名稱", "版號", "最新版號", "模組名稱", "程式名稱", "作者", "提交時間", "同步時間", "狀態",
 				"提交ID", "提交說明", "提交步驟", "完整提交內容", "完整檔案名稱"
 		};
 	}
@@ -143,6 +144,14 @@ public class CommentMissDO extends CVSBaseDO {
 		this.state = state;
 	}
 
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
 	@Override
 	public String toString() {
 		return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
@@ -152,7 +161,7 @@ public class CommentMissDO extends CVSBaseDO {
 	public String[] getColumnFormat() {
 		return new String [] {
 				null,
-				null, null, null, null, null, "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss", null,
+				null, null, null, null, null, null, "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss", null,
 				null, null, null, null, null
 		};
 	}
@@ -165,12 +174,12 @@ public class CommentMissDO extends CVSBaseDO {
 	@Override
 	public int[] getColumnWidth() {
 //		"RCSID",
-//		"檔案名稱", "最新版號", "模組名稱", "程式名稱", "作者", "提交時間", "同步時間", "狀態",
+//		"檔案名稱", "版號", "最新版號", "模組名稱", "程式名稱", "作者", "提交時間", "同步時間", "狀態",
 //		"提交ID", "提交說明", "提交步驟", "完整提交內容", "完整檔案名稱"
 		return new int[] {
 				60,
-				240, 70, 70, 120, 60, 130, 130, 40,
-				60, 300, 60, 200, 800
+				240, 50, 70, 110, 130, 60, 145, 145, 40,
+				55, 300, 60, 200, 800
 		};
 	}
 

@@ -29,7 +29,10 @@ public class CVSParserLogic {
 	}
 	
 	/** the structure that collects version description **/
-	class VERDESC {
+	public static class VERDESC {
+		private final int ID = 1;
+		private final int DESC = 2;
+		private final int STEP = 3;
 		public String revision;
 		public Timestamp date;
 		public String author;
@@ -39,6 +42,45 @@ public class CVSParserLogic {
 		public StringBuffer desc_DESC = null;
 		public StringBuffer desc_STEP = null;
 		public StringBuffer rawdesc = new StringBuffer();
+		public void splitDesc() {
+			int CURRENT = 0;
+			String [] lineArray = rawdesc.toString().replaceAll(";", System.getProperty("line.separator")).split(System.getProperty("line.separator"));
+			for (String line : lineArray) {
+				if (StringUtil.isEmpty(line)) continue;
+				
+				/** DESC_ID **/
+				if (line.startsWith("ID:")) {
+					CURRENT = ID;
+					if (line.indexOf(";") >= 0) {
+						desc_ID = line.substring(3, line.indexOf(";")).trim();
+					}else{
+						desc_ID = line.substring(3).trim();
+					}
+				}
+				
+				/** DESC_DESC **/
+				if (line.startsWith("DESC:") || CURRENT == DESC) {
+					CURRENT = DESC;
+					if (line.startsWith("DESC:")) {
+						desc_DESC = new StringBuffer();
+						desc_DESC.append(line.substring(5));
+					}else{
+						desc_DESC.append(line);
+					}
+				}
+				
+				/** DESC_STEP **/
+				if (line.startsWith("STEP:") || CURRENT == STEP) {
+					CURRENT = STEP;
+					if (line.startsWith("STEP:")) {
+						desc_STEP = new StringBuffer();
+						desc_STEP.append(line.substring(5));
+					}else{
+						desc_STEP.append(line);
+					}
+				}
+			} // for
+		}
 	}
 	
 	/** verify date **/
@@ -90,7 +132,8 @@ public class CVSParserLogic {
 		List<VERTAG> tagList = new ArrayList<VERTAG>();
 		for (int i = beginLine; i < lineList.size(); i++) {
 			String line = lineList.get(i);
-			if (line.startsWith("keyword")) { break; }
+			if (line.startsWith("keyword") || line.startsWith("total")) { break; }
+			System.err.println (line);
 			VERTAG tag = new VERTAG();
 			tag.tagname = line.split(": ")[0].trim();
 			tag.version = line.split(": ")[1];
@@ -145,47 +188,8 @@ public class CVSParserLogic {
 		} // for
 		
 		// Extract ID, DESC and STEP
-		final int ID = 1;
-		final int DESC = 2;
-		final int STEP = 3;
 		for (VERDESC vd : verdescList) {
-			int CURRENT = 0;
-			String [] lineArray = vd.rawdesc.toString().replaceAll(";", System.getProperty("line.separator")).split(System.getProperty("line.separator"));
-			for (String line : lineArray) {
-				if (StringUtil.isEmpty(line)) continue;
-				
-				/** DESC_ID **/
-				if (line.startsWith("ID:")) {
-					CURRENT = ID;
-					if (line.indexOf(";") >= 0) {
-						vd.desc_ID = line.substring(3, line.indexOf(";")).trim();
-					}else{
-						vd.desc_ID = line.substring(3).trim();
-					}
-				}
-				
-				/** DESC_DESC **/
-				if (line.startsWith("DESC:") || CURRENT == DESC) {
-					CURRENT = DESC;
-					if (line.startsWith("DESC:")) {
-						vd.desc_DESC = new StringBuffer();
-						vd.desc_DESC.append(line.substring(5));
-					}else{
-						vd.desc_DESC.append(line);
-					}
-				}
-				
-				/** DESC_STEP **/
-				if (line.startsWith("STEP:") || CURRENT == STEP) {
-					CURRENT = STEP;
-					if (line.startsWith("STEP:")) {
-						vd.desc_STEP = new StringBuffer();
-						vd.desc_STEP.append(line.substring(5));
-					}else{
-						vd.desc_STEP.append(line);
-					}
-				}
-			} // for
+			vd.splitDesc();
 		}
 		
 		return verdescList;
@@ -291,6 +295,6 @@ public class CVSParserLogic {
 		commonDAO.saveDTO(insertVerList, 500);
 		commonDAO.updateDTO(updateVerList, 500);
 		
-		return null;
+		return map;
 	}
 }

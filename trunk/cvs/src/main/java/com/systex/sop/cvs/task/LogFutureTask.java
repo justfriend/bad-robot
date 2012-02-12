@@ -15,7 +15,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 import com.systex.sop.cvs.helper.CVSLog;
 import com.systex.sop.cvs.helper.CVSModuleHelper;
-import com.systex.sop.cvs.ui.StartUI;
+import com.systex.sop.cvs.message.CxtMessageQueue;
 import com.systex.sop.cvs.ui.SyncPage;
 import com.systex.sop.cvs.ui.Workspace;
 import com.systex.sop.cvs.ui.Workspace.PAGE;
@@ -32,12 +32,15 @@ import com.systex.sop.cvs.util.TimestampHelper;
  *
  */
 public class LogFutureTask {
-	private Map<String, FutureTask<TaskResult>> taskMap = new HashMap<String, FutureTask<TaskResult>>();
+	private Map<String, FutureTask<TaskSyncResult>> taskMap = new HashMap<String, FutureTask<TaskSyncResult>>();
 	private Map<String, Boolean> taskDoneMap = new HashMap<String, Boolean>();
 	private ExecutorService service = Executors.newFixedThreadPool(PropReader.getPropertyInt("CVS.THREAD_LOG"));
 	private int previousTotal = 0;		// 上次同步的總數
+	private boolean isUI = false;		// 若「isUI」為否則不做更新至UI界面之動作
 	
-	public LogFutureTask() {}
+	public LogFutureTask(boolean isUI) {
+		this.isUI = isUI;
+	}
 	
 	public boolean execute(Timestamp edate) {
 		
@@ -48,7 +51,7 @@ public class LogFutureTask {
 			
 			// 逐個模組項目進行LOG之取得 (執行CVS.EXE向CVS SERVER要求CVS LOG)
 			for (String module : moduleHelper.getMap().keySet()) {
-				FutureTask<TaskResult> task = new FutureTask<TaskResult>(new LogCallable(module, moduleHelper.getMap().get(module), edate));
+				FutureTask<TaskSyncResult> task = new FutureTask<TaskSyncResult>(new LogCallable(module, moduleHelper.getMap().get(module), edate));
 				service.submit(task);						// 執行該模組之工作
 				taskMap.put(module, task);					// 將該模組的工作暫存至MAP
 				taskDoneMap.put(module, Boolean.FALSE);		// 初始該模組為尚為完成
@@ -68,14 +71,14 @@ public class LogFutureTask {
 				
 				// 逐個模組去取得執行結果並轉成輸出至JTABLE之結構 (extends CVSTableClass)
 				for (String module : taskMap.keySet()) {
-					TaskResult tempResult = TaskResult.getTaskResult(module);		// 取得即時之結果 (可能尚未完成)
+					TaskSyncResult tempResult = TaskSyncResult.getTaskResult(module);		// 取得即時之結果 (可能尚未完成)
 					if (tempResult == null) {
-						tempResult = new TaskResult();	// fake
+						tempResult = new TaskSyncResult();	// fake
 						tempResult.setModule(module);
 					}
 					LogResultDO t = new LogResultDO();
 					PropertyUtils.copyProperties(t, tempResult);
-					FutureTask<TaskResult> task = taskMap.get(module);				// 取得該模組之FUTURE TASK
+					FutureTask<TaskSyncResult> task = taskMap.get(module);				// 取得該模組之FUTURE TASK
 					if (task.isDone()) {
 						taskDoneMap.put(module, Boolean.TRUE);						// 標記該模組為完成
 						tempResult = task.get();									// 取得已完成之結果 (從TaskResult.getResultMap()也可以)
@@ -84,15 +87,6 @@ public class LogFutureTask {
 					tList.add(t);
 				}
 				
-				// 更新至Table
-				SwingUtilities.invokeAndWait(new java.lang.Runnable() {
-					@Override
-					public void run() {
-						SyncPage page = (SyncPage) Workspace.getPage(PAGE.SYNC_CVS);
-						TableUtil.addRows(page.getTable(), tList);
-					}
-				});
-				
 				// 計算此次總計
 				int currentTotal = 0;
 				for (LogResultDO t : tList) {
@@ -100,17 +94,26 @@ public class LogFutureTask {
 					currentTotal += t.getCurrentLine();
 				}
 				
-				// 將此次新增的數量彈至畫面上
-				final int plusTotal = currentTotal - previousTotal;
-				previousTotal = currentTotal;
-				SwingUtilities.invokeLater(new java.lang.Runnable() {
-					@Override
-					public void run() {
-						if (PAGE.SYNC_CVS.equals(Workspace.getCurrentPage())) {
-							StartUI.getInstance().getFrame().setCxtMessage("+" + plusTotal);
-						}
-					}
-				});
+				if (isUI) {
+					// 更新至Table
+					SwingUtilities.invokeAndWait(new java.lang.Runnable() {
+						@Override
+						public void run() {
+							SyncPage page = (SyncPage) Workspace.getPage(PAGE.SYNC_CVS);
+							TableUtil.addRows(page.getTable(), tList);
+						} });
+					
+					// 將此次新增的數量彈至畫面上
+					final int plusTotal = currentTotal - previousTotal;
+					previousTotal = currentTotal;
+					SwingUtilities.invokeAndWait(new java.lang.Runnable() {
+						@Override
+						public void run() {
+							if (PAGE.SYNC_CVS.equals(Workspace.getCurrentPage())) {
+								CxtMessageQueue.addCxtMessage("+" + plusTotal);
+							}
+						} });
+				}
 				
 				// Check is finish or not
 				boolean isFinish = true;
@@ -141,7 +144,7 @@ public class LogFutureTask {
 	}
 
 	public static void main(String [] args) {
-		LogFutureTask logManager = new LogFutureTask();
+		LogFutureTask logManager = new LogFutureTask(false);
 		logManager.execute(TimestampHelper.convertToTimestamp("20120129"));
 	}
 }
