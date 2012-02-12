@@ -71,7 +71,9 @@ public class CommonDAO {
 		Session session = null;
 		try {
 			session = SessionUtil.openSession();
-			return session.load(loadClass, key);
+			Object obj = session.load(loadClass, key);
+			if (obj != null) obj.toString();	// 印出來強迫加載
+			return obj;
 		}catch(HibernateException e){
 			throw e;
 		}finally{
@@ -83,7 +85,9 @@ public class CommonDAO {
 		Session session = null;
 		try {
 			session = SessionUtil.openSession();
-			return session.get(loadClass, key);
+			Object obj = session.get(loadClass, key);
+			if (obj != null) obj.toString();	// 印出來強迫加載
+			return obj;
 		}catch(HibernateException e){
 			throw e;
 		}finally{

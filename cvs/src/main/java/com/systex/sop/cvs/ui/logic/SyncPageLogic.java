@@ -54,7 +54,7 @@ public class SyncPageLogic {
 	}
 	
 	/** 執行「手動同步」 **/
-	public void doManualSyncExecute() {
+	public void doManualSyncExecute(boolean isSyncLog, boolean isSyncWrite) {
 		if (job == null) job = new CVSJob();
 		Timestamp date = null;
 		try {
@@ -64,7 +64,7 @@ public class SyncPageLogic {
 			return;
 		}
 		
-		job.execute(date, page.getFullSync_jChkB().isSelected());
+		job.execute(date, page.getFullSync_jChkB().isSelected(), isSyncLog, isSyncWrite, true);
 	}
 	
 	/** 執行「手動同步之中斷」 **/

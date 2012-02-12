@@ -1,0 +1,404 @@
+package com.systex.sop.cvs.ui;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
+
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+import com.systex.sop.cvs.dao.CVSQueryDAO;
+import com.systex.sop.cvs.dto.Tbsoptcvsver;
+import com.systex.sop.cvs.helper.CVSFunc;
+import com.systex.sop.cvs.helper.CVSLog;
+import com.systex.sop.cvs.task.ModifyCallable;
+import com.systex.sop.cvs.task.TaskResult;
+import com.systex.sop.cvs.task.VerifyLogCallable;
+import com.systex.sop.cvs.task.VerifyWriteCallable;
+import com.systex.sop.cvs.ui.customize.SSSPalette;
+import com.systex.sop.cvs.ui.customize.comp.SSSJButton;
+import com.systex.sop.cvs.ui.customize.comp.SSSJDialogBase;
+import com.systex.sop.cvs.ui.customize.comp.SSSJLabel;
+import com.systex.sop.cvs.ui.customize.comp.SSSJTextField;
+import com.systex.sop.cvs.util.PropReader;
+import com.systex.sop.cvs.util.StringUtil;
+
+@SuppressWarnings("serial")
+public class ModifyDialog extends SSSJDialogBase {
+	private Tbsoptcvsver currentVer = null;
+	private SSSJTextField filepath_jTxtF;
+	private SSSJTextField workdir_jTxtF;
+	private JTextArea oldComment_jTxtF;
+	private JTextArea newComment_jTxtF;
+	private SSSJTextField filename_jTxtF;
+	private SSSJTextField version_jTxtF;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		try {
+			ModifyDialog dialog = new ModifyDialog();
+			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			dialog.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/** 進行驗證 **/
+	private void doVerifyComment() {
+		String workdir = getWorkdir_jTxtF().getText();
+		String filepath = getFilepath_jTxtF().getText();
+		String version = getVersion_jTxtF().getText();
+		String filename = getFilename_jTxtF().getText();
+		TaskResult result = null;
+		
+		// 取得LOG
+		VerifyLogCallable vLog = null;
+		try {
+			vLog = new VerifyLogCallable(workdir, filepath, version , filename);
+			result = vLog.call();
+			if (result.getIsDone()) {
+				CVSLog.getLogger().info("取得LOG成功");
+			}else{
+				throw new Exception ("isDone is not true");
+			}
+		}catch(Exception ex){
+			CVSLog.getLogger().error(this, ex);
+			StartUI.getInstance().getFrame().showMessageBox(ModifyDialog.this, "取得LOG失敗:" + ex.getMessage());
+			return;
+		}
+		
+		// 寫入LOG
+		VerifyWriteCallable vWrite = null;
+		try {
+			vWrite = new VerifyWriteCallable(version, filename, CVSFunc.fxToModule(currentVer.getTbsoptcvsmap().getRcsfile()));
+			result = vWrite.call();
+			if (result.getIsDone()) {
+				CVSLog.getLogger().info("寫入LOG成功");
+			}else{
+				throw new Exception ("isDone is not true");
+			}
+		}catch(Exception ex){
+			CVSLog.getLogger().error(this, ex);
+			StartUI.getInstance().getFrame().showMessageBox(ModifyDialog.this, "寫入LOG失敗:" + ex.getMessage());
+			return;
+		}
+		
+		// 重新查詢
+		CVSQueryDAO dao = new CVSQueryDAO();
+		Tbsoptcvsver ver = null;
+		try {
+			ver = dao.retrieveVER(currentVer.getId().getMSid(), version);
+			getNewComment_jTxtF().setText(ver.getFulldesc());
+		}catch(Exception e){
+			CVSLog.getLogger().error(this, e);
+			StartUI.getInstance().getFrame().showMessageBox(ModifyDialog.this, "查詢版本資料失敗:" + e.getMessage());
+			return;
+		}
+	}
+	
+	/** 進行修改提交註記 **/
+	private void doUpdateComment() {
+		String workdir = getWorkdir_jTxtF().getText();
+		String filepath = getFilepath_jTxtF().getText();
+		String version = getVersion_jTxtF().getText();
+		String comment = getOldComment_jTxtF().getText();
+		ModifyCallable m = null;
+		TaskResult result = null;
+		try {
+			m = new ModifyCallable(currentVer.getId().getMSid(), workdir, filepath, version, comment);
+			result = m.call();
+			if (result.getIsDone() == null) {
+				StartUI.getInstance().getFrame().showMessageBox(ModifyDialog.this, "更新成功但回寫資料庫失敗..請再執行一次 (資料不同步)");
+			}else if (result.getIsDone()) {
+				StartUI.getInstance().getFrame().showMessageBox(ModifyDialog.this, "更新成功");
+			}else{
+				StartUI.getInstance().getFrame().showMessageBox(ModifyDialog.this, "更新失敗");
+			}
+		}catch(Exception ex){
+			CVSLog.getLogger().error(this, ex);
+			StartUI.getInstance().getFrame().showMessageBox(ModifyDialog.this, "更新失敗:" + ex.getMessage());
+		}
+	}
+	
+	private void initUI() {
+		setTitle("");
+		setBounds(100, 100, 730, 720);
+		setModal(true);
+		// 增加座標記憶功能
+		getTitleBar().addMouseListener(new MouseAdapter() {
+					public void mouseReleased(MouseEvent e) {
+						PropReader.setProperty("CVS.MODIFY_X", Integer.toString(ModifyDialog.this.getX()));	// 記憶座標X
+						PropReader.setProperty("CVS.MODIFY_Y", Integer.toString(ModifyDialog.this.getY()));	// 記憶座標Y
+					}
+		});
+	}
+	
+	private void initial() {
+		getMainPane().setLayout(new BorderLayout(0, 0));
+		
+		JPanel panel = new JPanel();
+		panel.setBackground(Color.WHITE);
+		panel.setBorder(new MatteBorder(1, 0, 0, 0, new Color(207, 207, 207)));
+		getMainPane().add(panel, BorderLayout.SOUTH);
+		panel.setLayout(new FormLayout(new ColumnSpec[] {
+				ColumnSpec.decode("50dlu:grow"),},
+			new RowSpec[] {
+				RowSpec.decode("40px"),}));
+		
+		SSSJButton update_jBtn = new SSSJButton();
+		update_jBtn.setBackground(Color.WHITE);
+		
+		// XXX 進行修改提交註記
+		update_jBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				doUpdateComment();
+			}
+		});
+		update_jBtn.setText("進行更新");
+		panel.add(update_jBtn, "1, 1, center, default");
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setBorder(null);
+		getMainPane().add(scrollPane, BorderLayout.CENTER);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(Color.WHITE);
+		scrollPane.setViewportView(panel_1);
+		panel_1.setLayout(new FormLayout(new ColumnSpec[] {
+				ColumnSpec.decode("6dlu"),
+				ColumnSpec.decode("40dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("300dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("max(80dlu;default):grow"),},
+			new RowSpec[] {
+				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("30dlu"),
+				FormFactory.DEFAULT_ROWSPEC,
+				RowSpec.decode("10dlu"),
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("100dlu"),
+				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("100dlu"),
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,}));
+		
+		SSSJLabel lblModifyCvsComment = new SSSJLabel();
+		lblModifyCvsComment.setFont(new Font("Arial", Font.BOLD, 26));
+		lblModifyCvsComment.setText("Modify CVS Comment");
+		panel_1.add(lblModifyCvsComment, "2, 2, 3, 1, center, default");
+		
+		SSSJLabel lblcommit = new SSSJLabel();
+		lblcommit.setText("提供提交(Commit)時註記之更改，註記更改並非提交，僅做為註記更新。若註記之修改而影響包版，建議進行完整同步。");
+		panel_1.add(lblcommit, "2, 3, 3, 1, center, default");
+		
+		SSSJLabel label_3 = new SSSJLabel();
+		label_3.setText("檔案名稱");
+		panel_1.add(label_3, "2, 5, right, default");
+		
+		JPanel panel_3 = new JPanel();
+		panel_3.setBackground(Color.WHITE);
+		panel_1.add(panel_3, "4, 5, fill, fill");
+		panel_3.setLayout(new FormLayout(new ColumnSpec[] {
+				ColumnSpec.decode("200dlu"),
+				ColumnSpec.decode("61dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("35dlu"),},
+			new RowSpec[] {
+				FormFactory.DEFAULT_ROWSPEC,}));
+		
+		filename_jTxtF = new SSSJTextField();
+		filename_jTxtF.setEditable(false);
+		filename_jTxtF.setForeground(Color.DARK_GRAY);
+		filename_jTxtF.setBackground(new Color(207, 199, 188));
+		filename_jTxtF.setBorder(new LineBorder(SystemColor.activeCaptionBorder));
+		panel_3.add(filename_jTxtF, "1, 1, fill, default");
+		
+		SSSJLabel label_4 = new SSSJLabel();
+		label_4.setText("版號");
+		panel_3.add(label_4, "2, 1, right, default");
+		
+		version_jTxtF = new SSSJTextField();
+		version_jTxtF.setEditable(false);
+		version_jTxtF.setForeground(Color.DARK_GRAY);
+		version_jTxtF.setBackground(new Color(207, 199, 188));
+		version_jTxtF.setBorder(new LineBorder(SystemColor.activeCaptionBorder));
+		panel_3.add(version_jTxtF, "4, 1, fill, default");
+		
+		SSSJLabel label = new SSSJLabel();
+		label.setText("工作目錄");
+		panel_1.add(label, "2, 7, right, default");
+		
+		workdir_jTxtF = new SSSJTextField();
+		workdir_jTxtF.setEditable(false);
+		workdir_jTxtF.setForeground(Color.DARK_GRAY);
+		workdir_jTxtF.setBackground(new Color(207, 199, 188));
+		workdir_jTxtF.setBorder(new LineBorder(SystemColor.activeCaptionBorder));
+		panel_1.add(workdir_jTxtF, "4, 7, fill, default");
+		
+		SSSJLabel label_1 = new SSSJLabel();
+		label_1.setText("檔案路徑");
+		panel_1.add(label_1, "2, 9, right, default");
+		
+		filepath_jTxtF = new SSSJTextField();
+		filepath_jTxtF.setEditable(false);
+		filepath_jTxtF.setForeground(Color.DARK_GRAY);
+		filepath_jTxtF.setBackground(new Color(207, 199, 188));
+		filepath_jTxtF.setBorder(new LineBorder(SystemColor.activeCaptionBorder));
+		panel_1.add(filepath_jTxtF, "4, 9, fill, default");
+		
+		SSSJLabel label_2 = new SSSJLabel();
+		label_2.setText("註記");
+		panel_1.add(label_2, "2, 11, right, top");
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBorder(null);
+		panel_1.add(scrollPane_1, "4, 11, fill, fill");
+		
+		oldComment_jTxtF = new JTextArea();
+		oldComment_jTxtF.setFont(new Font(SSSPalette.fontFamily, Font.PLAIN, 12));
+		scrollPane_1.setViewportView(oldComment_jTxtF);
+		oldComment_jTxtF.setBorder(new LineBorder(SystemColor.activeCaptionBorder));
+		
+		JPanel panel_2 = new JPanel();
+		panel_2.setBackground(new Color(0, 206, 209));
+		panel_1.add(panel_2, "2, 13, fill, fill");
+		panel_2.setLayout(new FormLayout(new ColumnSpec[] {
+				ColumnSpec.decode("default:grow"),},
+			new RowSpec[] {
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("default:grow"),
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,}));
+		
+		SSSJLabel lblCvs = new SSSJLabel();
+		panel_2.add(lblCvs, "1, 2, center, default");
+		lblCvs.setText("伺服端註記");
+		
+		SSSJButton refresh_jBtn = new SSSJButton(SSSJButton.ITEM_DARK);
+		
+		// XXX 進行驗證
+		refresh_jBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				doVerifyComment();
+			}
+		});
+		panel_2.add(refresh_jBtn, "1, 6");
+		refresh_jBtn.setText("驗證");
+		
+		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2.setBorder(null);
+		panel_1.add(scrollPane_2, "4, 13, fill, fill");
+		
+		newComment_jTxtF = new JTextArea();
+		newComment_jTxtF.setEditable(false);
+		newComment_jTxtF.setFont(new Font(SSSPalette.fontFamily, Font.PLAIN, 12));
+		scrollPane_2.setViewportView(newComment_jTxtF);
+		newComment_jTxtF.setBackground(new Color(218, 238, 243));
+		newComment_jTxtF.setBorder(new LineBorder(SystemColor.activeCaptionBorder));
+		
+		SSSJLabel label_5 = new SSSJLabel();
+		label_5.setText("1. 已刪除之檔案(狀態為刪除)無法進行修改。");
+		panel_1.add(label_5, "4, 17");
+		
+		SSSJLabel lblcvsLog = new SSSJLabel();
+		lblcvsLog.setText("2. 點擊「驗證」將從伺服端重新取得註記以利驗證，驗證時亦進行重新更新。(以最新CVS LOG為主)");
+		panel_1.add(lblcvsLog, "4, 19");
+		
+		SSSJLabel lbllogpathmodifylogappend = new SSSJLabel();
+		lbllogpathmodifylogappend.setText("3. 進行更新之紀錄，紀錄在LOG_PATH下的Modify.log (每次執行時附加)。");
+		panel_1.add(lbllogpathmodifylogappend, "4, 21");
+		
+		SSSJLabel lblmodifylog = new SSSJLabel();
+		lblmodifylog.setText("4. 若更新失敗請查看紀錄檔Modify.log；若驗證失敗請查看紀錄檔<FILENAME>_<VERSION>.log。");
+		panel_1.add(lblmodifylog, "4, 23");
+		
+		SSSJLabel label_8 = new SSSJLabel();
+		label_8.setText("5. 更新成功後將一併更新資料庫之註記。");
+		panel_1.add(label_8, "4, 25");
+	}
+	
+	public void setTitle(Long id, String version, String filename, int maxLengths) {
+		filename = (filename.length() > maxLengths)? filename.substring(0, maxLengths - 2) + "..": filename;
+		setTitle(StringUtil.concat("[", version, "] ", filename));
+	}
+
+	/**
+	 * Create the dialog.
+	 */
+	public ModifyDialog() {
+		super();
+		initial();
+		initUI();
+	}
+
+	public SSSJTextField getFilepath_jTxtF() {
+		return filepath_jTxtF;
+	}
+
+	public SSSJTextField getWorkdir_jTxtF() {
+		return workdir_jTxtF;
+	}
+
+	public JTextArea getOldComment_jTxtF() {
+		return oldComment_jTxtF;
+	}
+
+	public JTextArea getNewComment_jTxtF() {
+		return newComment_jTxtF;
+	}
+
+	public SSSJTextField getFilename_jTxtF() {
+		return filename_jTxtF;
+	}
+
+	public SSSJTextField getVersion_jTxtF() {
+		return version_jTxtF;
+	}
+
+	public Tbsoptcvsver getCurrentVer() {
+		return currentVer;
+	}
+
+	public void setCurrentVer(Tbsoptcvsver currentVer) {
+		this.currentVer = currentVer;
+	}
+	
+}

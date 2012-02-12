@@ -17,34 +17,28 @@ import com.systex.sop.cvs.helper.CVSLog;
 import com.systex.sop.cvs.util.StreamCloseHelper;
 import com.systex.sop.cvs.util.StringUtil;
 
-public class LogCallable implements Callable<TaskSyncResult> {
-	private String module;
-	private String path;
-	private Timestamp edate;
+public class VerifyLogCallable implements Callable<TaskResult> {
+	private String workdir;		// 工作目錄
+	private String filepath;	// 檔案路徑
+	private String version;		// 版號
+	private String filename;	// 檔案名稱
 	
-	public LogCallable(String module, String path, Timestamp edate) {
-		this.module = module;
-		this.path = path;
-		this.edate = edate;
+	public VerifyLogCallable(String workdir, String filepath, String version, String filename) {
+		this.workdir = workdir;
+		this.filepath = filepath;
+		this.version = version;
+		this.filename = filename;
 	}
 	
 	@Override
-	public TaskSyncResult call() throws Exception {
-		TaskSyncResult result = null;
-		synchronized(LogCallable.class) {
-			result = TaskSyncResult.getTaskResult(module);
-			if (result == null) {
-				result = new TaskSyncResult();
-				result.setModule(module);
-				TaskSyncResult.putTaskResult(module, result);	// keep ref. by itself
-			}
-		}
+	public TaskResult call() throws Exception {
+		TaskResult result = new TaskResult();
 		
 		/**
-		 *  收集更新資訊 (CVS LOG) 並輸至指定路徑 (LOG PATH)
+		 *  進行提示註記更新
 		 */
-		ProcessBuilder pb = new ProcessBuilder(CVSFunc.fxCmdArray(edate));
-		pb.directory(new File(path));
+		ProcessBuilder pb = new ProcessBuilder(CVSFunc.fxCmdVerifyArray(version, filepath));
+		pb.directory(new File(workdir));
 		pb.redirectErrorStream(true);
 		
 		// process resource
@@ -61,28 +55,28 @@ public class LogCallable implements Callable<TaskSyncResult> {
 		BufferedWriter wr = null;
 		
 		String line = null;
-		int currentLine = 0;
 		try {
 			result.setBeginTime(new Timestamp(System.currentTimeMillis()));	// [START]
 			p = pb.start();
 			is = p.getInputStream();
 			isr = new InputStreamReader(is, CVSConst.ENCODING_IN);
 			br = new BufferedReader(isr);
-			result.setTotalLines(-1);	// 陸續讀入故無法取得總行數
 			
-			os = new FileOutputStream(new File(CVSFunc.fxLogFilePath(module, edate)));
+			os = new FileOutputStream(new File(CVSFunc.fxVerifyFilePath(filename, version)));
 			osw = new OutputStreamWriter(os, CVSConst.ENCODING_OUT);
 			wr = new BufferedWriter(osw);
 			
+			// 輸出 結果
 			while ((line = br.readLine()) != null) {
 				if (StringUtil.isEmpty(line) || line.startsWith("?")) continue;
-				result.setCurrentLine(++currentLine);
 				wr.write(line);
-				wr.newLine(); // same as wr.write(System.getProperty("line.separator"));
-				CVSLog.getLogger().debug(line);
+				wr.newLine();
 			}
+			
+			result.setIsDone(Boolean.TRUE);
 		}catch(Exception e){
 			CVSLog.getLogger().error(this, e);
+			result.setIsDone(Boolean.FALSE);
 		}finally{
 			result.setEndedTime(new Timestamp(System.currentTimeMillis()));	// [ENDED]
 			StreamCloseHelper.closeReader(br, isr);

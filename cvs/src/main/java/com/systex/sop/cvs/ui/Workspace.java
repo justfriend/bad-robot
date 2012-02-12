@@ -50,6 +50,7 @@ public class Workspace {
 				comp = new QueryClassicPage();
 				break;
 			case QRY_NORMAL:
+				comp = new QueryNormalPage();
 				break;
 			case ENV_CHK:
 				break;

@@ -19,38 +19,29 @@ import com.systex.sop.cvs.util.HostnameUtil;
 import com.systex.sop.cvs.util.StreamCloseHelper;
 import com.systex.sop.cvs.util.StringUtil;
 
-public class WriteCallable implements Callable<TaskSyncResult> {
-	private String module;
-	private Timestamp edate;
-	private boolean isFullSync;
+public class VerifyWriteCallable implements Callable<TaskResult> {
+	private String version;		// 版號
+	private String filename;	// 檔案名稱
+	private String module;		// 模組名稱
 	
-	public WriteCallable(String module, Timestamp edate, boolean isFullSync) {
+	public VerifyWriteCallable(String version, String filename, String module) {
+		this.version = version;
+		this.filename = filename;
 		this.module = module;
-		this.edate = edate;
-		this.isFullSync = isFullSync;
 	}
 	
 	@Override
-	public TaskSyncResult call() throws Exception {
-		TaskSyncResult result = null;
-		synchronized(WriteCallable.class) {
-			result = TaskSyncResult.getTaskResult(module);
-			if (result == null) {
-				result = new TaskSyncResult();
-				result.setModule(module);
-				TaskSyncResult.putTaskResult(module, result);	// keep ref. by itself
-			}
-		}
+	public TaskResult call() throws Exception {
+		TaskResult result = new TaskResult();
 		
 		CVSParserLogic logic = new CVSParserLogic();
-		File f = new File(CVSFunc.fxLogFilePath(module, edate));
+		File f = new File(CVSFunc.fxVerifyFilePath(filename, version));
 		FileInputStream fis = null;
 		InputStreamReader isr = null;
 		BufferedReader br = null;
 		String line = null;
-		int currentLine = 0;
 		try {
-			result.setBeginTime2(new Timestamp(System.currentTimeMillis()));	// [START]
+			result.setBeginTime(new Timestamp(System.currentTimeMillis()));	// [START]
 			
 			/** 取得總行數 **/
 			FileReader fr = null;
@@ -59,12 +50,9 @@ public class WriteCallable implements Callable<TaskSyncResult> {
 				fr = new FileReader(f);
 				lnr = new LineNumberReader(fr);
 				lnr.skip(f.length());
-				result.setTotalLines2(lnr.getLineNumber());
 			}catch(Exception e){
-				CVSLog.getLogger().error("無法取得檔案總行數, FILE is " + ((f == null)? "null": f.getAbsolutePath()) );
-				CVSLog.getLogger().error(this, e);
-				result.setTotalLines2(-1);
-				result.setCurrentLine2(-1);
+				result.setErrMsg(e.getMessage());
+				throw e;
 			}finally{
 				StreamCloseHelper.closeReader(lnr, fr);
 			}
@@ -76,18 +64,21 @@ public class WriteCallable implements Callable<TaskSyncResult> {
 			List<String> tmpList = new ArrayList<String>();
 			while ((line = br.readLine()) != null) {
 				if (StringUtil.isEmpty(line)) continue;
-				result.setCurrentLine2(++currentLine);
 				tmpList.add(line);
 				CVSLog.getLogger().debug(line);
 				if (line.startsWith(CVSConst.BLOCK_END)) {
-					logic.parser(HostnameUtil.getHostname(), module, tmpList, isFullSync);
+					logic.parser(HostnameUtil.getHostname(), module, tmpList, false);
 					tmpList.clear();
 				}
 			}
+			
+			result.setIsDone(Boolean.TRUE);
 		}catch(Exception e){
 			CVSLog.getLogger().error(this, e);
+			result.setErrMsg(e.getMessage());
+			result.setIsDone(Boolean.FALSE);
 		}finally{
-			result.setEndedTime2(new Timestamp(System.currentTimeMillis()));	// [ENDED]
+			result.setEndedTime(new Timestamp(System.currentTimeMillis()));	// [ENDED]
 			StreamCloseHelper.closeReader(br, isr);
 			StreamCloseHelper.closeInputStream(fis);
 			f = null;

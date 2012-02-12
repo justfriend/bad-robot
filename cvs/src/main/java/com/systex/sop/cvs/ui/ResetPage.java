@@ -91,8 +91,6 @@ public class ResetPage extends JPanel {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,}));
 		
 		loginMsg_jL = new SSSJLabel();
@@ -113,15 +111,9 @@ public class ResetPage extends JPanel {
 		label_2.setText("※執行「確定重置」將刪除登入資訊。");
 		imgJPanel.add(label_2, "4, 6, 3, 1");
 		
-		SSSJLabel lblio = new SSSJLabel();
-		lblio.setForeground(Color.WHITE);
-		lblio.setFont(new Font(lblio.getFont().getFamily(), Font.BOLD, 14));
-		lblio.setText("※狀態「I」代表目前為登入中；「O」代表為已登出。");
-		imgJPanel.add(lblio, "4, 8, 3, 1, left, default");
-		
 		JLabel lblNewLabel_1 = new JLabel("New label");
 		lblNewLabel_1.setIcon(new ImageIcon(ResetPage.class.getResource("/resource/reset.gif")));
-		imgJPanel.add(lblNewLabel_1, "6, 10");
+		imgJPanel.add(lblNewLabel_1, "6, 8");
 	}
 	
 	private void initUI() {

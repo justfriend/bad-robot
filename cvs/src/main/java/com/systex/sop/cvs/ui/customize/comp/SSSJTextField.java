@@ -1,12 +1,14 @@
 package com.systex.sop.cvs.ui.customize.comp;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 
 import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
 import javax.swing.text.Document;
 
 import com.systex.sop.cvs.ui.customize.SSSPalette;
-import com.systex.sop.cvs.ui.customize.ui.SSSBasicTextFieldUI;
 
 @SuppressWarnings("serial")
 public class SSSJTextField extends JTextField {
@@ -32,7 +34,8 @@ public class SSSJTextField extends JTextField {
 	}
 	
 	{
-		setUI(new SSSBasicTextFieldUI());
+		setPreferredSize(new Dimension(2, 22));
+		setBorder(new LineBorder(new Color(171, 173, 179), 1));
 		setFont(new Font(SSSPalette.fontFamily, Font.BOLD, 12));
 	}
 }

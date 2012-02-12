@@ -6,6 +6,7 @@ import java.util.Calendar;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+import com.systex.sop.cvs.helper.CVSFunc;
 import com.systex.sop.cvs.util.StringUtil;
 
 public class LogResultDO extends CVSBaseDO {
@@ -109,12 +110,7 @@ public class LogResultDO extends CVSBaseDO {
 		if (endedTime2 == null) {
 			elapseTime2 = "";
 		}else{
-			Calendar c = Calendar.getInstance();
-			c.setTimeInMillis(endedTime2.getTime() - beginTime2.getTime());
-			elapseTime2 = StringUtil.concat(
-					String.format("%02d", c.get(Calendar.MINUTE)), ":", 
-					String.format("%02d", c.get(Calendar.SECOND)), ".",
-					String.format("%03d", c.get(Calendar.MILLISECOND)) );
+			elapseTime2 = CVSFunc.fxElapseTime(endedTime2.getTime() - beginTime2.getTime());
 		}
 		
 		return elapseTime2;

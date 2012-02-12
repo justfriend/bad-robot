@@ -2,7 +2,6 @@ package com.systex.sop.cvs.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -13,18 +12,14 @@ import java.util.Locale;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.border.BevelBorder;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
-import com.systex.sop.cvs.ui.customize.SSSPalette;
 import com.systex.sop.cvs.ui.customize.comp.SSSJButton;
 import com.systex.sop.cvs.ui.customize.comp.SSSJLabel;
 import com.systex.sop.cvs.ui.customize.comp.SSSJSplitPane;
@@ -33,25 +28,25 @@ import com.systex.sop.cvs.ui.customize.comp.SSSJTable;
 import com.systex.sop.cvs.ui.customize.comp.SSSJTextField;
 import com.systex.sop.cvs.ui.customize.other.ObservingTextField;
 import com.systex.sop.cvs.ui.customize.other.SSSDatePicker;
-import com.systex.sop.cvs.ui.logic.QueryClassicPageLogic;
-import com.systex.sop.cvs.ui.tableClass.CommentMissDO;
-import com.systex.sop.cvs.ui.tableClass.NewVerNoTagDO;
+import com.systex.sop.cvs.ui.logic.QueryPageLogic;
+import com.systex.sop.cvs.ui.tableClass.VerMapDO;
 import com.systex.sop.cvs.util.TimestampHelper;
 
 @SuppressWarnings("serial")
 public class QueryClassicPage extends JPanel {
-	private QueryClassicPageLogic logic = new QueryClassicPageLogic(this);
+	private QueryPageLogic logic = new QueryPageLogic();
 	private SSSJTable table;
 	private SSSJTextField author_jTxtF;
 	private JCheckBox ignoreDel_jChkB;
-	private TAGDialog tagDialog = new TAGDialog();
+	private TagDialog tagDialog = new TagDialog();				// 呈現 TAG 清單的對話框
+	private ModifyDialog modifyDialog = new ModifyDialog();		// 呈現修改註記的對話框
+	private VersionDialog versionDialog = new VersionDialog();	// 呈現版本樹的對話框
 	private SSSJTable table_1;
 	private SSSJTextField author_1_jTxtF;
 	private ObservingTextField beginDate_1_jTxtF;
 	private JCheckBox ignoreDel_1_jChkB;
 	
 	private void initial() {
-		setBackground(new Color(127, 125, 123));
 		setLayout(new BorderLayout(0, 0));
 		
 		SSSJTabbedPane tabbedPane = new SSSJTabbedPane();
@@ -106,10 +101,12 @@ public class QueryClassicPage extends JPanel {
 		panel_4.add(ignoreDel_jChkB, "4, 4");
 		
 		SSSJButton qry_jBtn = new SSSJButton();
+		qry_jBtn.setBackground(Color.WHITE);
+		
+		// XXX 查詢提交註記錯誤或遺漏
 		qry_jBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// 查詢提交註記錯誤或遺漏
-				logic.doQueryNewVerNoTag(getAuthor_jTxtF().getText(), getIgnoreDel_jChkB().isSelected());
+				logic.doQueryNewVerNoTag(getAuthor_jTxtF().getText(), getIgnoreDel_jChkB().isSelected(), getTable());
 			}
 		});
 		qry_jBtn.setText("查詢");
@@ -118,7 +115,9 @@ public class QueryClassicPage extends JPanel {
 		JScrollPane scrollPane = new JScrollPane();
 		splitPane.setRightComponent(scrollPane);
 		
-		table = new SSSJTable(new NewVerNoTagDO());
+		table = new SSSJTable(new VerMapDO());
+		
+		// XXX 最新版本未下TAG POPUP CLIECK
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -126,12 +125,10 @@ public class QueryClassicPage extends JPanel {
 					Long rcsid = (Long) getTable().getSelectValueAt("RCSID");
 					String ver = (String) getTable().getSelectValueAt("最新版號");
 					String filename = (String) getTable().getSelectValueAt("檔案名稱");
-					logic.doRetrieveTagInfo(rcsid, ver, filename);
+					logic.doRetrieveTagInfo(rcsid, ver, filename, getTagDialog());
 				}
 			}
 		});
-		table.setFont(new Font(SSSPalette.fontFamily, Font.PLAIN, 12));
-		table.setRowHeight(20);
 		scrollPane.setViewportView(table);
 		
 		JPanel panel_1 = new JPanel();
@@ -154,7 +151,7 @@ public class QueryClassicPage extends JPanel {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("50dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("50dlu"),
+				ColumnSpec.decode("30dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("50dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
@@ -203,13 +200,16 @@ public class QueryClassicPage extends JPanel {
 		panel_5.add(ignoreDel_1_jChkB, "4, 4");
 		
 		SSSJButton qry_1_jBtn = new SSSJButton();
+		qry_1_jBtn.setBackground(Color.WHITE);
+		
+		// XXX 查詢提交註記錯誤或遺漏
 		qry_1_jBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// 查詢提交註記錯誤或遺漏
 				logic.doQueryCommentMiss(
 						getAuthor_1_jTxtF().getText(),
 						getIgnoreDel_1_jChkB().isSelected(),
-						TimestampHelper.convertToTimestamp2(getBeginDate_1_jTxtF().getText()) );
+						TimestampHelper.convertToTimestamp2(getBeginDate_1_jTxtF().getText()),
+						getTable_1() );
 			}
 		});
 		qry_1_jBtn.setText("查詢");
@@ -218,7 +218,8 @@ public class QueryClassicPage extends JPanel {
 		JScrollPane scrollPane_1 = new JScrollPane();
 		splitPane_1.setRightComponent(scrollPane_1);
 		
-		table_1 = new SSSJTable(new CommentMissDO());
+		table_1 = new SSSJTable(new VerMapDO());
+		// XXX 提交註記錯誤或遺漏 POPUP CLIECK
 		table_1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -226,70 +227,33 @@ public class QueryClassicPage extends JPanel {
 					Long rcsid = (Long) getTable_1().getSelectValueAt("RCSID");
 					String ver = (String) getTable_1().getSelectValueAt("最新版號");
 					String filename = (String) getTable_1().getSelectValueAt("檔案名稱");
-					logic.doRetrieveTagInfo(rcsid, ver, filename);
+					logic.doRetrieveTagInfo(rcsid, ver, filename, getTagDialog());
 				}
 			}
 		});
-		table_1.setRowHeight(20);
 		scrollPane_1.setViewportView(table_1);
-		
-		JPanel panel_3 = new JPanel();
-		tabbedPane.addTab("概要統計", null, panel_3, null);
-		panel_3.setLayout(new BorderLayout(0, 0));
-		
-		SSSJSplitPane splitPane_3 = new SSSJSplitPane();
-		splitPane_3.setBorder(null);
-		splitPane_3.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		splitPane_3.setDividerLocation(130);
-		panel_3.add(splitPane_3, BorderLayout.CENTER);
-		
-		JPanel panel_7 = new JPanel();
-		splitPane_3.setLeftComponent(panel_7);
-		panel_7.setLayout(new FormLayout(new ColumnSpec[] {},
-			new RowSpec[] {}));
 	}
 	
 	public void initUI() {
-		// POPUPMENU
-		JPopupMenu popup = getTable().getPopup();
-		JMenuItem item = new JMenuItem("檢示標籤");
-		item.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Long rcsid = (Long) getTable().getSelectValueAt("RCSID");
-				String ver = (String) getTable().getSelectValueAt("最新版號");
-				String filename = (String) getTable().getSelectValueAt("檔案名稱");
-				logic.doRetrieveTagInfo(rcsid, ver, filename);
-			}
-		});
-		popup.add(item);
-		popup.setBorder(new BevelBorder(BevelBorder.RAISED));
-		
-		// POPUPMENU2
-		popup = getTable_1().getPopup();
-		item = new JMenuItem("檢示標籤");
-		item.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Long rcsid = (Long) getTable_1().getSelectValueAt("RCSID");
-				String ver = (String) getTable_1().getSelectValueAt("最新版號");
-				String filename = (String) getTable_1().getSelectValueAt("檔案名稱");
-				logic.doRetrieveTagInfo(rcsid, ver, filename);
-			}
-		});
-		popup.add(item);
-		popup.setBorder(new BevelBorder(BevelBorder.RAISED));
-		
-		// TAG DIALOG
-		
+		setBackground(new Color(127, 125, 123));
+		logic.registerPopupMenu(getTable(), getTagDialog(), getModifyDialog(), getVersionDialog());
+		logic.registerPopupMenu(getTable_1(), getTagDialog(), getModifyDialog(), getVersionDialog());
 	}
 
 	public SSSJTable getTable() {
 		return table;
 	}
 
-	public TAGDialog getTagDialog() {
+	public TagDialog getTagDialog() {
 		return tagDialog;
+	}
+
+	public ModifyDialog getModifyDialog() {
+		return modifyDialog;
+	}
+
+	public VersionDialog getVersionDialog() {
+		return versionDialog;
 	}
 
 	/**

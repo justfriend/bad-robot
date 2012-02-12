@@ -10,6 +10,7 @@ import java.util.Locale;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -50,6 +51,8 @@ public class SyncPage extends JPanel {
 	private JCheckBox fullSync_jChkB;
 	private SSSJButton manualExec_jBtn;
 	private SyncPageLogic logic = new SyncPageLogic(this);
+	private JCheckBox syncLog_jChkB;
+	private JCheckBox syncWrite_jChkB;
 	
 	private void initial() {
 		setLayout(new BorderLayout(0, 0));
@@ -129,7 +132,11 @@ public class SyncPage extends JPanel {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("left:30dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("50dlu"),},
+				ColumnSpec.decode("50dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("30dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("74dlu"),},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("20dlu"),
@@ -168,6 +175,11 @@ public class SyncPage extends JPanel {
 		});
 		button.setText("中斷");
 		manualSyncTab.add(button, "8, 2");
+		
+		syncLog_jChkB = new JCheckBox("同步LOG");
+		syncLog_jChkB.setSelected(true);
+		syncLog_jChkB.setBackground(Color.WHITE);
+		manualSyncTab.add(syncLog_jChkB, "12, 2");
 
 		SSSJLabel label_3 = new SSSJLabel();
 		label_3.setText("範圍");
@@ -188,11 +200,20 @@ public class SyncPage extends JPanel {
 		manualExec_jBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// 執行「手動同步」
-				logic.doManualSyncExecute();
+				if (!getSyncLog_jChkB().isSelected() && !getSyncWrite_jChkB().isSelected()) {
+					JOptionPane.showMessageDialog(SyncPage.this, "「同步LOG」與「 同步WRITE」至少選一項");
+				}else{
+					logic.doManualSyncExecute(getSyncLog_jChkB().isSelected(), getSyncWrite_jChkB().isSelected());
+				}
 			}
 		});
 		manualExec_jBtn.setText("執行");
 		manualSyncTab.add(manualExec_jBtn, "8, 4");
+		
+		syncWrite_jChkB = new JCheckBox("同步WRITE");
+		syncWrite_jChkB.setSelected(true);
+		syncWrite_jChkB.setBackground(Color.WHITE);
+		manualSyncTab.add(syncWrite_jChkB, "12, 4");
 
 		JScrollPane syncResult_jScrP = new JScrollPane();
 		syncResult_jScrP.setBackground(Color.ORANGE);
@@ -248,4 +269,10 @@ public class SyncPage extends JPanel {
 		return table;
 	}
 
+	public JCheckBox getSyncLog_jChkB() {
+		return syncLog_jChkB;
+	}
+	public JCheckBox getSyncWrite_jChkB() {
+		return syncWrite_jChkB;
+	}
 }

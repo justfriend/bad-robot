@@ -1,5 +1,7 @@
 package com.systex.sop.cvs.util;
 
+import java.sql.Timestamp;
+
 /**
  * String Utility
  * <p>
@@ -11,6 +13,18 @@ package com.systex.sop.cvs.util;
  * 
  */
 public class StringUtil {
+	
+	public static Long convertLong(String num) {
+		if (isEmpty(num)) return null;
+		
+		try {
+			return Long.parseLong(num);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
 	
 	public static boolean anyEmpty(Object ...objs) {
 		for (Object obj : objs) {
@@ -77,4 +91,67 @@ public class StringUtil {
 		return !isEmpty(str);
 	}
 	
+	public static String genDateBetweenSQL(String column, Timestamp beginDate, Timestamp endedDate) {
+		if (beginDate != null && endedDate != null) {
+			return StringUtil.concat(
+					" AND ", column, " BETWEEN",
+					" to_date('", TimestampHelper.convertToyyyyMMdd(beginDate), "', 'yyyymmdd') AND",
+					" to_date('", TimestampHelper.convertToyyyyMMdd(TimestampHelper.addTime(endedDate, 0, 0, 1)), "', 'yyyymmdd')"
+			);
+		}else
+		if (beginDate != null) {
+			return StringUtil.concat(
+					" AND ", column, " >=",
+					" to_date('", TimestampHelper.convertToyyyyMMdd(beginDate), "', 'yyyymmdd')"
+			);
+		}else
+		if (endedDate != null){
+			return StringUtil.concat(
+					" AND ", column, " <",
+					" to_date('", TimestampHelper.convertToyyyyMMdd(TimestampHelper.addTime(endedDate, 0, 0, 1)), "', 'yyyymmdd')"
+			);
+		}else{
+			return "";
+		}
+	}
+	
+	public static String genStringEqSQL(String column, String value) {
+		if (isNotEmpty(value)) {
+			return StringUtil.concat(" AND ", column, " = '", value, "'");
+		}else{
+			return "";
+		}
+	}
+	
+	public static String genStringIgnoreCaseEqSQL(String column, String value) {
+		if (isNotEmpty(value)) {
+			return StringUtil.concat(" AND UPPER(", column, ") = UPPER('", value, "')");
+		}else{
+			return "";
+		}
+	}
+	
+	public static String genStringLikeSQL(String column, String value) {
+		if (isNotEmpty(value)) {
+			return StringUtil.concat(" AND ", column, " LIKE '%", value, "%'");
+		}else{
+			return "";
+		}
+	}
+	
+	public static String genStringIgnoreCaseLikeSQL(String column, String value) {
+		if (isNotEmpty(value)) {
+			return StringUtil.concat(" AND UPPER(", column, ") LIKE UPPER('%", value, "%')");
+		}else{
+			return "";
+		}
+	}
+	
+	public static String genNumberEqSQL(String column, Long value) {
+		if (value != null) {
+			return StringUtil.concat(" AND ", column, " = ", value);
+		}else{
+			return "";
+		}
+	}
 }

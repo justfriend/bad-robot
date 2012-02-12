@@ -2,6 +2,7 @@ package com.systex.sop.cvs.ui.customize.comp;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -9,8 +10,6 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -18,9 +17,9 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.Timer;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -33,6 +32,7 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+import com.systex.sop.cvs.helper.CVSLog;
 import com.systex.sop.cvs.ui.customize.SSSPalette;
 import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.StringUtil;
@@ -41,7 +41,6 @@ import com.systex.sop.cvs.util.StringUtil;
 public class SSSJFrameBase extends IFrame {
 	private SSSJLabel msgjL = new SSSJLabel();	// message label (框架最下方左下角的訊息提示)
 	private SSSJLabel cxtjL = new SSSJLabel();	// content warning message (畫面中間的明顯警示-字大)
-	private Timer cxtTimer = null;
 	private JPanel panel;						// container panel
 	private TitleBar titleBar;
 	
@@ -49,12 +48,6 @@ public class SSSJFrameBase extends IFrame {
 		cxtjL.setFont(new Font(SSSPalette.fontFamily, Font.BOLD, PropReader.getPropertyInt("CVS.WARNINGSIZE")));
 		cxtjL.setOpaque(false);
 		cxtjL.setForeground(Color.PINK);
-		cxtTimer = new Timer(1500, new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				setCxtMessage(null);
-			}
-		});
 	}
 	
 	public class TitleBar extends IWindowTitleBar implements ChangeListener {
@@ -225,17 +218,12 @@ public class SSSJFrameBase extends IFrame {
 		if (StringUtil.isEmpty(msg)) {
 			cxtjL.setText("");
 		}else{
-			cxtTimer.stop();
-			
 			// 動態重新定位
 			Rectangle size = this.getBounds();
 			cxtjL.setHorizontalAlignment(SwingConstants.CENTER);
 			cxtjL.setVerticalAlignment(SwingConstants.CENTER);
 			cxtjL.setBounds( (int) (size.width * 0.2), (int) (size.height * 0.2), (int) (size.width * 0.6), (int) (size.height * 0.6));
 			cxtjL.setText(msg);
-			
-			// 自動消逝
-			cxtTimer.restart();
 		}
 		cxtjL.repaint();
 	}
@@ -244,4 +232,12 @@ public class SSSJFrameBase extends IFrame {
 		return titleBar;
 	}
 	
+	public void showMessageBox(String msg) {
+		showMessageBox(this, msg);
+	}
+	
+	public void showMessageBox(Component comp, String msg) {
+		CVSLog.getLogger().info("[MessageBox]" + msg);
+		JOptionPane.showMessageDialog(comp, msg);
+	}
 }

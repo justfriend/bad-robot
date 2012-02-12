@@ -1,6 +1,5 @@
 package com.systex.sop.cvs.ui.customize.other;
 
-import javax.swing.SwingUtilities;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Window;
@@ -8,6 +7,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
+
+import javax.swing.SwingUtilities;
 
 /**
  * 可以让指定的Component通过鼠标拖动来移动Window的便利类
@@ -20,6 +22,8 @@ public class PWindowDragger {
 	protected Component fComponent;
 	protected int dX;
 	protected int dY;
+	protected MouseListener mouseListener;
+	protected MouseMotionListener mouseMotionListener;
 
 	/**
 	 * 让指定的Component通过鼠标拖动来移动Window
@@ -31,9 +35,11 @@ public class PWindowDragger {
 
 		fWindow = window;
 		fComponent = component;
-
-		fComponent.addMouseListener(createMouseListener());
-		fComponent.addMouseMotionListener(createMouseMotionListener());
+		
+		mouseListener = createMouseListener();
+		mouseMotionListener = createMouseMotionListener();
+		fComponent.addMouseListener(mouseListener);
+		fComponent.addMouseMotionListener(mouseMotionListener);
 	}
 
 	protected MouseListener createMouseListener() {
@@ -59,6 +65,14 @@ public class PWindowDragger {
 				fWindow.setLocation(dragPoint.x - dX, dragPoint.y - dY);
 			}
 		};
+	}
+
+	public MouseListener getMouseListener() {
+		return mouseListener;
+	}
+
+	public MouseMotionListener getMouseMotionListener() {
+		return mouseMotionListener;
 	}
 
 }

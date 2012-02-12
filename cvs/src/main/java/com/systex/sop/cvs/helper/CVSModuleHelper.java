@@ -32,6 +32,10 @@ public class CVSModuleHelper {
 		return map;
 	}
 	
+	public String getPath(String module) {
+		return map.get(module);
+	}
+	
 	public static void main(String [] args) throws Exception {
 		CVSModuleHelper app = new CVSModuleHelper();
 		app.load();

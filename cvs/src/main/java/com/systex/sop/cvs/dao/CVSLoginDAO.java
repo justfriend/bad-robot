@@ -61,7 +61,7 @@ public class CVSLoginDAO {
 			if (oldObj == null) {
 				return null;
 			}else{
-				if (CVSConst.LOGIN_STATUS.LOGIN.getText() == oldObj.getStatus()) {
+				if (CVSConst.LOGIN_STATUS.LOGIN.getFlag() == oldObj.getStatus()) {
 					session.delete(oldObj);
 				}else{
 					return oldObj;	// 登入資訊存在但無須刪除
@@ -102,7 +102,7 @@ public class CVSLoginDAO {
 			if (oldObj == null) {
 				Tbsoptcvslogin newObj = new Tbsoptcvslogin();
 				newObj.setFlag(CVSConst.LOGIN_FLAG.SESSION.getText());
-				newObj.setStatus(CVSConst.LOGIN_STATUS.LOGIN.getText());
+				newObj.setStatus(CVSConst.LOGIN_STATUS.LOGIN.getFlag());
 				newObj.setDescription(" ");
 				newObj.setCreator(hostname);
 				newObj.setCreatetime(TimestampHelper.now());
@@ -110,10 +110,10 @@ public class CVSLoginDAO {
 				newObj.setLastupdate(null);
 				session.save(newObj);
 			}else{
-				if (CVSConst.LOGIN_STATUS.LOGIN.getText() == oldObj.getStatus()) {
+				if (CVSConst.LOGIN_STATUS.LOGIN.getFlag() == oldObj.getStatus()) {
 					return oldObj;
 				}else{
-					oldObj.setStatus(CVSConst.LOGIN_STATUS.LOGIN.getText());
+					oldObj.setStatus(CVSConst.LOGIN_STATUS.LOGIN.getFlag());
 					oldObj.setDescription("Login");
 					oldObj.setCreator(hostname);
 					oldObj.setModifier(hostname);
@@ -158,10 +158,10 @@ public class CVSLoginDAO {
 				// 未登入則登出 (在此儘做警告)
 				CVSLog.getLogger().warn("進行登出，但未發現登入紀錄...");
 			}else{
-				if (CVSConst.LOGIN_STATUS.LOGOUT.getText() == oldObj.getStatus()) {
+				if (CVSConst.LOGIN_STATUS.LOGOUT.getFlag() == oldObj.getStatus()) {
 					return oldObj;
 				}else{
-					oldObj.setStatus(CVSConst.LOGIN_STATUS.LOGOUT.getText());
+					oldObj.setStatus(CVSConst.LOGIN_STATUS.LOGOUT.getFlag());
 					oldObj.setDescription("Logout");
 					oldObj.setModifier(hostname);
 					oldObj.setLastupdate(TimestampHelper.now());

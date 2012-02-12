@@ -44,20 +44,30 @@ public class CVSConst {
 	}
 	
 	public enum LOGIN_STATUS {
-		LOGIN('I'), LOGOUT('O'), CANCEL('C');
+		LOGIN('I', "登入中"), LOGOUT('O', "已登出" ), CANCEL('C', "已取消");
 
-		private char text;
+		private char flag;
+		private String desc;
 
-		private LOGIN_STATUS(char flag) {
-			this.text = flag;
+		private LOGIN_STATUS(char flag, String desc) {
+			this.flag = flag;
+			this.desc = desc;
 		}
 
-		public char getText() {
-			return text;
+		public char getFlag() {
+			return flag;
 		}
-
-		public void setText(char text) {
-			this.text = text;
+		
+		public String getDesc() {
+			return desc;
+		}
+		
+		public static LOGIN_STATUS findDesc(char flag) {
+			for (LOGIN_STATUS e : LOGIN_STATUS.values()) {
+				if (e.getFlag() == flag) return e;
+			}
+			
+			return null;
 		}
 	}
 
