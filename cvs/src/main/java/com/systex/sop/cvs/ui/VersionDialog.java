@@ -2,10 +2,13 @@ package com.systex.sop.cvs.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.SystemColor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -23,6 +26,8 @@ import com.systex.sop.cvs.ui.customize.comp.SSSJTable;
 import com.systex.sop.cvs.ui.customize.comp.SSSJTextField;
 import com.systex.sop.cvs.ui.tableClass.VerTreeDO;
 import com.systex.sop.cvs.util.PropReader;
+import javax.swing.border.MatteBorder;
+import javax.swing.ImageIcon;
 
 @SuppressWarnings("serial")
 public class VersionDialog extends SSSJDialogBase {
@@ -64,6 +69,7 @@ public class VersionDialog extends SSSJDialogBase {
 				RowSpec.decode("default:grow"),}));
 		
 		JPanel panel_1 = new JPanel();
+		panel_1.setBorder(new MatteBorder(0, 0, 2, 0, (Color) new Color(128, 128, 128)));
 		panel_1.setBackground(Color.WHITE);
 		panel.add(panel_1, "1, 1, fill, fill");
 		panel_1.setLayout(new FormLayout(new ColumnSpec[] {
@@ -72,7 +78,7 @@ public class VersionDialog extends SSSJDialogBase {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("200dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("40dlu"),},
+				ColumnSpec.decode("38dlu"),},
 			new RowSpec[] {
 				RowSpec.decode("default:grow"),}));
 		
@@ -87,13 +93,25 @@ public class VersionDialog extends SSSJDialogBase {
 		filename_jTxtF.setBorder(new LineBorder(SystemColor.activeCaptionBorder));
 		panel_1.add(filename_jTxtF, "4, 1, fill, default");
 		
-		SSSImgJPanel imgJPanel = new SSSImgJPanel();
-		imgJPanel.setBorder(new EmptyBorder(4, 24, 0, 0));
+		SSSJLabel label_1 = new SSSJLabel();
+		label_1.setBorder(new LineBorder(new Color(204, 153, 102)));
+		label_1.setIcon(new ImageIcon(VersionDialog.class.getResource("/resource/symbolLarge.png")));
+		panel_1.add(label_1, "6, 1, right, center");
+		
+		Image img = null;
+		try {
+			img = ImageIO.read(VersionDialog.class.getResource("/resource/orangeGridBG.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		SSSImgJPanel imgJPanel = new SSSImgJPanel(img);
+		imgJPanel.setBorder(new EmptyBorder(6, 10, 4, 0));
 		panel.add(imgJPanel, "1, 2, fill, fill");
 		imgJPanel.setLayout(new BorderLayout(0, 0));
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBorder(new EmptyBorder(0, 0, 0, 0));
+		scrollPane_1.setBackground(Color.ORANGE);
+		scrollPane_1.setBorder(new MatteBorder(2, 2, 2, 0, (Color) new Color(128, 128, 128)));
 		imgJPanel.add(scrollPane_1, BorderLayout.CENTER);
 		
 		table = new SSSJTable(new VerTreeDO());

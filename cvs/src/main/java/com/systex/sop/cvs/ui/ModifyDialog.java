@@ -140,7 +140,7 @@ public class ModifyDialog extends SSSJDialogBase {
 	private void initUI() {
 		setTitle("");
 		setBounds(100, 100, 730, 720);
-		setModal(true);
+//		setModal(true);
 		// 增加座標記憶功能
 		getTitleBar().addMouseListener(new MouseAdapter() {
 					public void mouseReleased(MouseEvent e) {

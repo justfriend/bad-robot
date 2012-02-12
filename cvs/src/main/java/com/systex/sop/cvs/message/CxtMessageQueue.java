@@ -12,7 +12,6 @@ public class CxtMessageQueue {
 	}
 	
 	public static void addCxtMessage(String msg) {
-		System.err.println (msg);
 		try {
 			queue.put(msg);
 		} catch (InterruptedException e) {

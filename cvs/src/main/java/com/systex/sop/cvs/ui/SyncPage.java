@@ -33,6 +33,7 @@ import com.systex.sop.cvs.ui.logic.SyncPageLogic;
 import com.systex.sop.cvs.ui.tableClass.LogResultDO;
 import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.TimestampHelper;
+import javax.swing.border.EmptyBorder;
 
 /**
  * 同步功能頁面

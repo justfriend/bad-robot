@@ -38,9 +38,6 @@ public class QueryClassicPage extends JPanel {
 	private SSSJTable table;
 	private SSSJTextField author_jTxtF;
 	private JCheckBox ignoreDel_jChkB;
-	private TagDialog tagDialog = new TagDialog();				// 呈現 TAG 清單的對話框
-	private ModifyDialog modifyDialog = new ModifyDialog();		// 呈現修改註記的對話框
-	private VersionDialog versionDialog = new VersionDialog();	// 呈現版本樹的對話框
 	private SSSJTable table_1;
 	private SSSJTextField author_1_jTxtF;
 	private ObservingTextField beginDate_1_jTxtF;
@@ -125,7 +122,7 @@ public class QueryClassicPage extends JPanel {
 					Long rcsid = (Long) getTable().getSelectValueAt("RCSID");
 					String ver = (String) getTable().getSelectValueAt("最新版號");
 					String filename = (String) getTable().getSelectValueAt("檔案名稱");
-					logic.doRetrieveTagInfo(rcsid, ver, filename, getTagDialog());
+					logic.doRetrieveTagInfo(rcsid, ver, filename);
 				}
 			}
 		});
@@ -227,7 +224,7 @@ public class QueryClassicPage extends JPanel {
 					Long rcsid = (Long) getTable_1().getSelectValueAt("RCSID");
 					String ver = (String) getTable_1().getSelectValueAt("最新版號");
 					String filename = (String) getTable_1().getSelectValueAt("檔案名稱");
-					logic.doRetrieveTagInfo(rcsid, ver, filename, getTagDialog());
+					logic.doRetrieveTagInfo(rcsid, ver, filename);
 				}
 			}
 		});
@@ -236,24 +233,12 @@ public class QueryClassicPage extends JPanel {
 	
 	public void initUI() {
 		setBackground(new Color(127, 125, 123));
-		logic.registerPopupMenu(getTable(), getTagDialog(), getModifyDialog(), getVersionDialog());
-		logic.registerPopupMenu(getTable_1(), getTagDialog(), getModifyDialog(), getVersionDialog());
+		logic.registerPopupMenu(getTable());
+		logic.registerPopupMenu(getTable_1());
 	}
 
 	public SSSJTable getTable() {
 		return table;
-	}
-
-	public TagDialog getTagDialog() {
-		return tagDialog;
-	}
-
-	public ModifyDialog getModifyDialog() {
-		return modifyDialog;
-	}
-
-	public VersionDialog getVersionDialog() {
-		return versionDialog;
 	}
 
 	/**
