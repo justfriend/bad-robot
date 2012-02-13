@@ -8,6 +8,33 @@ public class CVSConst {
 	public static final String SPLIT_DESC = "----------------------------";
 	public static final String BLOCK_END = "===========================================================================";
 	
+	public enum PROG_TYPE {
+		ALL(' ', "all"), PROGRAM('0', "program"), SCHEMA('2', "schema" );
+		private char flag;
+		private String desc;
+		
+		private PROG_TYPE(char flag, String desc) {
+			this.flag = flag;
+			this.desc = desc;
+		}
+		
+		public char getFlag() {
+			return flag;
+		}
+		
+		public String getDesc() {
+			return desc;
+		}
+		
+		public static PROG_TYPE findByFlag(char flag) {
+			for (PROG_TYPE e : PROG_TYPE.values()) {
+				if (e.getFlag() == flag) return e;
+			}
+			return null;
+		}
+	}
+
+
 	public enum CMDTYPE {
 		CHK_CVS, CHK_MODULE, CHK_LOGPATH, CHK_DBCONN, CHK_CRON,
 		CHK_SCHEDULAR

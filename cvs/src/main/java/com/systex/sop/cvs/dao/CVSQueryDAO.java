@@ -12,6 +12,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
+import com.systex.sop.cvs.constant.CVSConst.PROG_TYPE;
 import com.systex.sop.cvs.dto.Tbsoptcvsmap;
 import com.systex.sop.cvs.dto.Tbsoptcvstag;
 import com.systex.sop.cvs.dto.Tbsoptcvsver;
@@ -52,7 +53,7 @@ public class CVSQueryDAO {
 	}
 	
 	/** 查詢提交註記錯誤或遺漏 **/
-	public List<VerMapDO> queryCommentMiss(String author, boolean isIgnoreDel, Timestamp date) {
+	public List<VerMapDO> queryCommentMiss(String author, boolean isIgnoreDel, Timestamp date, PROG_TYPE type) {
 		List<VerMapDO> objList = new ArrayList<VerMapDO>();
 		Session session = null;
 		Criteria cri = null;
@@ -67,6 +68,12 @@ public class CVSQueryDAO {
 					Restrictions.isNull("descId"),
 					Restrictions.isNull("descDesc") ));
 			if (isIgnoreDel) cri.add(Restrictions.ne("state", '1'));
+			if (PROG_TYPE.PROGRAM == type) {
+				cri.add(Restrictions.ne("m.clientserver", '2'));
+			}else
+			if (PROG_TYPE.SCHEMA == type){
+				cri.add(Restrictions.eq("m.clientserver", '2'));
+			}
 			
 			cri.setMaxResults(PropReader.getPropertyInt("CVS.MAX_RESULT_COUNT"));
 			Iterator<Tbsoptcvsver> iter = cri.list().iterator();
@@ -87,7 +94,7 @@ public class CVSQueryDAO {
 	}
 	
 	/** 查詢最新版本TAG未上 **/
-	public List<VerMapDO> queryNewVerNoTag(String author, boolean isIgnoreDel) {
+	public List<VerMapDO> queryNewVerNoTag(String author, boolean isIgnoreDel, PROG_TYPE type) {
 		List<VerMapDO> objList = new ArrayList<VerMapDO>();
 		Session session = null;
 		Criteria cri = null;
@@ -101,6 +108,12 @@ public class CVSQueryDAO {
 			cri.add(Restrictions.eqProperty("m.versionhead", "v.id.version"));
 			cri.add(Restrictions.isNull("t.id.tagname"));
 			if (isIgnoreDel) cri.add(Restrictions.ne("state", '1'));
+			if (PROG_TYPE.PROGRAM == type) {
+				cri.add(Restrictions.ne("m.clientserver", '2'));
+			}else
+			if (PROG_TYPE.SCHEMA == type){
+				cri.add(Restrictions.eq("m.clientserver", '2'));
+			}
 
 			cri.setMaxResults(PropReader.getPropertyInt("CVS.MAX_RESULT_COUNT"));
 			Iterator<Tbsoptcvsver> iter = cri.list().iterator();
@@ -122,7 +135,7 @@ public class CVSQueryDAO {
 	
 	/** 一般查詢 **/
 	public List<VerMapDO> queryNormal(String author, boolean isIgnoreDel, Timestamp beginDate, Timestamp endedDate,
-			String filename, String program, String id, String desc, String tagName) 
+			String filename, String program, String id, String desc, String tagName, PROG_TYPE type) 
 	{
 		List<VerMapDO> objList = new ArrayList<VerMapDO>();
 		Session session = null;
@@ -141,6 +154,12 @@ public class CVSQueryDAO {
 			if (isIgnoreDel) cri.add(Restrictions.ne("state", '1'));
 			if (StringUtil.isNotEmpty(tagName)) {
 				cri.createCriteria("tbsoptcvstags", "t", Criteria.INNER_JOIN, Restrictions.eq("t.id.tagname", tagName));
+			}
+			if (PROG_TYPE.PROGRAM == type) {
+				cri.add(Restrictions.ne("m.clientserver", '2'));
+			}else
+			if (PROG_TYPE.SCHEMA == type){
+				cri.add(Restrictions.eq("m.clientserver", '2'));
 			}
 			
 			cri.setMaxResults(PropReader.getPropertyInt("CVS.MAX_RESULT_COUNT"));

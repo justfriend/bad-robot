@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.util.Date;
 import java.util.Locale;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -20,7 +21,9 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+import com.systex.sop.cvs.constant.CVSConst.PROG_TYPE;
 import com.systex.sop.cvs.ui.customize.comp.SSSJButton;
+import com.systex.sop.cvs.ui.customize.comp.SSSJComboBox;
 import com.systex.sop.cvs.ui.customize.comp.SSSJLabel;
 import com.systex.sop.cvs.ui.customize.comp.SSSJSplitPane;
 import com.systex.sop.cvs.ui.customize.comp.SSSJTabbedPane;
@@ -47,7 +50,9 @@ public class QueryClassicPage extends JPanel {
 	private SSSJTextField author_1_jTxtF;
 	private ObservingTextField beginDate_1_jTxtF;
 	private JCheckBox ignoreDel_1_jChkB;
-
+	private SSSJComboBox type_jCmbB;
+	private SSSJComboBox type_1_jCmbB;
+	
 	/** Constructor **/
 	public QueryClassicPage() {
 		initial();
@@ -91,7 +96,7 @@ public class QueryClassicPage extends JPanel {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("50dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("max(89dlu;default)"),},
+				ColumnSpec.decode("50dlu"),},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("18dlu"),
@@ -116,14 +121,23 @@ public class QueryClassicPage extends JPanel {
 		SSSJButton qry_jBtn = new SSSJButton();
 		qry_jBtn.setBackground(Color.WHITE);
 		
-		// XXX 查詢提交註記錯誤或遺漏
+		// XXX 查詢「最新版本未下TAG」
 		qry_jBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				logic.doQueryNewVerNoTag(getAuthor_jTxtF().getText(), getIgnoreDel_jChkB().isSelected(), getTable());
+				PROG_TYPE type = (PROG_TYPE) getType_jCmbB().getSelectedItem();
+				logic.doQueryNewVerNoTag(getAuthor_jTxtF().getText(), getIgnoreDel_jChkB().isSelected(), type, getTable());
 			}
 		});
+		
+		SSSJLabel label_5 = new SSSJLabel();
+		label_5.setText("分類");
+		panel_4.add(label_5, "6, 3, right, default");
+		
+		type_jCmbB = new SSSJComboBox();
+		type_jCmbB.setModel(new DefaultComboBoxModel(PROG_TYPE.values()));
+		panel_4.add(type_jCmbB, "8, 3, fill, default");
 		qry_jBtn.setText("查詢");
-		panel_4.add(qry_jBtn, "8, 3");
+		panel_4.add(qry_jBtn, "10, 3, default, center");
 		
 		JScrollPane scrollPane = new JScrollPane();
 		splitPane.setRightComponent(scrollPane);
@@ -214,18 +228,27 @@ public class QueryClassicPage extends JPanel {
 		SSSJButton qry_1_jBtn = new SSSJButton();
 		qry_1_jBtn.setBackground(Color.WHITE);
 		
-		// XXX 查詢提交註記錯誤或遺漏
+		// XXX 查詢「提交註記錯誤或遺漏」
 		qry_1_jBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				PROG_TYPE type = (PROG_TYPE) getType_1_jCmbB().getSelectedItem();
 				logic.doQueryCommentMiss(
 						getAuthor_1_jTxtF().getText(),
 						getIgnoreDel_1_jChkB().isSelected(),
 						TimestampHelper.convertToTimestamp2(getBeginDate_1_jTxtF().getText()),
-						getTable_1() );
+						getTable_1(), type );
 			}
 		});
+		
+		SSSJLabel label_6 = new SSSJLabel();
+		label_6.setText("分類");
+		panel_5.add(label_6, "6, 3, right, default");
+		
+		type_1_jCmbB = new SSSJComboBox();
+		type_1_jCmbB.setModel(new DefaultComboBoxModel(PROG_TYPE.values()));
+		panel_5.add(type_1_jCmbB, "8, 3, fill, default");
 		qry_1_jBtn.setText("查詢");
-		panel_5.add(qry_1_jBtn, "8, 3");
+		panel_5.add(qry_1_jBtn, "10, 3, default, center");
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
 		splitPane_1.setRightComponent(scrollPane_1);
@@ -272,5 +295,11 @@ public class QueryClassicPage extends JPanel {
 
 	public JCheckBox getIgnoreDel_1_jChkB() {
 		return ignoreDel_1_jChkB;
+	}
+	public SSSJComboBox getType_jCmbB() {
+		return type_jCmbB;
+	}
+	public SSSJComboBox getType_1_jCmbB() {
+		return type_1_jCmbB;
 	}
 }

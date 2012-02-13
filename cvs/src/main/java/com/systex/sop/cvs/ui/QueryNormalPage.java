@@ -35,6 +35,9 @@ import com.systex.sop.cvs.ui.logic.QueryPageLogic;
 import com.systex.sop.cvs.ui.tableClass.VerMapDO;
 import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.TimestampHelper;
+import com.systex.sop.cvs.ui.customize.comp.SSSJComboBox;
+import javax.swing.DefaultComboBoxModel;
+import com.systex.sop.cvs.constant.CVSConst.PROG_TYPE;
 
 /**
  * 一般查詢畫面
@@ -61,6 +64,7 @@ public class QueryNormalPage extends JPanel {
 	private SSSJTable table;
 	private SSSJTextField tag_jTxtF;
 	private SSSJCheckBox tag_jChkB;
+	private SSSJComboBox type_jCmbB;
 	
 	/** Constructor **/
 	public QueryNormalPage() {
@@ -105,7 +109,7 @@ public class QueryNormalPage extends JPanel {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("60dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("20dlu"),
+				ColumnSpec.decode("30dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("50dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
@@ -131,19 +135,19 @@ public class QueryNormalPage extends JPanel {
 		author_jTxtF = new SSSJTextField();
 		panel_2.add(author_jTxtF, "4, 2, fill, default");
 		
-		SSSJLabel label_2 = new SSSJLabel();
-		label_2.setText("檔案名稱");
-		panel_2.add(label_2, "6, 2, right, default");
-		
-		filename_jTxtF = new SSSJTextField();
-		panel_2.add(filename_jTxtF, "8, 2, fill, default");
-		
 		SSSJLabel lblPccid = new SSSJLabel();
 		lblPccid.setText("ID");
-		panel_2.add(lblPccid, "10, 2, right, default");
+		panel_2.add(lblPccid, "6, 2, right, default");
 		
 		id_jTxtF = new SSSJTextField();
-		panel_2.add(id_jTxtF, "12, 2, fill, default");
+		panel_2.add(id_jTxtF, "8, 2, fill, default");
+		
+		SSSJLabel lblDesc = new SSSJLabel();
+		lblDesc.setText("DESC");
+		panel_2.add(lblDesc, "10, 2, right, default");
+		
+		desc_jTxtF = new SSSJTextField();
+		panel_2.add(desc_jTxtF, "12, 2, fill, default");
 		
 		SSSJLabel label_4 = new SSSJLabel();
 		label_4.setText("提交時間");
@@ -218,19 +222,13 @@ public class QueryNormalPage extends JPanel {
 		ignoreDel_jChkB.setBackground(Color.PINK);
 		panel_2.add(ignoreDel_jChkB, "4, 3");
 		
-		SSSJLabel label_3 = new SSSJLabel();
-		label_3.setText("程式名稱");
-		panel_2.add(label_3, "6, 3, right, default");
+		SSSJLabel label_7 = new SSSJLabel();
+		label_7.setText("分類");
+		panel_2.add(label_7, "6, 3, right, default");
 		
-		program_jTxtF = new SSSJTextField();
-		panel_2.add(program_jTxtF, "8, 3, fill, default");
-		
-		SSSJLabel lblDesc = new SSSJLabel();
-		lblDesc.setText("DESC");
-		panel_2.add(lblDesc, "10, 3, right, default");
-		
-		desc_jTxtF = new SSSJTextField();
-		panel_2.add(desc_jTxtF, "12, 3, fill, default");
+		type_jCmbB = new SSSJComboBox();
+		type_jCmbB.setModel(new DefaultComboBoxModel(PROG_TYPE.values()));
+		panel_2.add(type_jCmbB, "8, 3, fill, default");
 		
 		tag_jChkB = new SSSJCheckBox("");
 		tag_jChkB.setSelected(true);
@@ -250,6 +248,13 @@ public class QueryNormalPage extends JPanel {
 			}
 		});
 		
+		SSSJLabel label_3 = new SSSJLabel();
+		label_3.setText("程式名稱");
+		panel_2.add(label_3, "10, 3, right, default");
+		
+		program_jTxtF = new SSSJTextField();
+		panel_2.add(program_jTxtF, "12, 3, fill, default");
+		
 		SSSJLabel label_5 = new SSSJLabel();
 		label_5.setText("鎖定版本");
 		panel_2.add(label_5, "14, 3, right, default");
@@ -266,6 +271,7 @@ public class QueryNormalPage extends JPanel {
 		// XXX 進行一般查詢
 		query_jBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				PROG_TYPE type = (PROG_TYPE) getType_jCmbB().getSelectedItem();
 				logic.doQueryNormal(getTable(),
 						getAuthor_jTxtF().getText(),
 						getIgnoreDel_jChkB().isSelected(),
@@ -275,9 +281,17 @@ public class QueryNormalPage extends JPanel {
 						getProgram_jTxtF().getText(),
 						getId_jTxtF().getText(),
 						getDesc_jTxtF().getText(),
-						(getTag_jChkB().isSelected())? getTag_jTxtF().getText(): null );
+						(getTag_jChkB().isSelected())? getTag_jTxtF().getText(): null,
+						type);
 			}
 		});
+		
+		SSSJLabel label_2 = new SSSJLabel();
+		label_2.setText("檔案名稱");
+		panel_2.add(label_2, "10, 4, right, default");
+		
+		filename_jTxtF = new SSSJTextField();
+		panel_2.add(filename_jTxtF, "12, 4, fill, default");
 		query_jBtn.setBackground(Color.WHITE);
 		query_jBtn.setText("查詢");
 		panel_2.add(query_jBtn, "16, 4, 3, 1");
@@ -349,5 +363,8 @@ public class QueryNormalPage extends JPanel {
 
 	public JCheckBox getTag_jChkB() {
 		return tag_jChkB;
+	}
+	public SSSJComboBox getType_jCmbB() {
+		return type_jCmbB;
 	}
 }
