@@ -10,7 +10,7 @@
         <property name="hibernate.connection.username">sopaadmin</property>
         <property name="hibernate.default_schema">SOPAADMIN</property>
         <property name="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</property>
-        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.show_sql">false</property>
         
         <!-- Mapping resource -->
     	<mapping resource="com/systex/sop/cvs/dto/Tbsoptcvsmap.hbm.xml"/>

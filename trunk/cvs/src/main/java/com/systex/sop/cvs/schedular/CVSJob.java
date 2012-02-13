@@ -93,6 +93,7 @@ public class CVSJob implements Job {
 						CxtMessageQueue.addCxtMessage(msg);
 					}
 				}else{
+					isSyncWrite = false;
 					if (isUI) {
 						msg = "同步紀錄檔失敗";
 						StartUI.getInstance().getFrame().setMessage(msg);
