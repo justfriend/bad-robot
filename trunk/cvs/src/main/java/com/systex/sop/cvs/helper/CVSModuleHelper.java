@@ -1,6 +1,6 @@
 package com.systex.sop.cvs.helper;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.systex.sop.cvs.util.PropReader;
@@ -9,7 +9,7 @@ import com.systex.sop.cvs.util.StringUtil;
 public class CVSModuleHelper {
 	
 	/** key is module name, value is module path **/
-	private Map<String, String> map = new HashMap<String, String>();
+	private Map<String, String> map = new LinkedHashMap<String, String>();
 	
 	public CVSModuleHelper() {
 		load();
