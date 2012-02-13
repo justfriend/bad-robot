@@ -15,6 +15,7 @@ import javax.swing.border.BevelBorder;
 
 import org.apache.commons.lang.time.StopWatch;
 
+import com.systex.sop.cvs.constant.CVSConst.PROG_TYPE;
 import com.systex.sop.cvs.dao.CVSQueryDAO;
 import com.systex.sop.cvs.dto.Tbsoptcvsmap;
 import com.systex.sop.cvs.dto.Tbsoptcvsver;
@@ -53,12 +54,12 @@ public class QueryPageLogic {
 	}
 	
 	/**  查詢提交註記錯誤或遺漏 **/
-	public void doQueryCommentMiss(String author, boolean isIgnoreDel, Timestamp date, JTable table) {
+	public void doQueryCommentMiss(String author, boolean isIgnoreDel, Timestamp date, JTable table, PROG_TYPE type) {
 		try {
 			// 進行查詢
 			StopWatch s = new StopWatch();
 			s.start();
-			List<VerMapDO> result = dao.queryCommentMiss(author, isIgnoreDel, date);
+			List<VerMapDO> result = dao.queryCommentMiss(author, isIgnoreDel, date, type);
 			s.stop();
 			
 			displayResult(table, result, s);
@@ -71,12 +72,12 @@ public class QueryPageLogic {
 	}
 	
 	/** 查詢最新版本未上TAG **/
-	public void doQueryNewVerNoTag(String author, boolean isIgnoreDel, JTable table) {
+	public void doQueryNewVerNoTag(String author, boolean isIgnoreDel, PROG_TYPE type, JTable table) {
 		try {
 			// 進行查詢
 			StopWatch s = new StopWatch();
 			s.start();
-			List<VerMapDO> result = dao.queryNewVerNoTag(author, isIgnoreDel);
+			List<VerMapDO> result = dao.queryNewVerNoTag(author, isIgnoreDel, type);
 			s.stop();
 			
 			displayResult(table, result, s);
@@ -91,13 +92,13 @@ public class QueryPageLogic {
 	
 	/** 一般查詢 **/
 	public  void doQueryNormal(JTable table, String author, boolean isIgnoreDel, Timestamp beginTime, Timestamp endedTime,
-			String filename, String program, String id, String desc, String tagname) {
+			String filename, String program, String id, String desc, String tagname, PROG_TYPE type) {
 		try {
 			// 進行查詢
 			StopWatch s = new StopWatch();
 			s.start();
 			List<VerMapDO> result = dao.queryNormal(
-					author, isIgnoreDel, beginTime, endedTime, filename, program, id, desc, tagname
+					author, isIgnoreDel, beginTime, endedTime, filename, program, id, desc, tagname, type
 			);
 			s.stop();
 			
