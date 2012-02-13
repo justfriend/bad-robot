@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.border.BevelBorder;
@@ -112,7 +113,10 @@ public class QueryPageLogic {
 	
 	/** 檢示版本樹 **/
 	public void doQueryVerTree(Long rcsid, String filename) {
-		if (StringUtil.anyEmpty(rcsid, filename)) return;
+		if (StringUtil.anyEmpty(rcsid, filename)) {
+			StartUI.getInstance().getFrame().showMessageBox("無法取得[RCSID]或[檔案名稱]"	);
+			return;
+		}
 		
 		try {
 			// 進行查詢
@@ -153,13 +157,18 @@ public class QueryPageLogic {
 			TableUtil.addRows(StartUI.getInstance().getVersionDialog().getTable(), result);
 		} catch (Exception e) {
 			CVSLog.getLogger().error(this, e);
-			StartUI.getInstance().getFrame().setMessage("查詢發生異常：" + e.getMessage());
+			String msg = "查詢發生異常：" + e.getMessage();
+			StartUI.getInstance().getFrame().setMessage(msg);
+			StartUI.getInstance().getFrame().showMessageBox(msg);
 		}
 	}
 	
 	/** 查詢TAG資料 **/
 	public void doRetrieveTagInfo(Long rcsid, String ver, String filename) {
-		if (StringUtil.anyEmpty(rcsid, ver, filename)) return;
+		if (StringUtil.anyEmpty(rcsid, ver, filename)) {
+			StartUI.getInstance().getFrame().showMessageBox("無法取得[RCSID][版號]或[檔案名稱]"	);
+			return;
+		}
 		
 		List<TagDO> tList = null;
 		try {
@@ -190,14 +199,19 @@ public class QueryPageLogic {
 			TableUtil.addRows(StartUI.getInstance().getTagDialog().getTable(), tList);
 		}catch(Exception e){
 			CVSLog.getLogger().error(this, e);
-			StartUI.getInstance().getFrame().setMessage("查詢發生異常：" + e.getMessage());
+			String msg = "查詢發生異常：" + e.getMessage();
+			StartUI.getInstance().getFrame().setMessage(msg);
+			StartUI.getInstance().getFrame().showMessageBox(msg);
 		}
 	}
 	
-	/** 取得特定版號資料 **/
-	public void doRetrieveVerInfo(Long rcsid, String ver) {
-		if (StringUtil.anyEmpty(rcsid, ver)) return;
-
+	/** 取得特定版號資料 (彈出修改視窗) **/
+	public void doRetrieveVerInfo(Long rcsid, String ver, String module) {
+		if (StringUtil.anyEmpty(rcsid, ver, module)) {
+			StartUI.getInstance().getFrame().showMessageBox("無法取得[RCSID][版號]或[模組名稱]"	);
+			return;
+		}
+		
 		try {
 			// 查詢資料
 			Tbsoptcvsver v = dao.retrieveVER(rcsid, ver);
@@ -217,12 +231,15 @@ public class QueryPageLogic {
 			StartUI.getInstance().getModifyDialog().getVersion_jTxtF().setText(ver);
 			StartUI.getInstance().getModifyDialog().getWorkdir_jTxtF().setText(mHelper.getPath(CVSFunc.fxModule(m.getModule(), m.getClientserver())));
 			StartUI.getInstance().getModifyDialog().getFilepath_jTxtF().setText(CVSFunc.fxExtraSource(m.getRcsfile()));
+			StartUI.getInstance().getModifyDialog().getModule_jTxtF().setText(module);
 			StartUI.getInstance().getModifyDialog().getOldComment_jTxtF().setText(v.getFulldesc());
 			StartUI.getInstance().getModifyDialog().getNewComment_jTxtF().setText("");	// clear
 			StartUI.getInstance().getModifyDialog().setVisible(true);
 		}catch(Exception e){
 			CVSLog.getLogger().error(this, e);
-			StartUI.getInstance().getFrame().setMessage("查詢發生異常：" + e.getMessage());
+			String msg = "查詢發生異常：" + e.getMessage();
+			StartUI.getInstance().getFrame().setMessage(msg);
+			StartUI.getInstance().getFrame().showMessageBox(msg);
 		}
 	}
 	
@@ -265,9 +282,30 @@ public class QueryPageLogic {
 			public void actionPerformed(ActionEvent e) {
 				Long rcsid = (Long) table.getSelectValueAt("RCSID");
 				String ver = (String) table.getSelectValueAt("版號");
-				doRetrieveVerInfo(rcsid, ver);
+				String module = (String) table.getSelectValueAt("模組名稱");
+				doRetrieveVerInfo(rcsid, ver, module);
 			} });
 		popup.add(item);
+		popup.addSeparator();
+		
+		// 重置所有子視窗
+		item = new JMenuItem("重置所有視窗");
+		item.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int confirm = JOptionPane.showConfirmDialog(StartUI.getInstance().getFrame(), "是否確定重置所有子視窗位置", "", JOptionPane.YES_NO_OPTION);
+				if (confirm == JOptionPane.YES_OPTION) {
+					PropReader.setProperty("CVS.TAG_X", "0");
+					PropReader.setProperty("CVS.TAG_Y", "0");
+					PropReader.setProperty("CVS.MODIFY_X", "0");
+					PropReader.setProperty("CVS.MODIFY_Y", "0");
+					PropReader.setProperty("CVS.VERTREE_X", "0");
+					PropReader.setProperty("CVS.VERTREE_Y", "0");
+					StartUI.getInstance().getFrame().showMessageBox("視窗重置完成");
+				}
+			} });
+		popup.add(item);
+		
 		
 		Dimension size = popup.getPreferredSize();
 		popup.setPreferredSize(new Dimension((int) (size.width * 1.4), size.height));

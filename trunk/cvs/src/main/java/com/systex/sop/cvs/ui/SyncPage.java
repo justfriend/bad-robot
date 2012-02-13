@@ -2,6 +2,7 @@ package com.systex.sop.cvs.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
@@ -33,17 +34,20 @@ import com.systex.sop.cvs.ui.logic.SyncPageLogic;
 import com.systex.sop.cvs.ui.tableClass.LogResultDO;
 import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.TimestampHelper;
-import javax.swing.border.EmptyBorder;
 
 /**
  * 同步功能頁面
  * <P>
- * 1. 僅含畫面UI及元件事件 <BR>
- * 3. 事件之處理委派由--Logic來處理<BR>
  *
  */
 @SuppressWarnings("serial")
 public class SyncPage extends JPanel {
+	// 控制變數
+	
+	// 幫助項目
+	private SyncPageLogic logic = new SyncPageLogic();
+	
+	// 元件項目
 	private SSSJTextField autoCron_jTxtF;
 	private SSSJTextField autoDate_jTxtF;
 	private SSSJButton autoExec_jBtn;
@@ -51,9 +55,33 @@ public class SyncPage extends JPanel {
 	private SSSJTable table;
 	private JCheckBox fullSync_jChkB;
 	private SSSJButton manualExec_jBtn;
-	private SyncPageLogic logic = new SyncPageLogic(this);
 	private JCheckBox syncLog_jChkB;
 	private JCheckBox syncWrite_jChkB;
+	
+	/** Constructor */
+	public SyncPage() {
+		setBorder(null);
+		initial();
+		initUI();
+	}
+	
+	/** 切換「完整同步」按鈕 **/
+	private void doSwitchFullSync() {
+		if (getFullSync_jChkB().isSelected()) {
+			getManualDate_jTxtF().setText("2000/01/01");
+		} else {
+			getManualDate_jTxtF().setText(TimestampHelper.convertToyyyyMMdd2(CVSJob.getAutoSyncDate()));
+		}
+	}
+
+	private void initUI() {
+		/** 初始化「自動同步」 **/
+		getCron_jTxtF().setText(PropReader.getProperty("CVS.CRONTAB"));
+		getAutoDate_jTxtF().setText(TimestampHelper.convertToyyyyMMdd2(CVSJob.getAutoSyncDate()));
+		
+		/** 初始化「手動同步」 **/
+		getManualDate_jTxtF().setText(TimestampHelper.convertToyyyyMMdd2(CVSJob.getAutoSyncDate()));
+	}
 	
 	private void initial() {
 		setLayout(new BorderLayout(0, 0));
@@ -65,7 +93,7 @@ public class SyncPage extends JPanel {
 		SSSJSplitPane sync_jSplit = new SSSJSplitPane();
 		sync_jSplit.setBorder(null);
 		sync_jSplit.setBackground(new Color(127, 125, 123));
-		sync_jSplit.setDividerLocation(130);
+		sync_jSplit.setDividerLocation(105);
 		sync_jSplit.setOneTouchExpandable(false);
 		sync_jSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		scrollPane.setViewportView(sync_jSplit);
@@ -78,7 +106,7 @@ public class SyncPage extends JPanel {
 		sync_jTab.addTab("自動同步", null, autoSyncTab, null);
 		autoSyncTab.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("30dlu"),
+				ColumnSpec.decode("25dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("50dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
@@ -87,9 +115,8 @@ public class SyncPage extends JPanel {
 				ColumnSpec.decode("50dlu"),},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("20dlu"),
-				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("20dlu"),
+				RowSpec.decode("18dlu"),
+				RowSpec.decode("18dlu"),
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -104,30 +131,31 @@ public class SyncPage extends JPanel {
 		autoDate_jTxtF.setColumns(10);
 
 		SSSJLabel label_1 = new SSSJLabel("排程");
-		autoSyncTab.add(label_1, "2, 4, right, default");
+		autoSyncTab.add(label_1, "2, 3, right, default");
 
 		autoCron_jTxtF = new SSSJTextField();
 		autoCron_jTxtF.setEditable(false);
-		autoSyncTab.add(autoCron_jTxtF, "4, 4, fill, default");
+		autoSyncTab.add(autoCron_jTxtF, "4, 3, fill, default");
 		autoCron_jTxtF.setColumns(10);
 
 		autoExec_jBtn = new SSSJButton(SSSJButton.ITEM_LITE);
 		autoExec_jBtn.setBackground(Color.WHITE);
+		
+		// XXX 「自動同步」(啟動 / 停止)
 		autoExec_jBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// 執行「自動同步」(啟動 / 停止)
-				logic.doAutoSyncExecute();
+				logic.doAutoSyncExecute(autoExec_jBtn);
 			}
 		});
 		autoExec_jBtn.setText("啟動");
-		autoSyncTab.add(autoExec_jBtn, "8, 4");
+		autoSyncTab.add(autoExec_jBtn, "8, 3");
 
 		JPanel manualSyncTab = new JPanel();
 		manualSyncTab.setBackground(Color.WHITE);
 		sync_jTab.addTab("手動同步", null, manualSyncTab, null);
 		manualSyncTab.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("30dlu"),
+				ColumnSpec.decode("25dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("50dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
@@ -140,11 +168,8 @@ public class SyncPage extends JPanel {
 				ColumnSpec.decode("74dlu"),},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("20dlu"),
-				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("20dlu"),
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,}));
+				RowSpec.decode("18dlu"),
+				RowSpec.decode("18dlu"),}));
 
 		SSSJLabel label_2 = new SSSJLabel("日期");
 		manualSyncTab.add(label_2, "2, 2, right, default");
@@ -169,6 +194,8 @@ public class SyncPage extends JPanel {
 		manualSyncTab.add(datePicker_jBtn, "6, 2");
 		
 		SSSJButton button = new SSSJButton();
+		
+		// XXX 中斷同步
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				logic.doInterrupt();
@@ -184,62 +211,51 @@ public class SyncPage extends JPanel {
 
 		SSSJLabel label_3 = new SSSJLabel();
 		label_3.setText("範圍");
-		manualSyncTab.add(label_3, "2, 4, right, default");
+		manualSyncTab.add(label_3, "2, 3, right, default");
 
 		fullSync_jChkB = new JCheckBox("完全同步");
 		fullSync_jChkB.setBackground(Color.PINK);
+		
+		// XXX 切換「完整同步」按鈕
 		fullSync_jChkB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// 切換「完整同步」按鈕
-				logic.doSwitchFullSync();
+				doSwitchFullSync();
 			}
 		});
-		manualSyncTab.add(fullSync_jChkB, "4, 4");
+		manualSyncTab.add(fullSync_jChkB, "4, 3");
 
 		manualExec_jBtn = new SSSJButton(SSSJButton.ITEM_LITE);
 		manualExec_jBtn.setBackground(Color.WHITE);
+		
+		// XXX 執行「手動同步」
 		manualExec_jBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// 執行「手動同步」
 				if (!getSyncLog_jChkB().isSelected() && !getSyncWrite_jChkB().isSelected()) {
 					JOptionPane.showMessageDialog(SyncPage.this, "「同步LOG」與「 同步WRITE」至少選一項");
 				}else{
-					logic.doManualSyncExecute(getSyncLog_jChkB().isSelected(), getSyncWrite_jChkB().isSelected());
+					logic.doManualSyncExecute(
+							getSyncLog_jChkB().isSelected(),
+							getSyncWrite_jChkB().isSelected(),
+							getManualDate_jTxtF().getText(),
+							getFullSync_jChkB().isSelected() );
 				}
 			}
 		});
 		manualExec_jBtn.setText("執行");
-		manualSyncTab.add(manualExec_jBtn, "8, 4");
+		manualSyncTab.add(manualExec_jBtn, "8, 3");
 		
 		syncWrite_jChkB = new JCheckBox("同步WRITE");
 		syncWrite_jChkB.setSelected(true);
 		syncWrite_jChkB.setBackground(Color.WHITE);
-		manualSyncTab.add(syncWrite_jChkB, "12, 4");
-
-		JScrollPane syncResult_jScrP = new JScrollPane();
-		syncResult_jScrP.setBackground(Color.ORANGE);
-		sync_jSplit.setRightComponent(syncResult_jScrP);
+		manualSyncTab.add(syncWrite_jChkB, "12, 3");
+		
+				JScrollPane syncResult_jScrP = new JScrollPane();
+				sync_jSplit.setRightComponent(syncResult_jScrP);
+				syncResult_jScrP.setBackground(Color.ORANGE);
 
 		table = new SSSJTable(new LogResultDO());
+		table.setPreferredScrollableViewportSize(new Dimension(450, 200));
 		syncResult_jScrP.setViewportView(table);
-	}
-	
-	private void initUI() {
-		/** 初始化「自動同步」 **/
-		getCron_jTxtF().setText(PropReader.getProperty("CVS.CRONTAB"));
-		getAutoDate_jTxtF().setText(TimestampHelper.convertToyyyyMMdd2(CVSJob.getAutoSyncDate()));
-		
-		/** 初始化「手動同步」 **/
-		getManualDate_jTxtF().setText(TimestampHelper.convertToyyyyMMdd2(CVSJob.getAutoSyncDate()));
-	}
-
-	/**
-	 * Create the panel.
-	 */
-	public SyncPage() {
-		setBorder(null);
-		initial();
-		initUI();
 	}
 
 	public SSSJTextField getAutoDate_jTxtF() {
@@ -273,6 +289,7 @@ public class SyncPage extends JPanel {
 	public JCheckBox getSyncLog_jChkB() {
 		return syncLog_jChkB;
 	}
+
 	public JCheckBox getSyncWrite_jChkB() {
 		return syncWrite_jChkB;
 	}

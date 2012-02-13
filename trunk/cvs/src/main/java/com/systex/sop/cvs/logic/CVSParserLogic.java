@@ -116,13 +116,16 @@ public class CVSParserLogic {
 	}
 	
 	private char fxClientServer(String module) {
-		char csCode = ' ';
+		char csCode = CVSConst.CLIENTSERVER.CLIENT.getFlag();
 		String cs = module.split("-")[2];
 		if ("client".equalsIgnoreCase(cs)) {
-			csCode = '0';
+			csCode = CVSConst.CLIENTSERVER.CLIENT.getFlag();
 		}else
 		if ("server".equalsIgnoreCase(cs)) {
-			csCode = '1';
+			csCode = CVSConst.CLIENTSERVER.SERVER.getFlag();
+		}else
+		if ("schema".equalsIgnoreCase(cs)) {
+			csCode = CVSConst.CLIENTSERVER.SCHEMA.getFlag();
 		}
 		
 		return csCode;
@@ -133,7 +136,6 @@ public class CVSParserLogic {
 		for (int i = beginLine; i < lineList.size(); i++) {
 			String line = lineList.get(i);
 			if (line.startsWith("keyword") || line.startsWith("total")) { break; }
-			System.err.println (line);
 			VERTAG tag = new VERTAG();
 			tag.tagname = line.split(": ")[0].trim();
 			tag.version = line.split(": ")[1];

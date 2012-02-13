@@ -43,6 +43,32 @@ public class CVSConst {
 		}
 	}
 	
+	public enum CLIENTSERVER {
+		UNKNOW(' ', "unknow"), CLIENT('0', "client"), SERVER('1', "server" ), SCHEMA('2', "schema");
+		private char flag;
+		private String desc;
+		
+		private CLIENTSERVER(char flag, String desc) {
+			this.flag = flag;
+			this.desc = desc;
+		}
+		
+		public char getFlag() {
+			return flag;
+		}
+		
+		public String getDesc() {
+			return desc;
+		}
+		
+		public static CLIENTSERVER findByFlag(char flag) {
+			for (CLIENTSERVER e : CLIENTSERVER.values()) {
+				if (e.getFlag() == flag) return e;
+			}
+			return null;
+		}
+	}
+	
 	public enum LOGIN_STATUS {
 		LOGIN('I', "登入中"), LOGOUT('O', "已登出" ), CANCEL('C', "已取消");
 
@@ -62,7 +88,7 @@ public class CVSConst {
 			return desc;
 		}
 		
-		public static LOGIN_STATUS findDesc(char flag) {
+		public static LOGIN_STATUS findByFlag(char flag) {
 			for (LOGIN_STATUS e : LOGIN_STATUS.values()) {
 				if (e.getFlag() == flag) return e;
 			}

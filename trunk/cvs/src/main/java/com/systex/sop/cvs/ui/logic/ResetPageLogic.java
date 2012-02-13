@@ -8,6 +8,11 @@ import com.systex.sop.cvs.ui.ResetPage;
 import com.systex.sop.cvs.util.HostnameUtil;
 import com.systex.sop.cvs.util.StringUtil;
 
+/**
+ * 重置登入之邏輯處理及資料查詢
+ * <p>
+ *
+ */
 public class ResetPageLogic {
 	private CVSLoginDAO dao = new CVSLoginDAO();
 	private ResetPage page;
@@ -37,7 +42,7 @@ public class ResetPageLogic {
 		if (login == null) {
 			page.getLoginMsg_jL().setText("系統無登入資訊");
 		}else{
-			String status = CVSConst.LOGIN_STATUS.findDesc(login.getStatus()).getDesc();
+			String status = CVSConst.LOGIN_STATUS.findByFlag(login.getStatus()).getDesc();
 			String msg = StringUtil.concat(
 					"使用者[", login.getCreator(),
 					"], 狀態[", status,

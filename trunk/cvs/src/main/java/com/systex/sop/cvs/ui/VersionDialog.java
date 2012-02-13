@@ -42,7 +42,7 @@ public class VersionDialog extends SSSJDialogBase {
 	}
 	
 	private void initUI() {
-		setBounds(100, 100, 600, 600);
+		setBounds(100, 100, 540, 500);
 		setTitle("CVS Version Tree");
 		// 增加座標記憶功能
 		getTitleBar().addMouseListener(new MouseAdapter() {
@@ -66,7 +66,7 @@ public class VersionDialog extends SSSJDialogBase {
 				ColumnSpec.decode("default:grow"),},
 			new RowSpec[] {
 				RowSpec.decode("30dlu"),
-				RowSpec.decode("default:grow"),}));
+				RowSpec.decode("150dlu:grow"),}));
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new MatteBorder(0, 0, 2, 0, (Color) new Color(128, 128, 128)));
@@ -76,7 +76,7 @@ public class VersionDialog extends SSSJDialogBase {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("40dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("200dlu"),
+				ColumnSpec.decode("120dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("38dlu"),},
 			new RowSpec[] {
@@ -110,9 +110,9 @@ public class VersionDialog extends SSSJDialogBase {
 		imgJPanel.setLayout(new BorderLayout(0, 0));
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
+		imgJPanel.add(scrollPane_1, BorderLayout.CENTER);
 		scrollPane_1.setBackground(Color.ORANGE);
 		scrollPane_1.setBorder(new MatteBorder(2, 2, 2, 0, (Color) new Color(128, 128, 128)));
-		imgJPanel.add(scrollPane_1, BorderLayout.CENTER);
 		
 		table = new SSSJTable(new VerTreeDO());
 		table.setBorder(null);

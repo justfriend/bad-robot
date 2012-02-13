@@ -34,7 +34,12 @@ import com.systex.sop.cvs.util.TimestampHelper;
 
 @SuppressWarnings("serial")
 public class QueryClassicPage extends JPanel {
+	// 控制變數
+	
+	// 幫助項目
 	private QueryPageLogic logic = new QueryPageLogic();
+	
+	// 元件項目
 	private SSSJTable table;
 	private SSSJTextField author_jTxtF;
 	private JCheckBox ignoreDel_jChkB;
@@ -42,6 +47,18 @@ public class QueryClassicPage extends JPanel {
 	private SSSJTextField author_1_jTxtF;
 	private ObservingTextField beginDate_1_jTxtF;
 	private JCheckBox ignoreDel_1_jChkB;
+
+	/** Constructor **/
+	public QueryClassicPage() {
+		initial();
+		initUI();
+	}
+	
+	public void initUI() {
+		setBackground(new Color(127, 125, 123));
+		logic.registerPopupMenu(getTable());
+		logic.registerPopupMenu(getTable_1());
+	}
 	
 	private void initial() {
 		setLayout(new BorderLayout(0, 0));
@@ -58,7 +75,7 @@ public class QueryClassicPage extends JPanel {
 		splitPane.setBorder(null);
 		splitPane.setBackground(new Color(127, 125, 123));
 		splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		splitPane.setDividerLocation(95);
+		splitPane.setDividerLocation(75);
 		panel.add(splitPane, BorderLayout.CENTER);
 		
 		JPanel panel_4 = new JPanel();
@@ -66,7 +83,7 @@ public class QueryClassicPage extends JPanel {
 		splitPane.setLeftComponent(panel_4);
 		panel_4.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("30dlu"),
+				ColumnSpec.decode("25dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("50dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
@@ -77,9 +94,8 @@ public class QueryClassicPage extends JPanel {
 				ColumnSpec.decode("max(89dlu;default)"),},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("20dlu"),
-				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("20dlu"),}));
+				RowSpec.decode("18dlu"),
+				RowSpec.decode("18dlu"),}));
 		
 		SSSJLabel label = new SSSJLabel();
 		label.setText("作者");
@@ -90,12 +106,12 @@ public class QueryClassicPage extends JPanel {
 		
 		SSSJLabel label_1 = new SSSJLabel();
 		label_1.setText("忽略");
-		panel_4.add(label_1, "2, 4, right, default");
+		panel_4.add(label_1, "2, 3, right, default");
 		
 		ignoreDel_jChkB = new JCheckBox("忽略已刪除");
 		ignoreDel_jChkB.setSelected(true);
 		ignoreDel_jChkB.setBackground(Color.PINK);
-		panel_4.add(ignoreDel_jChkB, "4, 4");
+		panel_4.add(ignoreDel_jChkB, "4, 3");
 		
 		SSSJButton qry_jBtn = new SSSJButton();
 		qry_jBtn.setBackground(Color.WHITE);
@@ -107,7 +123,7 @@ public class QueryClassicPage extends JPanel {
 			}
 		});
 		qry_jBtn.setText("查詢");
-		panel_4.add(qry_jBtn, "8, 4");
+		panel_4.add(qry_jBtn, "8, 3");
 		
 		JScrollPane scrollPane = new JScrollPane();
 		splitPane.setRightComponent(scrollPane);
@@ -135,7 +151,7 @@ public class QueryClassicPage extends JPanel {
 		SSSJSplitPane splitPane_1 = new SSSJSplitPane();
 		splitPane_1.setBorder(null);
 		splitPane_1.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		splitPane_1.setDividerLocation(95);
+		splitPane_1.setDividerLocation(75);
 		splitPane_1.setBackground(new Color(127, 125, 123));
 		panel_1.add(splitPane_1, BorderLayout.CENTER);
 		
@@ -144,7 +160,7 @@ public class QueryClassicPage extends JPanel {
 		splitPane_1.setLeftComponent(panel_5);
 		panel_5.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("30dlu"),
+				ColumnSpec.decode("25dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("50dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
@@ -155,9 +171,8 @@ public class QueryClassicPage extends JPanel {
 				ColumnSpec.decode("50dlu"),},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("20dlu"),
-				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("20dlu"),}));
+				RowSpec.decode("18dlu"),
+				RowSpec.decode("18dlu"),}));
 		
 		SSSJLabel label_3 = new SSSJLabel();
 		label_3.setText("作者");
@@ -189,12 +204,12 @@ public class QueryClassicPage extends JPanel {
 		
 		SSSJLabel label_2 = new SSSJLabel();
 		label_2.setText("忽略");
-		panel_5.add(label_2, "2, 4, right, default");
+		panel_5.add(label_2, "2, 3, right, default");
 		
 		ignoreDel_1_jChkB = new JCheckBox("忽略已刪除");
 		ignoreDel_1_jChkB.setBackground(Color.PINK);
 		ignoreDel_1_jChkB.setSelected(true);
-		panel_5.add(ignoreDel_1_jChkB, "4, 4");
+		panel_5.add(ignoreDel_1_jChkB, "4, 3");
 		
 		SSSJButton qry_1_jBtn = new SSSJButton();
 		qry_1_jBtn.setBackground(Color.WHITE);
@@ -210,7 +225,7 @@ public class QueryClassicPage extends JPanel {
 			}
 		});
 		qry_1_jBtn.setText("查詢");
-		panel_5.add(qry_1_jBtn, "8, 4");
+		panel_5.add(qry_1_jBtn, "8, 3");
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
 		splitPane_1.setRightComponent(scrollPane_1);
@@ -230,23 +245,9 @@ public class QueryClassicPage extends JPanel {
 		});
 		scrollPane_1.setViewportView(table_1);
 	}
-	
-	public void initUI() {
-		setBackground(new Color(127, 125, 123));
-		logic.registerPopupMenu(getTable());
-		logic.registerPopupMenu(getTable_1());
-	}
 
 	public SSSJTable getTable() {
 		return table;
-	}
-
-	/**
-	 * Create the panel.
-	 */
-	public QueryClassicPage() {
-		initial();
-		initUI();
 	}
 
 	public SSSJTextField getAuthor_jTxtF() {

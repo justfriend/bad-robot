@@ -77,7 +77,7 @@ public class VerTreeDO extends CVSBaseDO implements Comparable<VerTreeDO>{
 	@Override
 	public int[] getColumnWidth() {
 //		"版號", "提交日期", "作者", "標籤名稱"
-		return new int[] { 65, 155, 65, 220 };
+		return new int[] { 50, 145, 60, 220 };
 	}
 
 	@Override

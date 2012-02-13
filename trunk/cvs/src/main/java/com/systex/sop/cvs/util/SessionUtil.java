@@ -1,5 +1,7 @@
 package com.systex.sop.cvs.util;
 
+import java.io.File;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -20,7 +22,8 @@ public class SessionUtil {
 	private static SessionFactory sessionFty = null;
 	
 	private static void buildSessionFactory() {
-		sessionFty = new Configuration().configure().buildSessionFactory();
+		File f = new File(PropReader.getPropertyHome(), "hibernate.cfg.xml");
+		sessionFty = new Configuration().configure(f).buildSessionFactory();
 	}
 	
 	/**

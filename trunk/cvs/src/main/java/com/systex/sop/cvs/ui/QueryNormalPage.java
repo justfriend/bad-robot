@@ -36,6 +36,11 @@ import com.systex.sop.cvs.ui.tableClass.VerMapDO;
 import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.TimestampHelper;
 
+/**
+ * 一般查詢畫面
+ * <p>
+ *
+ */
 @SuppressWarnings("serial")
 public class QueryNormalPage extends JPanel {
 	// 控制變數
@@ -84,7 +89,7 @@ public class QueryNormalPage extends JPanel {
 		splitPane.setBorder(null);
 		splitPane.setBackground(new Color(127, 125, 123));
 		splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		splitPane.setDividerLocation(95);
+		splitPane.setDividerLocation(100);
 		panel.add(splitPane, BorderLayout.CENTER);
 		
 		JPanel panel_2 = new JPanel();
@@ -92,7 +97,7 @@ public class QueryNormalPage extends JPanel {
 		splitPane.setLeftComponent(panel_2);
 		panel_2.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("30dlu"),
+				ColumnSpec.decode("25dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("50dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
@@ -115,9 +120,9 @@ public class QueryNormalPage extends JPanel {
 				ColumnSpec.decode("50dlu"),},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("20dlu"),
-				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("20dlu"),}));
+				RowSpec.decode("18dlu"),
+				RowSpec.decode("18dlu"),
+				RowSpec.decode("18dlu"),}));
 		
 		SSSJLabel label = new SSSJLabel();
 		label.setText("作者");
@@ -206,52 +211,26 @@ public class QueryNormalPage extends JPanel {
 		
 		SSSJLabel label_1 = new SSSJLabel();
 		label_1.setText("忽略");
-		panel_2.add(label_1, "2, 4, right, default");
+		panel_2.add(label_1, "2, 3, right, default");
 		
 		ignoreDel_jChkB = new JCheckBox("忽略已刪除");
 		ignoreDel_jChkB.setSelected(true);
 		ignoreDel_jChkB.setBackground(Color.PINK);
-		panel_2.add(ignoreDel_jChkB, "4, 4");
+		panel_2.add(ignoreDel_jChkB, "4, 3");
 		
 		SSSJLabel label_3 = new SSSJLabel();
 		label_3.setText("程式名稱");
-		panel_2.add(label_3, "6, 4, right, default");
+		panel_2.add(label_3, "6, 3, right, default");
 		
 		program_jTxtF = new SSSJTextField();
-		panel_2.add(program_jTxtF, "8, 4, fill, default");
+		panel_2.add(program_jTxtF, "8, 3, fill, default");
 		
 		SSSJLabel lblDesc = new SSSJLabel();
 		lblDesc.setText("DESC");
-		panel_2.add(lblDesc, "10, 4, right, default");
+		panel_2.add(lblDesc, "10, 3, right, default");
 		
 		desc_jTxtF = new SSSJTextField();
-		panel_2.add(desc_jTxtF, "12, 4, fill, default");
-		
-		SSSJLabel label_5 = new SSSJLabel();
-		label_5.setText("鎖定版本");
-		panel_2.add(label_5, "14, 4, right, default");
-		
-		tag_jTxtF = new SSSJTextField();
-		tag_jTxtF.setBackground(Color.WHITE);
-		panel_2.add(tag_jTxtF, "16, 4, 3, 1, fill, default");
-		
-		SSSJButton query_jBtn = new SSSJButton();
-		
-		// XXX 進行一般查詢
-		query_jBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				logic.doQueryNormal(getTable(),
-						getAuthor_jTxtF().getText(),
-						getIgnoreDel_jChkB().isSelected(),
-						TimestampHelper.convertToTimestamp2(getBeginVerTime_jTxtF().getText()),
-						TimestampHelper.convertToTimestamp2(getEndedVerTime_jTxtF().getText()),
-						getFilename_jTxtF().getText(),
-						getProgram_jTxtF().getText(),
-						getId_jTxtF().getText(),
-						getDesc_jTxtF().getText(),
-						(getTag_jChkB().isSelected())? getTag_jTxtF().getText(): null );
-			}
-		});
+		panel_2.add(desc_jTxtF, "12, 3, fill, default");
 		
 		tag_jChkB = new SSSJCheckBox("");
 		tag_jChkB.setSelected(true);
@@ -270,12 +249,38 @@ public class QueryNormalPage extends JPanel {
 				}
 			}
 		});
+		
+		SSSJLabel label_5 = new SSSJLabel();
+		label_5.setText("鎖定版本");
+		panel_2.add(label_5, "14, 3, right, default");
+		
+		tag_jTxtF = new SSSJTextField();
+		tag_jTxtF.setBackground(Color.WHITE);
+		panel_2.add(tag_jTxtF, "16, 3, 3, 1, fill, default");
 		tag_jChkB.setBorder(null);
 		tag_jChkB.setBackground(Color.WHITE);
-		panel_2.add(tag_jChkB, "20, 4, left, default");
+		panel_2.add(tag_jChkB, "20, 3, left, default");
+		
+		SSSJButton query_jBtn = new SSSJButton();
+		
+		// XXX 進行一般查詢
+		query_jBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				logic.doQueryNormal(getTable(),
+						getAuthor_jTxtF().getText(),
+						getIgnoreDel_jChkB().isSelected(),
+						TimestampHelper.convertToTimestamp2(getBeginVerTime_jTxtF().getText()),
+						TimestampHelper.convertToTimestamp2(getEndedVerTime_jTxtF().getText()),
+						getFilename_jTxtF().getText(),
+						getProgram_jTxtF().getText(),
+						getId_jTxtF().getText(),
+						getDesc_jTxtF().getText(),
+						(getTag_jChkB().isSelected())? getTag_jTxtF().getText(): null );
+			}
+		});
 		query_jBtn.setBackground(Color.WHITE);
 		query_jBtn.setText("查詢");
-		panel_2.add(query_jBtn, "22, 4");
+		panel_2.add(query_jBtn, "16, 4, 3, 1");
 		
 		JScrollPane scrollPane = new JScrollPane();
 		splitPane.setRightComponent(scrollPane);

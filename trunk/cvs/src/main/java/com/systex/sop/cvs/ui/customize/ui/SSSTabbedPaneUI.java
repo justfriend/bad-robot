@@ -271,7 +271,6 @@ public class SSSTabbedPaneUI extends BasicTabbedPaneUI {
 	@Override
 	protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h,
 			boolean isSelected) {
-//		System.err.println ("x is " + x + " y is " + y + " w is " + w + " h is " + h);
 		Graphics2D g2d = (Graphics2D) g;
 		
 		/** 上半部底色 **/
