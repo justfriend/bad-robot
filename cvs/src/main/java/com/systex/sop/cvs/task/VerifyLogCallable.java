@@ -77,6 +77,7 @@ public class VerifyLogCallable implements Callable<TaskResult> {
 		}catch(Exception e){
 			CVSLog.getLogger().error(this, e);
 			result.setIsDone(Boolean.FALSE);
+			throw e;
 		}finally{
 			result.setEndedTime(new Timestamp(System.currentTimeMillis()));	// [ENDED]
 			StreamCloseHelper.closeReader(br, isr);

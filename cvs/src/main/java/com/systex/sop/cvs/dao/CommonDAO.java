@@ -67,12 +67,12 @@ public class CommonDAO {
 		}
 	}
 	
-	public Object loadDTO(Class<? extends Object> loadClass, Serializable key) {
+	public Object loadDTO(Class<? extends Object> loadClass, Serializable key, boolean isNotLazy) {
 		Session session = null;
 		try {
 			session = SessionUtil.openSession();
 			Object obj = session.load(loadClass, key);
-			if (obj != null) obj.toString();	// 印出來強迫加載
+			if (isNotLazy && obj != null) obj.toString();	// 印出來強迫加載
 			return obj;
 		}catch(HibernateException e){
 			throw e;
@@ -80,19 +80,27 @@ public class CommonDAO {
 			SessionUtil.closeSession(session);
 		}
 	}
+	
+	public Object loadDTO(Class<? extends Object> loadClass, Serializable key) {
+		return loadDTO(loadClass, key, false);
+	}
 
-	public Object getDTO(Class<? extends Object> loadClass, Serializable key) {
+	public Object getDTO(Class<? extends Object> loadClass, Serializable key, boolean isNotLazy) {
 		Session session = null;
 		try {
 			session = SessionUtil.openSession();
 			Object obj = session.get(loadClass, key);
-			if (obj != null) obj.toString();	// 印出來強迫加載
+			if (isNotLazy && obj != null) obj.toString();	// 印出來強迫加載
 			return obj;
 		}catch(HibernateException e){
 			throw e;
 		}finally{
 			SessionUtil.closeSession(session);
 		}
+	}
+	
+	public Object getDTO(Class<? extends Object> loadClass, Serializable key) {
+		return getDTO(loadClass, key, false);
 	}
 	
 	public void saveDTO(Object dto) {

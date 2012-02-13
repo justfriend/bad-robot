@@ -124,7 +124,6 @@ public class CVSJob implements Job {
 			if (isUI) {
 				msg = StringUtil.concat("同步完成, 耗時：", CVSFunc.fxElapseTime(s.getTime()));
 				StartUI.getInstance().getFrame().setMessage(msg);
-				CxtMessageQueue.addCxtMessage(msg);
 			}
 		}catch(Exception e){
 			CVSLog.getLogger().error(this, e);

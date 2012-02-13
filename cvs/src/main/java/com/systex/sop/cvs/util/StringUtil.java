@@ -2,6 +2,9 @@ package com.systex.sop.cvs.util;
 
 import java.sql.Timestamp;
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
+
 /**
  * String Utility
  * <p>
@@ -26,12 +29,26 @@ public class StringUtil {
 		return null;
 	}
 	
+	public static boolean allEmpty(Object ...objs) {
+		if (objs == null) return true;
+		
+		for (Object obj : objs) {
+			if (obj != null) {
+				if (!isEmpty(obj)) return false;
+			}
+		}
+		
+		return true;
+	}
+	
 	public static boolean anyEmpty(Object ...objs) {
+		if (objs == null) return true;
+		
 		for (Object obj : objs) {
 			if (obj == null) {
 				return true;
 			}else{
-				if (isEmpty(obj.toString()))
+				if (isEmpty(obj))
 					return true;
 			}
 		}
@@ -73,13 +90,13 @@ public class StringUtil {
 		return str;
 	}
 	
-	public static boolean isEmpty(String str) {
+	public static boolean isEmpty(Object str) {
 		boolean isEmpty = false;
 
 		if (str == null) {
 			isEmpty = true;
 		} else {
-			if (str.trim().length() < 1) {
+			if (str.toString().trim().length() < 1) {
 				isEmpty = true;
 			}
 		}
@@ -87,7 +104,7 @@ public class StringUtil {
 		return isEmpty;
 	}
 	
-	public static boolean isNotEmpty(String str) {
+	public static boolean isNotEmpty(Object str) {
 		return !isEmpty(str);
 	}
 	
@@ -115,43 +132,4 @@ public class StringUtil {
 		}
 	}
 	
-	public static String genStringEqSQL(String column, String value) {
-		if (isNotEmpty(value)) {
-			return StringUtil.concat(" AND ", column, " = '", value, "'");
-		}else{
-			return "";
-		}
-	}
-	
-	public static String genStringIgnoreCaseEqSQL(String column, String value) {
-		if (isNotEmpty(value)) {
-			return StringUtil.concat(" AND UPPER(", column, ") = UPPER('", value, "')");
-		}else{
-			return "";
-		}
-	}
-	
-	public static String genStringLikeSQL(String column, String value) {
-		if (isNotEmpty(value)) {
-			return StringUtil.concat(" AND ", column, " LIKE '%", value, "%'");
-		}else{
-			return "";
-		}
-	}
-	
-	public static String genStringIgnoreCaseLikeSQL(String column, String value) {
-		if (isNotEmpty(value)) {
-			return StringUtil.concat(" AND UPPER(", column, ") LIKE UPPER('%", value, "%')");
-		}else{
-			return "";
-		}
-	}
-	
-	public static String genNumberEqSQL(String column, Long value) {
-		if (value != null) {
-			return StringUtil.concat(" AND ", column, " = ", value);
-		}else{
-			return "";
-		}
-	}
 }

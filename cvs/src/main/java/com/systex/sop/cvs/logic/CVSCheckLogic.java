@@ -152,7 +152,5 @@ public class CVSCheckLogic {
 	}
 	
 	public static void main (String [] args) {
-		CVSCheckLogic app = new CVSCheckLogic();
-		System.err.println (app.execute());
 	}
 }

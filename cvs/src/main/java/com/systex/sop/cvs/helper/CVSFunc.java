@@ -3,6 +3,7 @@ package com.systex.sop.cvs.helper;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
+import com.systex.sop.cvs.constant.CVSConst.CLIENTSERVER;
 import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.StringUtil;
 import com.systex.sop.cvs.util.TimestampHelper;
@@ -20,7 +21,7 @@ public class CVSFunc {
 	}
 	
 	public static String [] fxCmdVerifyArray(String version, String filepath) {
-		String [] cmdArray = new String[] { "cvs.exe", "-q", "log", StringUtil.concat("-r", version), "-N", filepath };
+		String [] cmdArray = new String[] { "cvs.exe", "-q", "log", StringUtil.concat("-r", version, ":", version), "-N", filepath };
 		return cmdArray;
 	}
 	
@@ -46,7 +47,7 @@ public class CVSFunc {
 	}
 	
 	public static String fxModule(String modulePart, char clientServer) {
-		return StringUtil.concat("sop-", modulePart, "-", (clientServer == '0')? "client": "server");
+		return StringUtil.concat("sop-", modulePart, "-", CLIENTSERVER.findByFlag(clientServer).getDesc());
 	}
 	
 	public static String fxToModule(String rcsfile) {
@@ -59,6 +60,9 @@ public class CVSFunc {
 		}else
 		if (rcsfile.indexOf("-client/") > 0) {
 			return rcsfile.substring(rcsfile.indexOf("-client/") + 8);
+		}else
+		if (rcsfile.indexOf("/DB XML/") > 0) {
+			return rcsfile.substring(rcsfile.indexOf("/DB XML/") + 8);
 		}
 		
 		return null;

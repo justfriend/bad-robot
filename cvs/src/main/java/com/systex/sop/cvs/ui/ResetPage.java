@@ -22,10 +22,25 @@ import java.awt.Font;
 
 @SuppressWarnings("serial")
 public class ResetPage extends JPanel {
-	private SSSImgJPanel imgJPanel;
+	// 控制變數
+	
+	// 幫助類別
 	private ResetPageLogic logic = new ResetPageLogic(this);
+	
+	// 元件項目
+	private SSSImgJPanel imgJPanel;
 	private SSSJLabel loginMsg_jL;
 	
+	/** Constructor **/
+	public ResetPage() {
+		initial();
+		initUI();
+	}
+
+	private void initUI() {
+		
+	}
+
 	private void initial() {
 		setLayout(new BorderLayout(0, 0));
 		
@@ -53,9 +68,10 @@ public class ResetPage extends JPanel {
 				RowSpec.decode("40px"),}));
 		
 		SSSJButton reset_jBtn = new SSSJButton(SSSJButton.ITEM_DARK);
+
+		// XXX 重置登入資訊
 		reset_jBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// 重置登入資訊
 				logic.doResetLogin();
 			}
 		});
@@ -64,9 +80,10 @@ public class ResetPage extends JPanel {
 		panel_1.add(reset_jBtn, "2, 1, default, center");
 		
 		SSSJButton refreshLogin_jbtn = new SSSJButton(SSSJButton.ITEM_DARK);
+		
+		// XXX 更新登入資訊
 		refreshLogin_jbtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// 更新登入資訊 
 				logic.doRefreshLoginInfo();
 			}
 		});
@@ -115,22 +132,11 @@ public class ResetPage extends JPanel {
 		lblNewLabel_1.setIcon(new ImageIcon(ResetPage.class.getResource("/resource/reset.gif")));
 		imgJPanel.add(lblNewLabel_1, "6, 8");
 	}
-	
-	private void initUI() {
-		
-	}
-
-	/**
-	 * Create the panel.
-	 */
-	public ResetPage() {
-		initial();
-		initUI();
-	}
 
 	public SSSImgJPanel getImgJPanel() {
 		return imgJPanel;
 	}
+
 	public SSSJLabel getLoginMsg_jL() {
 		return loginMsg_jL;
 	}

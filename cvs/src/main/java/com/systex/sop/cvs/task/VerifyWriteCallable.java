@@ -75,8 +75,8 @@ public class VerifyWriteCallable implements Callable<TaskResult> {
 			result.setIsDone(Boolean.TRUE);
 		}catch(Exception e){
 			CVSLog.getLogger().error(this, e);
-			result.setErrMsg(e.getMessage());
 			result.setIsDone(Boolean.FALSE);
+			throw e;
 		}finally{
 			result.setEndedTime(new Timestamp(System.currentTimeMillis()));	// [ENDED]
 			StreamCloseHelper.closeReader(br, isr);

@@ -4,6 +4,11 @@ import com.systex.sop.cvs.helper.CVSLog;
 import com.systex.sop.cvs.ui.customize.comp.SSSJFrameBase;
 import com.systex.sop.cvs.util.ThreadHelper;
 
+/**
+ * 框架訊息消費者
+ * <p>
+ * 
+ */
 public class CxtMessageConsumer implements Runnable {
 	private SSSJFrameBase frame = null;
 	

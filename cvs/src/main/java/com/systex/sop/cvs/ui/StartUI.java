@@ -32,77 +32,47 @@ import com.systex.sop.cvs.util.ScreenSize;
 /**
  * CVS 主程式
  * <P>
- * 1. CVS 程式之進入點 <BR>
- * 2. 僅含畫面UI及元件事件 <BR>
- * 3. 事件之處理委派由--Logic來處理<BR>
- * 4. 此為主畫面包含框架及選單 <BR>
+ * CVS 程式之進入點 <br>
  *
  */
 public class StartUI {
-	private static StartUI instance;
-	
+	// 控制變數
 	private final float frameWidthRate = 0.8f;	// 框架起始的大小比率 (寬)
 	private final float frameHeightRate = 0.7f;	// 框架起始的大小比率 (高)
-	private SSSJFrameBase frame;
-	private SSSJButton qryNormal_jBtn;			// 一般查詢按鈕
-	private SSSJButton sync_jBtn;				// 同步執行按鈕
-	private SSSJButton sysInfo_jBtn;			// 系統說明按鈕
-	private SSSJButton qryClassic_jBtn;			// 典型查詢按鈕
-	private SSSJButton reset_jBtn;				// 登入重制按鈕
-	private SSSJButton envChk_jBtn;				// 環境檢查按鈕
-	private SSSJSplitPane contentSplitPane;		// 主要之分割窗(*)(點選左方按鈕時利用此來進行套用不同的頁面)
-	private JPanel body_jPanel;
-	private TagDialog tagDialog = new TagDialog();				// 呈現 TAG 清單的對話框
-	private ModifyDialog modifyDialog = new ModifyDialog();		// 呈現修改註記的對話框
-	private VersionDialog versionDialog = new VersionDialog();	// 呈現版本樹的對話框
 	ServerSocket socket;
+	
+	// 幫助項目
+	
+	// 元件項目
+	private TagDialog tagDialog = new TagDialog();				// 呈現 TAG 清單的對話框 (*)
+	private ModifyDialog modifyDialog = new ModifyDialog();		// 呈現修改註記的對話框 (*)
+	private VersionDialog versionDialog = new VersionDialog();	// 呈現版本樹的對話框 (*)
+	private SSSJFrameBase frame;
+	private SSSJButton qryNormal_jBtn;				// 一般查詢按鈕
+	private SSSJButton sync_jBtn;					// 同步執行按鈕
+	private SSSJButton sysInfo_jBtn;				// 系統說明按鈕
+	private SSSJButton qryClassic_jBtn;				// 典型查詢按鈕
+	private SSSJButton reset_jBtn;					// 登入重制按鈕
+	private SSSJButton envChk_jBtn;					// 環境檢查按鈕
+	private SSSJSplitPane contentSplitPane;			// 主要之分割窗(*)(點選左方按鈕時利用此來進行套用不同的頁面)
+	private JPanel body_jPanel;
+	
+	private static StartUI instance;
 
+	/** Singleton **/
 	public static StartUI getInstance() {
 		if (instance == null) {
 			instance = new StartUI();
 		}
 		return instance;
 	}
-	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) throws Exception {
-		try {
-			StartUI window = StartUI.getInstance();
-			
-			if ("true".equalsIgnoreCase(PropReader.getProperty("CVS.WELCOMELOGO"))) {
-				// 呈現歡迎畫面 (淡入後即關閉)
-				window.welcomeLogo();
-				
-				// 必須的等待 (等待歡迎畫面之時間，再秀出主畫面)
-				Thread.sleep(5000);
-			}
-			
-			// 檢查是否重覆啟動
-			window.checkSingleApp();
-			
-			// 啟用內內警示訊息消費者 (收佇列訊息將之呈現在畫面中間)
-			new Thread(new CxtMessageConsumer(getInstance().getFrame())).start();
-			
-			// 指定主容器 (用來切換頁面)
-			Workspace.registerBody(window.getBody_jPanel());
-			
-			// 設定預設畫面
-			Workspace.changePage(PAGE.SYNC_CVS);
-			
-			// 定位主畫面
-			window.frame.setBounds(100, 100,
-					ScreenSize.getDynamicScreenWidth(window.frameWidthRate),
-					ScreenSize.getDynamicScreenHeight(window.frameHeightRate) );
-			
-			// 呈現主畫面
-			window.frame.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
+	/** Constructor **/
+	private StartUI() {
+		initialize();
 	}
 	
+	/** 檢查系統是否重覆執行 **/
 	private void checkSingleApp() {
 		try {
 			socket = new ServerSocket(PropReader.getPropertyInt("CVS.PORT"));
@@ -111,41 +81,14 @@ public class StartUI {
 			System.exit(0);
 		}
 	}
-
-	private StartUI() {
-		initialize();
-	}
 	
-	public SSSJSplitPane getContentSplitPane() {
-		return contentSplitPane;
-	}
-
-	public SSSJButton getEnvChk_jBtn() {
-		return envChk_jBtn;
-	}
-
-	public SSSJFrameBase getFrame() {
-		return frame;
-	}
-
-	public SSSJButton getQryClassic_jBtn() {
-		return qryClassic_jBtn;
-	}
-
-	public SSSJButton getQryNormal_jBtn() {
-		return qryNormal_jBtn;
-	}
-
-	public SSSJButton getReset_jBtn() {
-		return reset_jBtn;
-	}
-
-	public SSSJButton getSync_jBtn() {
-		return sync_jBtn;
-	}
-
-	public SSSJButton getSysInfo_jBtn() {
-		return sysInfo_jBtn;
+	/** 顯示歡迎畫面 **/
+	private void welcomeLogo() {
+		try {
+			LogoUI.main(null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -191,9 +134,6 @@ public class StartUI {
 		menuPanel.add(button, "1, 1, default, fill");
 
 		sync_jBtn = new SSSJButton(SSSJButton.TITLE);
-		if (!"true".equalsIgnoreCase(PropReader.getProperty("CVS.SERVERMODE"))) {
-			sync_jBtn.setEnabled(false);
-		}
 		sync_jBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Workspace.changePage(PAGE.SYNC_CVS);
@@ -204,9 +144,6 @@ public class StartUI {
 		menuPanel.add(sync_jBtn, "1, 3");
 
 		reset_jBtn = new SSSJButton(SSSJButton.TITLE);
-		if (!"true".equalsIgnoreCase(PropReader.getProperty("CVS.SERVERMODE"))) {
-			reset_jBtn.setEnabled(false);
-		}
 		reset_jBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Workspace.changePage(PAGE.RESET_LOGIN);
@@ -279,14 +216,84 @@ public class StartUI {
 		qryTitle1.put("典型查詢", new String[] { "查詢TAG未正確", "查詢TAG版號未在最新版" });
 	}
 
-	private void welcomeLogo() {
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) throws Exception {
 		try {
-			LogoUI.main(null);
+			StartUI window = StartUI.getInstance();
+			
+			if ("true".equalsIgnoreCase(PropReader.getProperty("CVS.WELCOMELOGO"))) {
+				// 呈現歡迎畫面 (淡入後即關閉)
+				window.welcomeLogo();
+				
+				// 必須的等待 (等待歡迎畫面之時間，再秀出主畫面)
+				Thread.sleep(5000);
+			}
+			
+			// 檢查是否重覆啟動
+			window.checkSingleApp();
+			
+			// 啟用內內警示訊息消費者 (收佇列訊息將之呈現在畫面中間)
+			new Thread(new CxtMessageConsumer(getInstance().getFrame())).start();
+			
+			// 指定主容器 (用來切換頁面)
+			Workspace.registerBody(window.getBody_jPanel());
+			
+			// 設定預設畫面
+			if (!"true".equalsIgnoreCase(PropReader.getProperty("CVS.SERVERMODE"))) {
+				getInstance().getSync_jBtn().setEnabled(false);
+				getInstance().getReset_jBtn().setEnabled(false);
+				Workspace.changePage(PAGE.QRY_NORMAL);
+			}else{
+				Workspace.changePage(PAGE.SYNC_CVS);
+			}
+
+			
+			// 定位主畫面
+			window.frame.setBounds(100, 100,
+					ScreenSize.getDynamicScreenWidth(window.frameWidthRate),
+					ScreenSize.getDynamicScreenHeight(window.frameHeightRate) );
+			
+			// 呈現主畫面
+			window.frame.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
+	public SSSJSplitPane getContentSplitPane() {
+		return contentSplitPane;
+	}
+
+	public SSSJButton getEnvChk_jBtn() {
+		return envChk_jBtn;
+	}
+
+	public SSSJFrameBase getFrame() {
+		return frame;
+	}
+
+	public SSSJButton getQryClassic_jBtn() {
+		return qryClassic_jBtn;
+	}
+
+	public SSSJButton getQryNormal_jBtn() {
+		return qryNormal_jBtn;
+	}
+
+	public SSSJButton getReset_jBtn() {
+		return reset_jBtn;
+	}
+
+	public SSSJButton getSync_jBtn() {
+		return sync_jBtn;
+	}
+
+	public SSSJButton getSysInfo_jBtn() {
+		return sysInfo_jBtn;
+	}
+
 	public JPanel getBody_jPanel() {
 		return body_jPanel;
 	}

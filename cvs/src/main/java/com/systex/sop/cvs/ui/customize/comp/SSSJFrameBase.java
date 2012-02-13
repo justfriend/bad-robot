@@ -212,8 +212,10 @@ public class SSSJFrameBase extends IFrame {
 	/** 設定左下角訊息文字 **/
 	public void setMessage(String msg) {
 		msgjL.setText(msg);
+		CVSLog.getLogger().info("[Message]" + msg);
 	}
 	
+	/** 呈現框架訊息 **/
 	public void setCxtMessage(String msg) {
 		if (StringUtil.isEmpty(msg)) {
 			cxtjL.setText("");
@@ -224,6 +226,7 @@ public class SSSJFrameBase extends IFrame {
 			cxtjL.setVerticalAlignment(SwingConstants.CENTER);
 			cxtjL.setBounds( (int) (size.width * 0.2), (int) (size.height * 0.2), (int) (size.width * 0.6), (int) (size.height * 0.6));
 			cxtjL.setText(msg);
+			CVSLog.getLogger().info("[CxtMsg]" + msg);
 		}
 		cxtjL.repaint();
 	}
@@ -232,10 +235,12 @@ public class SSSJFrameBase extends IFrame {
 		return titleBar;
 	}
 	
+	/** 呈現訊息對話框 **/
 	public void showMessageBox(String msg) {
 		showMessageBox(this, msg);
 	}
 	
+	/** 呈現訊息對話框 (指定父視窗) **/
 	public void showMessageBox(Component comp, String msg) {
 		CVSLog.getLogger().info("[MessageBox]" + msg);
 		JOptionPane.showMessageDialog(comp, msg);
