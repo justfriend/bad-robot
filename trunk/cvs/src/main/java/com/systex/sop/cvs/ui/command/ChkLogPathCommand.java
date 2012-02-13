@@ -1,16 +1,16 @@
-package com.systex.sop.cvs.command;
+package com.systex.sop.cvs.ui.command;
 
 import java.io.File;
 
-import com.badrobot.ui.containers.BadTrafficLabel;
 import com.systex.sop.cvs.constant.CVSConst.CMD_RESULT;
 import com.systex.sop.cvs.helper.CVSLog;
+import com.systex.sop.cvs.ui.customize.comp.SSSTrafficLabel;
 import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.StringUtil;
 
-public class ChkLogPathCommand extends StatusCommand {
+public class ChkLogPathCommand extends BaseCommand {
 
-	protected ChkLogPathCommand(BadTrafficLabel c) {
+	protected ChkLogPathCommand(SSSTrafficLabel c) {
 		super(c);
 	}
 

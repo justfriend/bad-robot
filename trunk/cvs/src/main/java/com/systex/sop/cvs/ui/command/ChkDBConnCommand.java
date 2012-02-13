@@ -1,17 +1,17 @@
-package com.systex.sop.cvs.command;
+package com.systex.sop.cvs.ui.command;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 
-import com.badrobot.ui.containers.BadTrafficLabel;
 import com.systex.sop.cvs.constant.CVSConst.CMD_RESULT;
 import com.systex.sop.cvs.dto.Tbsoptcvslogin;
 import com.systex.sop.cvs.helper.CVSLog;
+import com.systex.sop.cvs.ui.customize.comp.SSSTrafficLabel;
 import com.systex.sop.cvs.util.SessionUtil;
 
-public class ChkDBConnCommand extends StatusCommand {
+public class ChkDBConnCommand extends BaseCommand {
 
-	protected ChkDBConnCommand(BadTrafficLabel c) {
+	protected ChkDBConnCommand(SSSTrafficLabel c) {
 		super(c);
 	}
 

@@ -1,4 +1,4 @@
-package com.systex.sop.cvs.command;
+package com.systex.sop.cvs.ui.command;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,9 +8,20 @@ import com.systex.sop.cvs.constant.CVSConst.CMD_RESULT;
 
 
 public class StatusInvoker {
-	private Map<CMDTYPE, StatusCommand> cmdMap = new HashMap<CMDTYPE, StatusCommand>();
+	private static StatusInvoker instance;
+	private Map<CMDTYPE, BaseCommand> cmdMap = new HashMap<CMDTYPE, BaseCommand>();
 	
-	public void setCommand(CMDTYPE type, StatusCommand cmd) {
+	private StatusInvoker() {};
+	
+	public static StatusInvoker getInstance() {
+		if (instance == null) {
+			instance = new StatusInvoker();
+		}
+		return instance;
+	}
+	
+	
+	public void setCommand(CMDTYPE type, BaseCommand cmd) {
 		cmdMap.put(type, cmd);
 	}
 	

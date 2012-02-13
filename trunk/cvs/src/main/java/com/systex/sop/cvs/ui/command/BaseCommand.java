@@ -1,12 +1,12 @@
-package com.systex.sop.cvs.command;
+package com.systex.sop.cvs.ui.command;
 
-import com.badrobot.ui.containers.BadTrafficLabel;
 import com.systex.sop.cvs.constant.CVSConst.CMD_RESULT;
+import com.systex.sop.cvs.ui.customize.comp.SSSTrafficLabel;
 
-public abstract class StatusCommand {
-	protected BadTrafficLabel c;
+public abstract class BaseCommand {
+	protected SSSTrafficLabel c;
 
-	protected StatusCommand(BadTrafficLabel c) {
+	protected BaseCommand(SSSTrafficLabel c) {
 		this.c = c;
 	}
 

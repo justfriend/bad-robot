@@ -1,6 +1,6 @@
 package com.systex.sop.cvs.constant;
 
-import com.badrobot.ui.containers.BadTrafficLabel.LIGHT;
+import com.systex.sop.cvs.ui.customize.comp.SSSTrafficLabel.LIGHT;
 
 public class CVSConst {
 	public static final String ENCODING_IN = "MS950";
