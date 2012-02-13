@@ -198,7 +198,7 @@ public class CVSParserLogic {
 	}
 	
 	public Tbsoptcvsmap parser(String hostname, String module, List<String> lineList, boolean isFullSync) {
-		CVSLog.getLogger().info(StringUtil.concat("Parsing... [module]", module, ", [lineList]", lineList.size(), ", [isFullSync]", isFullSync));
+//		CVSLog.getLogger().info(StringUtil.concat("Parsing... [module]", module, ", [lineList]", lineList.size(), ", [isFullSync]", isFullSync));
 		
 		/** Check DATA **/
 		checkParserData(lineList);
