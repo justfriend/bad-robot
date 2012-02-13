@@ -19,7 +19,7 @@ import com.systex.sop.cvs.ui.customize.SSSPalette;
 import com.systex.sop.cvs.ui.customize.comp.SSSStatusButton;
 
 public class SSSStatusButtonUI extends BasicButtonUI implements MouseListener {
-	private SSSStatusButtonUI button;
+	private SSSStatusButton button;
 	private boolean isArmed = false;
 	
 	public SSSStatusButtonUI(SSSStatusButton button) {
@@ -27,6 +27,7 @@ public class SSSStatusButtonUI extends BasicButtonUI implements MouseListener {
 		button.setBorderPainted(false);
 		button.setFocusable(false);
 		button.addMouseListener(this);
+		this.button = button;
 	}
 	
 	@Override
@@ -36,7 +37,26 @@ public class SSSStatusButtonUI extends BasicButtonUI implements MouseListener {
 		Color bomBG = null;
 		Color fontColor = null;
 		
-		if 
+		if (SSSStatusButton.STATUS.NONE == button.getStatus()) {
+			topBG = SSSPalette.BTN_STATUS_NONE_BG;
+			bomBG = topBG;
+			fontColor = SSSPalette.FNT_STATUS_NONE;
+		}else
+		if (SSSStatusButton.STATUS.ACTIVE == button.getStatus()) {
+			topBG = SSSPalette.BTN_STATUS_ACT_BG_TOP;
+			bomBG = SSSPalette.BTN_STATUS_ACT_BG_BOM;
+			fontColor = SSSPalette.FNT_STATUS_ACT;
+		}else
+		if (SSSStatusButton.STATUS.DONE == button.getStatus()) {
+			topBG = SSSPalette.BTN_STATUS_DONE_BG;
+			bomBG = topBG;
+			fontColor = SSSPalette.FNT_STATUS_DONE;
+		}else
+		if (SSSStatusButton.STATUS.ERROR == button.getStatus()) {
+			topBG = SSSPalette.BTN_STATUS_ERROR_BG_TOP;
+			bomBG = SSSPalette.BTN_STATUS_ERROR_BG_BOM;
+			fontColor = SSSPalette.FNT_STATUS_ERROR;
+		}
 		
 		AbstractButton btn = (AbstractButton) comp;
 		Dimension size = btn.getSize();
