@@ -30,6 +30,11 @@ import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.StringUtil;
 import com.systex.sop.cvs.util.TableUtil;
 
+/**
+ * 查詢之邏輯處理及資料查詢
+ * <p>
+ *
+ */
 public class QueryPageLogic {
 	private CVSQueryDAO dao = new CVSQueryDAO();
 	
@@ -58,7 +63,9 @@ public class QueryPageLogic {
 			displayResult(table, result, s);
 		} catch (Exception e) {
 			CVSLog.getLogger().error(this, e);
-			StartUI.getInstance().getFrame().setMessage("查詢發生異常：" + e.getMessage());
+			String msg = "查詢發生異常：" + e.getMessage();
+			StartUI.getInstance().getFrame().setMessage(msg);
+			StartUI.getInstance().getFrame().showMessageBox(msg);
 		}
 	}
 	
@@ -74,7 +81,9 @@ public class QueryPageLogic {
 			displayResult(table, result, s);
 		} catch (Exception e) {
 			CVSLog.getLogger().error(this, e);
-			StartUI.getInstance().getFrame().setMessage("查詢發生異常：" + e.getMessage());
+			String msg = "查詢發生異常：" + e.getMessage();
+			StartUI.getInstance().getFrame().setMessage(msg);
+			StartUI.getInstance().getFrame().showMessageBox(msg);
 		}
 	}
 	
@@ -94,7 +103,9 @@ public class QueryPageLogic {
 			displayResult(table, result, s);
 		} catch (Exception e) {
 			CVSLog.getLogger().error(this, e);
-			StartUI.getInstance().getFrame().setMessage("查詢發生異常：" + e.getMessage());
+			String msg = "查詢發生異常：" + e.getMessage();
+			StartUI.getInstance().getFrame().setMessage(msg);
+			StartUI.getInstance().getFrame().showMessageBox(msg);
 		}
 	}
 
@@ -227,7 +238,7 @@ public class QueryPageLogic {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Long rcsid = (Long) table.getSelectValueAt("RCSID");
-				String ver = (String) table.getSelectValueAt("最新版號");
+				String ver = (String) table.getSelectValueAt("版號");
 				String filename = (String) table.getSelectValueAt("檔案名稱");
 				doRetrieveTagInfo(rcsid, ver, filename);
 			}
@@ -253,7 +264,7 @@ public class QueryPageLogic {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Long rcsid = (Long) table.getSelectValueAt("RCSID");
-				String ver = (String) table.getSelectValueAt("最新版號");
+				String ver = (String) table.getSelectValueAt("版號");
 				doRetrieveVerInfo(rcsid, ver);
 			} });
 		popup.add(item);
