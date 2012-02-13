@@ -3,6 +3,7 @@ package com.systex.sop.cvs.task;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -32,7 +33,7 @@ import com.systex.sop.cvs.util.TimestampHelper;
  *
  */
 public class LogFutureTask {
-	private Map<String, FutureTask<TaskSyncResult>> taskMap = new HashMap<String, FutureTask<TaskSyncResult>>();
+	private Map<String, FutureTask<TaskSyncResult>> taskMap = new LinkedHashMap<String, FutureTask<TaskSyncResult>>();
 	private Map<String, Boolean> taskDoneMap = new HashMap<String, Boolean>();
 	private ExecutorService service = Executors.newFixedThreadPool(PropReader.getPropertyInt("CVS.THREAD_LOG"));
 	private int previousTotal = 0;		// 上次同步的總數
