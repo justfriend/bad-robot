@@ -1,15 +1,15 @@
-package com.systex.sop.cvs.command;
+package com.systex.sop.cvs.ui.command;
 
 import org.quartz.CronScheduleBuilder;
 
-import com.badrobot.ui.containers.BadTrafficLabel;
 import com.systex.sop.cvs.constant.CVSConst.CMD_RESULT;
 import com.systex.sop.cvs.helper.CVSLog;
+import com.systex.sop.cvs.ui.customize.comp.SSSTrafficLabel;
 import com.systex.sop.cvs.util.PropReader;
 
-public class ChkCronCommand extends StatusCommand {
+public class ChkCronCommand extends BaseCommand {
 
-	protected ChkCronCommand(BadTrafficLabel c) {
+	protected ChkCronCommand(SSSTrafficLabel c) {
 		super(c);
 	}
 

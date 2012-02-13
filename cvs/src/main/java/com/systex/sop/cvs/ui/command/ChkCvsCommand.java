@@ -1,19 +1,19 @@
-package com.systex.sop.cvs.command;
+package com.systex.sop.cvs.ui.command;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import com.badrobot.ui.containers.BadTrafficLabel;
 import com.systex.sop.cvs.constant.CVSConst;
 import com.systex.sop.cvs.constant.CVSConst.CMD_RESULT;
 import com.systex.sop.cvs.helper.CVSLog;
+import com.systex.sop.cvs.ui.customize.comp.SSSTrafficLabel;
 import com.systex.sop.cvs.util.StreamCloseHelper;
 import com.systex.sop.cvs.util.StringUtil;
 
-public class ChkCvsCommand extends StatusCommand {
+public class ChkCvsCommand extends BaseCommand {
 
-	protected ChkCvsCommand(BadTrafficLabel c) {
+	protected ChkCvsCommand(SSSTrafficLabel c) {
 		super(c);
 	}
 

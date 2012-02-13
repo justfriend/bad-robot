@@ -194,6 +194,7 @@ public class SyncPage extends JPanel {
 		manualSyncTab.add(datePicker_jBtn, "6, 2");
 		
 		SSSJButton button = new SSSJButton();
+		button.setBackground(Color.WHITE);
 		
 		// XXX 中斷同步
 		button.addActionListener(new ActionListener() {

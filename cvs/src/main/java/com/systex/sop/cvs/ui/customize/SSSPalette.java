@@ -35,4 +35,18 @@ public class SSSPalette {
 	
 	public static final Color TBL_ROW_ODD_BG = new Color(240, 240, 240);	// 表格列基數底色
 	public static final Color TBL_ROW_EVEN_BG = new Color(255, 255, 255);	// 表格列偶數底色
+	
+	public static final Color BTN_STATUS_ACT_BG_TOP = new Color(238, 118, 0);
+	public static final Color BTN_STATUS_ACT_BG_BOM = new Color(225, 170, 6);
+	public static final Color FNT_STATUS_ACT = new Color(134, 134, 134);
+	
+	public static final Color BTN_STATUS_NONE_BG = new Color(86, 86, 86);
+	public static final Color FNT_STATUS_NONE = new Color(134, 134, 134);
+	
+	public static final Color BTN_STATUS_DONE_BG = new Color(123, 81, 39);
+	public static final Color FNT_STATUS_DONE = new Color(134, 134, 134);
+	
+	public static final Color BTN_STATUS_ERROR_BG_TOP = new Color(255, 64, 64);
+	public static final Color BTN_STATUS_ERROR_BG_BOM = new Color(224, 64, 64);
+	public static final Color FNT_STATUS_ERROR = Color.WHITE;
 }

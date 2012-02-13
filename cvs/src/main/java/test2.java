@@ -1,23 +1,22 @@
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import com.systex.sop.cvs.dao.CVSQueryDAO;
-import com.systex.sop.cvs.ui.customize.comp.SSSJTextField;
-import com.systex.sop.cvs.ui.tableClass.NewVerNoTagDO;
+import com.systex.sop.cvs.ui.tableClass.VerTreeDO;
 
 
 
 public class test2 {
 
 	public static void main(String args[]) throws Exception {
+//		ModifyCallable m = new ModifyCallable(
+//				"D:\\Project\\SOPA_CVS\\SOPA_01_03_Standard\\sop-qfi-server",
+//				"src/com/systex/sop/qfi/model/sopterrtrade/dao/test.txt",
+//				"1.2",
+//				"TEST9999\n哈囉");
+//		TaskWriteResult result = m.call();
+//		System.err.println (result);
+		
 		CVSQueryDAO dao = new CVSQueryDAO();
-		List<NewVerNoTagDO> objList = dao.queryNewVerNoTag("", false);
-		for (NewVerNoTagDO obj : objList) {
-//			System.err.println (obj.getDesc_id());
-		}
 	}
 
 }
