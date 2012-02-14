@@ -29,6 +29,7 @@ import com.systex.sop.cvs.ui.customize.comp.SSSJTabbedPane;
 import com.systex.sop.cvs.ui.customize.comp.SSSJTable;
 import com.systex.sop.cvs.ui.customize.comp.SSSJTextField;
 import com.systex.sop.cvs.ui.customize.other.ObservingTextField;
+import com.systex.sop.cvs.ui.customize.other.QueryActionListener;
 import com.systex.sop.cvs.ui.customize.other.SSSDatePicker;
 import com.systex.sop.cvs.ui.logic.SyncPageLogic;
 import com.systex.sop.cvs.ui.tableClass.LogResultDO;
@@ -197,8 +198,8 @@ public class SyncPage extends JPanel {
 		button.setBackground(Color.WHITE);
 		
 		// XXX 中斷同步
-		button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		button.addActionListener(new QueryActionListener(button) {
+			public void actPerformed(ActionEvent e) {
 				logic.doInterrupt();
 			}
 		});
@@ -229,8 +230,8 @@ public class SyncPage extends JPanel {
 		manualExec_jBtn.setBackground(Color.WHITE);
 		
 		// XXX 執行「手動同步」
-		manualExec_jBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		manualExec_jBtn.addActionListener(new QueryActionListener(manualExec_jBtn) {
+			public void actPerformed(ActionEvent e) {
 				if (!getSyncLog_jChkB().isSelected() && !getSyncWrite_jChkB().isSelected()) {
 					JOptionPane.showMessageDialog(SyncPage.this, "「同步LOG」與「 同步WRITE」至少選一項");
 				}else{

@@ -1,6 +1,7 @@
 package com.systex.sop.cvs.task;
 
 import java.sql.Timestamp;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -11,6 +12,7 @@ public class TaskSyncResult {
 	 * Future task 只在處理結束時才能取得結果，在此將處理中的結果亦儲存起來
 	 */
 	private static ConcurrentHashMap<String, TaskSyncResult> resultMap = new ConcurrentHashMap<String, TaskSyncResult>();
+	private static ConcurrentHashMap<String, Callable> callableMap = new ConcurrentHashMap<String, Callable>();
 	private String module;				// 模組名稱
 	private Timestamp beginTime;		// 開始時間(LOG)
 	private Timestamp endedTime;		// 結束時間(LOG)
@@ -20,12 +22,16 @@ public class TaskSyncResult {
 	private Timestamp endedTime2;		// 結束時間(WRITE)
 	private Integer currentLine2;		// 當前處理行數(WRITE)
 	private Integer totalLines2;		// 總行數(WRITE)
+	private Integer successFiles;		// 成功寫入的檔案數量
+	private Integer failureFiles;		// 失敗寫入的檔案數量
 	
 	{
 		currentLine = 0;
 		totalLines = 0;
 		currentLine2 = 0;
 		totalLines2 = 0;
+		successFiles = 0;
+		failureFiles = 0;
 	}
 
 	/** 清空處理結果 **/
@@ -115,6 +121,22 @@ public class TaskSyncResult {
 		this.totalLines2 = totalLines2;
 	}
 	
+	public Integer getSuccessFiles() {
+		return successFiles;
+	}
+
+	public void setSuccessFiles(Integer successFiles) {
+		this.successFiles = successFiles;
+	}
+
+	public Integer getFailureFiles() {
+		return failureFiles;
+	}
+
+	public void setFailureFiles(Integer failureFiles) {
+		this.failureFiles = failureFiles;
+	}
+
 	@Override
 	public String toString() {
 		return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);

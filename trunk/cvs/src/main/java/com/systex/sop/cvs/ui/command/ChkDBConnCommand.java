@@ -11,7 +11,7 @@ import com.systex.sop.cvs.util.SessionUtil;
 
 public class ChkDBConnCommand extends BaseCommand {
 
-	protected ChkDBConnCommand(SSSTrafficLabel c) {
+	public ChkDBConnCommand(SSSTrafficLabel c) {
 		super(c);
 	}
 

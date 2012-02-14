@@ -23,7 +23,6 @@ import com.systex.sop.cvs.ui.Workspace.PAGE;
 import com.systex.sop.cvs.ui.tableClass.LogResultDO;
 import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.TableUtil;
-import com.systex.sop.cvs.util.TimestampHelper;
 
 /**
  * Future task class that retrieve CVS Log
@@ -33,108 +32,115 @@ import com.systex.sop.cvs.util.TimestampHelper;
  *
  */
 public class LogFutureTask {
-	private Map<String, FutureTask<TaskSyncResult>> taskMap = new LinkedHashMap<String, FutureTask<TaskSyncResult>>();
-	private Map<String, Boolean> taskDoneMap = new HashMap<String, Boolean>();
-	private ExecutorService service = Executors.newFixedThreadPool(PropReader.getPropertyInt("CVS.THREAD_LOG"));
-	private int previousTotal = 0;		// 上次同步的總數
-	private boolean isUI = false;		// 若「isUI」為否則不做更新至UI界面之動作
+	private static LogFutureTask instance;
+	private Map<String, FutureTask<TaskSyncResult>> taskMap;
+	private Map<String, Boolean> taskDoneMap;
+	private ExecutorService service;
+	private int previousTotal = 0;
 	
-	public LogFutureTask(boolean isUI) {
-		this.isUI = isUI;
+	{
+		taskMap = new LinkedHashMap<String, FutureTask<TaskSyncResult>>();
+		taskDoneMap = new HashMap<String, Boolean>();
+		newService();
 	}
 	
-	public boolean execute(Timestamp edate) {
+	private LogFutureTask() {}
+	
+	/** Singleton **/
+	public static LogFutureTask getInstance() {
+		if (instance == null) {
+			synchronized (LogFutureTask.class) {
+				if (instance == null)
+					instance = new LogFutureTask();
+			}
+		}
 		
-		/** 執行 **/
+		return instance;
+	}
+	
+	public boolean execute(Timestamp edate, boolean isFullSync) {
 		try {
-			// 取得所有模組項目
 			CVSModuleHelper moduleHelper = new CVSModuleHelper();
-			
-			// 逐個模組項目進行LOG之取得 (執行CVS.EXE向CVS SERVER要求CVS LOG)
 			for (String module : moduleHelper.getMap().keySet()) {
 				FutureTask<TaskSyncResult> task = new FutureTask<TaskSyncResult>(new LogCallable(module, moduleHelper.getMap().get(module), edate));
-				service.submit(task);						// 執行該模組之工作
-				taskMap.put(module, task);					// 將該模組的工作暫存至MAP
-				taskDoneMap.put(module, Boolean.FALSE);		// 初始該模組為尚為完成
+				service.submit(task);														// 模組工作加入執行服務
+				taskMap.put(module, task);													// 模組工作暫存至MAP
+				taskDoneMap.put(module, Boolean.FALSE);										// 模組工作完成度MAP
 			}
 			
-			final List<LogResultDO> tList = new ArrayList<LogResultDO>();			// 所有模組的當前執行結果
+			final List<LogResultDO> tList = new ArrayList<LogResultDO>();					// 所有模組的執行結果 (當前)
 			while (true) {
 				try {
-					Thread.sleep(PropReader.getPropertyInt("CVS.EXEC_INTERVAL"));	// 休息間隔
+					Thread.sleep(PropReader.getPropertyInt("CVS.EXEC_INTERVAL"));
 				} catch (InterruptedException e) {
 					CVSLog.getLogger().warn(this, e);
 				}
 				
-				if (service.isShutdown() || service.isTerminated()) return false;	// 供中斷後之判斷
+				if (service.isShutdown() || service.isTerminated()) return false;			// 執行服務中斷則離開
 
-				tList.clear();														// 清空執行結果 (執行結果每次都重新產生)
+				tList.clear();																// 清空所有模組的執行結果 (每次循環重新更新)
 				
-				// 逐個模組去取得執行結果並轉成輸出至JTABLE之結構 (extends CVSTableClass)
 				for (String module : taskMap.keySet()) {
-					TaskSyncResult tempResult = TaskSyncResult.getTaskResult(module);		// 取得即時之結果 (可能尚未完成)
+					TaskSyncResult tempResult = TaskSyncResult.getTaskResult(module);		// 取得模組的當前結果 (可能尚未完成)
 					if (tempResult == null) {
 						tempResult = new TaskSyncResult();	// fake
 						tempResult.setModule(module);
 					}
+					
+					FutureTask<TaskSyncResult> task = taskMap.get(module);					// 取得模組工作並檢查工作是否已完成
 					LogResultDO t = new LogResultDO();
 					PropertyUtils.copyProperties(t, tempResult);
-					FutureTask<TaskSyncResult> task = taskMap.get(module);				// 取得該模組之FUTURE TASK
 					if (task.isDone()) {
-						taskDoneMap.put(module, Boolean.TRUE);						// 標記該模組為完成
-						tempResult = task.get();									// 取得已完成之結果 (從TaskResult.getResultMap()也可以)
+						taskDoneMap.put(module, Boolean.TRUE);
+						tempResult = task.get();
 						t.setEndedTime(tempResult.getEndedTime());
 					}
 					tList.add(t);
 				}
 				
-				// 計算此次總計
-				int currentTotal = 0;
+				int currentTotal = 0;														// 計算當前總處理行數
 				for (LogResultDO t : tList) {
-					if (t == null) continue;
 					currentTotal += t.getCurrentLine();
 				}
 				
-				if (isUI) {
-					// 更新至Table
-					SwingUtilities.invokeAndWait(new java.lang.Runnable() {
-						@Override
-						public void run() {
-							SyncPage page = (SyncPage) Workspace.getPage(PAGE.SYNC_CVS);
-							TableUtil.addRows(page.getTable(), tList);
-						} });
-					
-					// 將此次新增的數量彈至畫面上
-					final int plusTotal = currentTotal - previousTotal;
-					previousTotal = currentTotal;
-					SwingUtilities.invokeAndWait(new java.lang.Runnable() {
-						@Override
-						public void run() {
-							if (PAGE.SYNC_CVS.equals(Workspace.getCurrentPage())) {
-								CxtMessageQueue.addCxtMessage("+" + plusTotal);
-							}
-						} });
-				}
+				SwingUtilities.invokeAndWait(new java.lang.Runnable() {						// 呈現處理結果
+					@Override
+					public void run() {
+						SyncPage page = (SyncPage) Workspace.getPage(PAGE.SYNC_CVS);
+						TableUtil.addRows(page.getTable(), tList);
+					}
+				});
 				
-				// Check is finish or not
-				boolean isFinish = true;
+				final int plusTotal = currentTotal - previousTotal;							// 計算此次循環處理行數並呈現於畫面
+				previousTotal = currentTotal;
+				SwingUtilities.invokeAndWait(new java.lang.Runnable() {
+					@Override
+					public void run() {
+						if (PAGE.SYNC_CVS.equals(Workspace.getCurrentPage())) {
+							CxtMessageQueue.addCxtMessage(
+									((plusTotal >= 0)? "+": "") + plusTotal );
+						}
+					}
+				});
+				
+				boolean isFinish = true;													// 檢查所有模組是否已完成，若都完成則結果
 				for (String module : taskDoneMap.keySet()) {
 					if (!taskDoneMap.get(module)) {
 						isFinish = false;
 						break;
 					}
 				}
-				
 				if (isFinish) break;
+				
 			} // while
-
+			
 		}catch(Exception e){
 			CVSLog.getLogger().error(this, e);
 			return false;
 		}finally{
 			service.shutdown();
 			taskMap.clear();
-			taskDoneMap.clear();
+			previousTotal = 0;
 		}
 		
 		return true;
@@ -143,9 +149,14 @@ public class LogFutureTask {
 	public ExecutorService getService() {
 		return service;
 	}
+	
+	public void newService() {
+		if (service == null || (service.isShutdown() && service.isTerminated()) ) {
+			service = Executors.newFixedThreadPool(PropReader.getPropertyInt("CVS.THREAD_LOG"));
+		}
+	}
 
 	public static void main(String [] args) {
-		LogFutureTask logManager = new LogFutureTask(false);
-		logManager.execute(TimestampHelper.convertToTimestamp("20120129"));
+		
 	}
 }

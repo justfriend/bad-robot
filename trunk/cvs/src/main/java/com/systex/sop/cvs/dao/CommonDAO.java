@@ -29,29 +29,41 @@ public class CommonDAO {
 	}
 	
 	public int executeSQL(String sql) {
+		int result = 0;
 		Session session = null;
+		Transaction txn = null;
 		try {
 			session = SessionUtil.openSession();
-			SQLQuery query = session.createSQLQuery(sql);
-			return query.executeUpdate();
+			txn = session.beginTransaction();
+			result = session.createSQLQuery(sql).executeUpdate();
+			SessionUtil.commit(txn);
 		}catch(HibernateException e){
+			SessionUtil.rollBack(txn);
 			throw e;
 		}finally{
 			SessionUtil.closeSession(session);
 		}
+		
+		return result;
 	}
 	
 	public int executeHQL(String hql) {
+		int result = 0;
 		Session session = null;
+		Transaction txn = null;
 		try {
 			session = SessionUtil.openSession();
-			Query query = session.createQuery(hql);
-			return query.executeUpdate();
+			txn = session.beginTransaction();
+			result = session.createQuery(hql).executeUpdate();
+			SessionUtil.commit(txn);
 		}catch(HibernateException e){
+			SessionUtil.rollBack(txn);
 			throw e;
 		}finally{
 			SessionUtil.closeSession(session);
 		}
+		
+		return result;
 	}
 	
 	public List queryDTO(Class<? extends Object> loadClass, String hql) {
