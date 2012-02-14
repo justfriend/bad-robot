@@ -2,9 +2,6 @@ package com.systex.sop.cvs.util;
 
 import java.sql.Timestamp;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
-
 /**
  * String Utility
  * <p>
