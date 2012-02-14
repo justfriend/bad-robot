@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -34,6 +33,7 @@ import com.systex.sop.cvs.ui.customize.comp.SSSJButton;
 import com.systex.sop.cvs.ui.customize.comp.SSSJDialogBase;
 import com.systex.sop.cvs.ui.customize.comp.SSSJLabel;
 import com.systex.sop.cvs.ui.customize.comp.SSSJTextField;
+import com.systex.sop.cvs.ui.customize.other.QueryActionListener;
 import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.StringUtil;
 
@@ -47,7 +47,7 @@ public class ModifyDialog extends SSSJDialogBase {
 	private SSSJTextField filename_jTxtF;
 	private SSSJTextField version_jTxtF;
 	private JTextField module_jTxtF;
-
+	
 	/**
 	 * Launch the application.
 	 */
@@ -183,8 +183,8 @@ public class ModifyDialog extends SSSJDialogBase {
 		update_jBtn.setBackground(Color.WHITE);
 		
 		// XXX 進行修改提交註記
-		update_jBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		update_jBtn.addActionListener(new QueryActionListener(update_jBtn) {
+			public void actPerformed(ActionEvent e) {
 				doUpdateComment();
 			}
 		});
@@ -325,8 +325,8 @@ public class ModifyDialog extends SSSJDialogBase {
 		SSSJButton refresh_jBtn = new SSSJButton(SSSJButton.ITEM_DARK);
 		
 		// XXX 進行驗證
-		refresh_jBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		refresh_jBtn.addActionListener(new QueryActionListener(refresh_jBtn) {
+			public void actPerformed(ActionEvent e) {
 				doVerifyComment();
 			}
 		});

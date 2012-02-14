@@ -4,15 +4,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 
 import com.systex.sop.cvs.ui.StartUI;
 
 public abstract class QueryActionListener implements ActionListener {
 	private int percent = -1;		// 執行百分筆
-	private JButton btn = null;
+	private JComponent comp = null;
 	
-	public QueryActionListener(JButton btn) {
-		this.btn = btn;
+	public QueryActionListener(JComponent btn) {
+		this.comp = btn;
 	}
 	
 	public abstract void actPerformed(ActionEvent event);
@@ -24,13 +25,13 @@ public abstract class QueryActionListener implements ActionListener {
 			public void run() {
 				try {
 					StartUI.getInstance().getFrame().beginProcess();
-					btn.setEnabled(false);
+					if (comp instanceof JButton) ((JButton) comp).setEnabled(false);
 					actPerformed(event);
 				}catch(RuntimeException e) {
 					throw e;
 				}finally{
 					StartUI.getInstance().getFrame().endProcess();
-					btn.setEnabled(true);
+					if (comp instanceof JButton) ((JButton) comp).setEnabled(true);
 				}
 			}
 		}).start();
