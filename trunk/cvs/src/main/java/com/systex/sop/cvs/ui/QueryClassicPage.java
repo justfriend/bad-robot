@@ -30,6 +30,7 @@ import com.systex.sop.cvs.ui.customize.comp.SSSJTabbedPane;
 import com.systex.sop.cvs.ui.customize.comp.SSSJTable;
 import com.systex.sop.cvs.ui.customize.comp.SSSJTextField;
 import com.systex.sop.cvs.ui.customize.other.ObservingTextField;
+import com.systex.sop.cvs.ui.customize.other.QueryActionListener;
 import com.systex.sop.cvs.ui.customize.other.SSSDatePicker;
 import com.systex.sop.cvs.ui.logic.QueryPageLogic;
 import com.systex.sop.cvs.ui.tableClass.VerMapDO;
@@ -122,8 +123,9 @@ public class QueryClassicPage extends JPanel {
 		qry_jBtn.setBackground(Color.WHITE);
 		
 		// XXX 查詢「最新版本未下TAG」
-		qry_jBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		qry_jBtn.addActionListener(new QueryActionListener(qry_jBtn) {
+			@Override
+			public void actPerformed(ActionEvent event) {
 				PROG_TYPE type = (PROG_TYPE) getType_jCmbB().getSelectedItem();
 				logic.doQueryNewVerNoTag(getAuthor_jTxtF().getText(), getIgnoreDel_jChkB().isSelected(), type, getTable());
 			}
@@ -229,8 +231,9 @@ public class QueryClassicPage extends JPanel {
 		qry_1_jBtn.setBackground(Color.WHITE);
 		
 		// XXX 查詢「提交註記錯誤或遺漏」
-		qry_1_jBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		qry_1_jBtn.addActionListener(new QueryActionListener(qry_1_jBtn) {
+			@Override
+			public void actPerformed(ActionEvent event) {
 				PROG_TYPE type = (PROG_TYPE) getType_1_jCmbB().getSelectedItem();
 				logic.doQueryCommentMiss(
 						getAuthor_1_jTxtF().getText(),
