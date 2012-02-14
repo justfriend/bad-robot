@@ -2,11 +2,10 @@ package com.systex.sop.cvs.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -18,7 +17,6 @@ import com.systex.sop.cvs.ui.customize.comp.SSSImgJPanel;
 import com.systex.sop.cvs.ui.customize.comp.SSSJButton;
 import com.systex.sop.cvs.ui.customize.comp.SSSJLabel;
 import com.systex.sop.cvs.ui.logic.ResetPageLogic;
-import java.awt.Font;
 
 @SuppressWarnings("serial")
 public class ResetPage extends JPanel {
