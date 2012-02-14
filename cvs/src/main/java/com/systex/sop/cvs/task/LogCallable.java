@@ -36,7 +36,7 @@ public class LogCallable implements Callable<TaskSyncResult> {
 			if (result == null) {
 				result = new TaskSyncResult();
 				result.setModule(module);
-				TaskSyncResult.putTaskResult(module, result);	// keep ref. by itself
+				TaskSyncResult.putTaskResult(module, result);							// keep ref. by itself
 			}
 		}
 		
@@ -63,12 +63,12 @@ public class LogCallable implements Callable<TaskSyncResult> {
 		String line = null;
 		int currentLine = 0;
 		try {
-			result.setBeginTime(new Timestamp(System.currentTimeMillis()));	// [START]
+			result.setBeginTime(new Timestamp(System.currentTimeMillis()));				// [START]
 			p = pb.start();
 			is = p.getInputStream();
 			isr = new InputStreamReader(is, CVSConst.ENCODING_IN);
 			br = new BufferedReader(isr);
-			result.setTotalLines(-1);	// 陸續讀入故無法取得總行數
+			result.setTotalLines(-1);													// 陸陸續讀入故無法取得總行數
 			
 			os = new FileOutputStream(new File(CVSFunc.fxLogFilePath(module, edate)));
 			osw = new OutputStreamWriter(os, CVSConst.ENCODING_OUT);
@@ -78,13 +78,20 @@ public class LogCallable implements Callable<TaskSyncResult> {
 				if (StringUtil.isEmpty(line) || line.startsWith("?")) continue;
 				result.setCurrentLine(++currentLine);
 				wr.write(line);
-				wr.newLine(); // same as wr.write(System.getProperty("line.separator"));
+				wr.newLine();
 				CVSLog.getLogger().debug(line);
+				if (line.startsWith(CVSConst.BLOCK_END)) {								// 每次遇換筆行時檢查執行服務是否已要求中斷
+					if (LogFutureTask.getInstance().getService().isShutdown() ||
+						LogFutureTask.getInstance().getService().isTerminated()) {
+						CVSLog.getLogger().info( module + " 已中斷");
+						return result;
+					}
+				}
 			}
 		}catch(Exception e){
 			CVSLog.getLogger().error(this, e);
 		}finally{
-			result.setEndedTime(new Timestamp(System.currentTimeMillis()));	// [ENDED]
+			result.setEndedTime(new Timestamp(System.currentTimeMillis()));				// [ENDED]
 			StreamCloseHelper.closeReader(br, isr);
 			StreamCloseHelper.closeInputStream(is);
 			StreamCloseHelper.closeWriter(wr, osw);

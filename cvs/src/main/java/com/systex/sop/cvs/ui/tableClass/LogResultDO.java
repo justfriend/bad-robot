@@ -17,6 +17,8 @@ public class LogResultDO extends CVSBaseDO {
 	private String elapseTime;		// log process elapse time
 	private Integer currentLine2;	// write process current line
 	private Integer totalLines2;	// write process total lines
+	private Integer successFiles;	// 成功寫入的檔案數量
+	private Integer failureFiles;	// 失敗寫入的檔案數量
 	private Timestamp beginTime2;	// write process begin time
 	private Timestamp endedTime2;	// write process ended time
 	private String elapseTime2;		// write process elapse time
@@ -27,7 +29,7 @@ public class LogResultDO extends CVSBaseDO {
 		columnName = new String [] {
 				"模組名稱",
 				"處理行數(L)", "起始時間(L)", "結束時間(L)", "耗時(L)",
-				"處理行數(W)", "總行數(W)", "起始時間(W)", "結束時間(W)", "耗時(W)"
+				"處理行數(W)", "總行數(W)", "成功筆數(W)", "失敗筆數(W)", "起始時間(W)", "結束時間(W)", "耗時(W)"
 		};
 	}
 
@@ -128,6 +130,22 @@ public class LogResultDO extends CVSBaseDO {
 		this.totalLines2 = totalLines2;
 	}
 	
+	public Integer getSuccessFiles() {
+		return successFiles;
+	}
+
+	public void setSuccessFiles(Integer successFiles) {
+		this.successFiles = successFiles;
+	}
+
+	public Integer getFailureFiles() {
+		return failureFiles;
+	}
+
+	public void setFailureFiles(Integer failureFiles) {
+		this.failureFiles = failureFiles;
+	}
+
 	@Override
 	public String toString() {
 		return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
@@ -138,7 +156,7 @@ public class LogResultDO extends CVSBaseDO {
 		return new String[] {
 				null,
 				null, "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss", null,
-				null, null, "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss", null};
+				null, null, null, null, "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss", null};
 	}
 
 	@Override
@@ -150,11 +168,11 @@ public class LogResultDO extends CVSBaseDO {
 	public int[] getColumnWidth() {
 //		"模組名稱",
 //		"處理行數(L)", "起始時間(L)", "結束時間(L)", "耗時(L)",
-//		"處理行數(W)", "總行數(W)", "起始時間(W)", "結束時間(W)", "耗時(W)"
+//      "處理行數(W)", "總行數(W)", "成功檔數(W)", "失敗檔數(W)", "起始時間(W)", "結束時間(W)", "耗時(W)"
 		return new int[] {
 				130,
 				80, 145, 145, 70,
-				80, 80, 145, 145, 70};
+				80, 80, 80, 80, 145, 145, 70};
 	}
 
 }

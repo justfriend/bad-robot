@@ -17,7 +17,7 @@ import com.systex.sop.cvs.util.TimestampHelper;
  *
  */
 public class SyncPageLogic {
-	private CVSJob job = new CVSJob();
+	private static CVSJob job = new CVSJob();
 	
 	/** 執行「自動同步」(啟動 / 停止) **/
 	public void doAutoSyncExecute(JButton btn) {
@@ -41,7 +41,14 @@ public class SyncPageLogic {
 	
 	/** 執行「手動同步之中斷」 **/
 	public void doInterrupt() {
-		if (job != null) job.shutdownNow();
+		if (job != null) {
+			try {
+				job.shutdownNow();
+				StartUI.getInstance().getFrame().showMessageBox("中斷成功");
+			}catch(Exception e){
+				StartUI.getInstance().getFrame().showMessageBox("中斷失敗，請重新啟動程式");
+			}
+		}
 	}
 	
 	/** 執行「手動同步」 **/
@@ -55,6 +62,6 @@ public class SyncPageLogic {
 			return;
 		}
 		
-		job.execute(date, isFullSync, isSyncLog, isSyncWrite, true);
+		job.execute(date, isFullSync, isSyncLog, isSyncWrite);
 	}
 }

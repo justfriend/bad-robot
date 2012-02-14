@@ -8,6 +8,8 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Hashtable;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
@@ -21,13 +23,16 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+import com.systex.sop.cvs.constant.CVSConst.CMD_RESULT;
 import com.systex.sop.cvs.message.CxtMessageConsumer;
 import com.systex.sop.cvs.ui.Workspace.PAGE;
+import com.systex.sop.cvs.ui.command.ChkDBConnCommand;
 import com.systex.sop.cvs.ui.customize.comp.SSSJButton;
 import com.systex.sop.cvs.ui.customize.comp.SSSJFrameBase;
 import com.systex.sop.cvs.ui.customize.comp.SSSJSplitPane;
 import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.ScreenSize;
+import com.systex.sop.cvs.util.ThreadHelper;
 
 /**
  * CVS 主程式
@@ -39,6 +44,7 @@ public class StartUI {
 	// 控制變數
 	private final float frameWidthRate = 0.8f;	// 框架起始的大小比率 (寬)
 	private final float frameHeightRate = 0.7f;	// 框架起始的大小比率 (高)
+	CMD_RESULT dbResult = CMD_RESULT.FAILURE;
 	ServerSocket socket;
 	
 	// 幫助項目
@@ -80,6 +86,30 @@ public class StartUI {
 			getFrame().showMessageBox("系統重覆執行");
 			System.exit(0);
 		}
+	}
+	
+	private void checkDBConn() {
+		dbResult = CMD_RESULT.FAILURE;
+		
+		// BEGIN TEST DB CONNECTION
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				dbResult = new ChkDBConnCommand(null).execute();
+			}
+		}).start();
+		
+		// GET THE TEST RESULT
+		Timer t = new Timer();
+		t.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				if (CMD_RESULT.SUCCESS != dbResult) {
+					getFrame().showMessageBox("DB連線失敗..");
+					System.exit(0);
+				}
+			}
+		}, 5000);
 	}
 	
 	/** 顯示歡迎畫面 **/
@@ -223,18 +253,25 @@ public class StartUI {
 		try {
 			StartUI window = StartUI.getInstance();
 			
+			// 檢查是否重覆啟動
+			window.checkSingleApp();
+			
+			// 檢查DB連線
+			window.checkDBConn();
+			
 			if ("true".equalsIgnoreCase(PropReader.getProperty("CVS.WELCOMELOGO"))) {
 				// 呈現歡迎畫面 (淡入後即關閉)
 				window.welcomeLogo();
 				
 				// 必須的等待 (等待歡迎畫面之時間，再秀出主畫面)
-				Thread.sleep(5000);
+				Thread.sleep(4000);
 			}
 			
-			// 檢查是否重覆啟動
-			window.checkSingleApp();
+			while (CMD_RESULT.SUCCESS != window.dbResult) {
+				ThreadHelper.sleep(1000);
+			}
 			
-			// 啟用內內警示訊息消費者 (收佇列訊息將之呈現在畫面中間)
+			// 啟用框內警示訊息消費者 (收佇列訊息將之呈現在畫面中間)
 			new Thread(new CxtMessageConsumer(getInstance().getFrame())).start();
 			
 			// 指定主容器 (用來切換頁面)
@@ -248,7 +285,6 @@ public class StartUI {
 			}else{
 				Workspace.changePage(PAGE.SYNC_CVS);
 			}
-
 			
 			// 定位主畫面
 			window.frame.setBounds(100, 100,
