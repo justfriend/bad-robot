@@ -19,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
@@ -39,10 +40,11 @@ import com.systex.sop.cvs.util.StringUtil;
 
 @SuppressWarnings({ "unchecked", "serial" })
 public class SSSJFrameBase extends IFrame {
-	private SSSJLabel msgjL = new SSSJLabel();	// message label (框架最下方左下角的訊息提示)
-	private SSSJLabel cxtjL = new SSSJLabel();	// content warning message (畫面中間的明顯警示-字大)
-	private JPanel panel;						// container panel
-	private TitleBar titleBar;
+	private SSSJLabel msgjL = new SSSJLabel();	// 框架最下方左下角的訊息提示
+	private SSSJLabel cxtjL = new SSSJLabel();	// 隱藏的訊息區塊 (畫面中間的明顯警示-字大)
+	private JPanel panel;						// 主要區塊
+	private TitleBar titleBar;					// 標題區
+	private JProgressBar pBar_jPBar;			// 進度條
 	
 	{
 		cxtjL.setFont(new Font(SSSPalette.fontFamily, Font.BOLD, PropReader.getPropertyInt("CVS.WARNINGSIZE")));
@@ -50,6 +52,7 @@ public class SSSJFrameBase extends IFrame {
 		cxtjL.setForeground(Color.PINK);
 	}
 	
+	/** 標題區 : 建立系統圖示、標題圖示、標題及視窗按鈕 **/
 	public class TitleBar extends IWindowTitleBar implements ChangeListener {
 		private Image frameIcon;
 		private JButton titleIcon;
@@ -157,23 +160,37 @@ public class SSSJFrameBase extends IFrame {
 		iContentPane.add(sPanel, BorderLayout.SOUTH);
 		sPanel.setLayout(new FormLayout(new ColumnSpec[] {
 				ColumnSpec.decode("20px"),
-				ColumnSpec.decode("177px:grow"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("default:grow"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("100dlu"),
+				ColumnSpec.decode("12dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				FormFactory.DEFAULT_COLSPEC,
 				ColumnSpec.decode("3px"),},
 			new RowSpec[] {
-				RowSpec.decode("14dlu"),
+				RowSpec.decode("14dlu:grow"),
 				RowSpec.decode("2px"),}));
 		
-		sPanel.add(msgjL, "2, 1, default, center");
+		sPanel.add(msgjL, "3, 1, default, center");
 		
-		JButton drawBtn = new JButton("");
-		drawBtn.setVerticalAlignment(SwingConstants.BOTTOM);
-		drawBtn.setBorder(null);
-		drawBtn.setBackground(SSSPalette.FRAME_BG);
-		drawBtn.setIcon(new ImageIcon(SSSJFrameBase.class.getResource("/resource/drawIcon.png")));
-		drawBtn.setMargin(new Insets(0, 0, 0, 0));
-		sPanel.add(drawBtn, "4, 1, center, bottom");
+		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(SSSPalette.FRAME_BG);
+		sPanel.add(panel_1, "5, 1, fill, fill");
+		panel_1.setLayout(new FormLayout(new ColumnSpec[] {
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("default:grow"),},
+			new RowSpec[] {
+				FormFactory.NARROW_LINE_GAP_ROWSPEC,
+				RowSpec.decode("default:grow"),}));
+		
+		pBar_jPBar = new JProgressBar();
+		pBar_jPBar.setVisible(false);	// default hide
+		panel_1.add(pBar_jPBar, "2, 2, default, center");
+		
+		JLabel label = new JLabel("");
+		label.setIcon(new ImageIcon(SSSJFrameBase.class.getResource("/resource/drawIcon.png")));
+		sPanel.add(label, "8, 1, right, bottom");
 		
 		/** 左邊邊界美化 (上底色) **/
 		JPanel wPanel = new JPanel();
@@ -235,6 +252,10 @@ public class SSSJFrameBase extends IFrame {
 		return titleBar;
 	}
 	
+	public JProgressBar getpBar() {
+		return pBar_jPBar;
+	}
+
 	/** 呈現訊息對話框 **/
 	public void showMessageBox(String msg) {
 		showMessageBox(this, msg);
@@ -244,5 +265,18 @@ public class SSSJFrameBase extends IFrame {
 	public void showMessageBox(Component comp, String msg) {
 		CVSLog.getLogger().info("[MessageBox]" + msg);
 		JOptionPane.showMessageDialog(comp, msg);
+	}
+	
+	public JProgressBar getPBar_jPBar() {
+		return pBar_jPBar;
+	}
+	
+	public void beginProcess() {
+		getpBar().setIndeterminate(true);
+		getpBar().setVisible(true);
+	}
+	
+	public void endProcess() {
+		getpBar().setVisible(false);
 	}
 }

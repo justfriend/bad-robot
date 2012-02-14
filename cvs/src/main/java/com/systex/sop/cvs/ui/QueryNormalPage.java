@@ -30,6 +30,7 @@ import com.systex.sop.cvs.ui.customize.comp.SSSJTabbedPane;
 import com.systex.sop.cvs.ui.customize.comp.SSSJTable;
 import com.systex.sop.cvs.ui.customize.comp.SSSJTextField;
 import com.systex.sop.cvs.ui.customize.other.ObservingTextField;
+import com.systex.sop.cvs.ui.customize.other.QueryActionListener;
 import com.systex.sop.cvs.ui.customize.other.SSSDatePicker;
 import com.systex.sop.cvs.ui.logic.QueryPageLogic;
 import com.systex.sop.cvs.ui.tableClass.VerMapDO;
@@ -267,8 +268,8 @@ public class QueryNormalPage extends JPanel {
 		SSSJButton query_jBtn = new SSSJButton();
 		
 		// XXX 進行一般查詢
-		query_jBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		query_jBtn.addActionListener(new QueryActionListener(query_jBtn) {
+			public void actPerformed(ActionEvent e) {
 				PROG_TYPE type = (PROG_TYPE) getType_jCmbB().getSelectedItem();
 				logic.doQueryNormal(getTable(),
 						getAuthor_jTxtF().getText(),

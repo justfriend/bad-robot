@@ -78,8 +78,8 @@ public class SSSItemLiteButtonUI extends BasicButtonUI implements MouseListener 
 		LinearGradientPaint linearPaint = null;
 		Color border = COLOR_BORDER;
 		Color foreColor = Color.BLACK;
-		if (isArmed) {
-			if (isPressed) {
+		if (isArmed || !b.isEnabled()) {
+			if (isPressed || !b.isEnabled()) {
 				linearPaint = new LinearGradientPaint(
 						new Point(0, 0),
 						new Point(0, size.height),
