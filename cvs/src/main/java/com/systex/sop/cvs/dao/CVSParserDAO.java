@@ -3,8 +3,10 @@ package com.systex.sop.cvs.dao;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 
 import com.systex.sop.cvs.dto.Tbsoptcvsmap;
 import com.systex.sop.cvs.dto.Tbsoptcvsver;
@@ -19,19 +21,15 @@ public class CVSParserDAO {
 		Session session = null;
 		try {
 			session = SessionUtil.openSession();
-			String hql = StringUtil.concat("from Tbsoptcvsmap where rcsfile = '", rcsfile, "'");
-			Query query = session.createQuery(hql);
-			query.setMaxResults(1);
-			List<Tbsoptcvsmap> list = query.list();
-			if (list != null && list.size() > 0) return list.get(0);
+			Criteria cri = session.createCriteria(Tbsoptcvsmap.class);
+			cri.add(Restrictions.eq("rcsfile", rcsfile));
+			return (Tbsoptcvsmap) cri.uniqueResult();
 		}catch(Exception e){
 			CVSLog.getLogger().error(this, e);
 			throw new RuntimeException(e);
 		}finally{
 			SessionUtil.closeSession(session);
 		}
-		
-		return null;
 	}
 	
 	public Tbsoptcvsver queryVerByVer(Long m_SID, BigDecimal version) {
