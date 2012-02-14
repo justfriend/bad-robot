@@ -77,6 +77,7 @@ public class QueryNormalPage extends JPanel {
 		setBackground(new Color(127, 125, 123));
 		tag_jTxtF.setText(PropReader.getProperty("CVS.SOPATAG"));
 		logic.registerPopupMenu(getTable());
+		getAuthor_jTxtF().setText(PropReader.getProperty("CVS.DEFAULT_AUTHOR"));
 	}
 	
 	private void initial() {

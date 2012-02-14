@@ -1,5 +1,6 @@
 package com.systex.sop.cvs.ui.logic;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -25,6 +26,7 @@ import com.systex.sop.cvs.helper.CVSModuleHelper;
 import com.systex.sop.cvs.message.CxtMessageQueue;
 import com.systex.sop.cvs.ui.StartUI;
 import com.systex.sop.cvs.ui.customize.comp.SSSJTable;
+import com.systex.sop.cvs.ui.customize.other.QueryActionListener;
 import com.systex.sop.cvs.ui.tableClass.TagDO;
 import com.systex.sop.cvs.ui.tableClass.VerMapDO;
 import com.systex.sop.cvs.ui.tableClass.VerTreeDO;
@@ -113,7 +115,7 @@ public class QueryPageLogic {
 
 	
 	/** 檢示版本樹 **/
-	public void doQueryVerTree(Long rcsid, String filename) {
+	public void doQueryVerTree(Long rcsid, String filename, String module) {
 		if (StringUtil.anyEmpty(rcsid, filename)) {
 			StartUI.getInstance().getFrame().showMessageBox("無法取得[RCSID]或[檔案名稱]"	);
 			return;
@@ -133,6 +135,8 @@ public class QueryPageLogic {
 					PropReader.getPropertyInt("CVS.VERTREE_Y"),
 					(int) size.getWidth(), (int) size.getHeight() );
 			StartUI.getInstance().getVersionDialog().getFilename_jTxtF().setText(filename);
+			StartUI.getInstance().getVersionDialog().getRcsid_jTxtF().setText(Long.toString(rcsid));
+			StartUI.getInstance().getVersionDialog().getModule_jTxtF().setText(module);
 			StartUI.getInstance().getVersionDialog().setVisible(true);
 			
 			// 顯示統計
@@ -207,9 +211,9 @@ public class QueryPageLogic {
 	}
 	
 	/** 取得特定版號資料 (彈出修改視窗) **/
-	public void doRetrieveVerInfo(Long rcsid, String ver, String module) {
+	public void doRetrieveVerInfo(Component comp, Long rcsid, String ver, String module) {
 		if (StringUtil.anyEmpty(rcsid, ver, module)) {
-			StartUI.getInstance().getFrame().showMessageBox("無法取得[RCSID][版號]或[模組名稱]"	);
+			StartUI.getInstance().getFrame().showMessageBox(comp, "無法取得[RCSID][版號]或[模組名稱]"	);
 			return;
 		}
 		
@@ -244,17 +248,39 @@ public class QueryPageLogic {
 		}
 	}
 	
-	/** 註冊 POPUP MENU **/
-	public  void registerPopupMenu(final SSSJTable table)
-	{
+	/** 註冊 POPUP MENU (for 版本樹) **/
+	public  void registerVerTreePopupMenu(final SSSJTable table) {
 		JPopupMenu popup = table.getPopup();
 		popup.setBorder(new BevelBorder(BevelBorder.RAISED));
+		JMenuItem item = null;
+		
+		// 修改註記
+		item = new JMenuItem("修改註記");
+		item.addActionListener(new QueryActionListener(item) {
+			@Override
+			public void actPerformed(ActionEvent e) {
+				Long rcsid = Long.parseLong(StartUI.getInstance().getVersionDialog().getRcsid_jTxtF().getText());
+				String ver = (String) table.getSelectValueAt("版號");
+				String module = StartUI.getInstance().getVersionDialog().getModule_jTxtF().getText();
+				doRetrieveVerInfo(StartUI.getInstance().getVersionDialog(), rcsid, ver, module);
+			} });
+		popup.add(item);
+		
+		Dimension size = popup.getPreferredSize();
+		popup.setPreferredSize(new Dimension((int) (size.width * 1.4), size.height));
+	}
+	
+	/** 註冊 POPUP MENU (for 查詢) **/
+	public void registerPopupMenu(final SSSJTable table) {
+		JPopupMenu popup = table.getPopup();
+		popup.setBorder(new BevelBorder(BevelBorder.RAISED));
+		JMenuItem item = null;
 		
 		// 檢示標籤
-		JMenuItem item = new JMenuItem("檢示標籤");
-		item.addActionListener(new ActionListener() {
+		item = new JMenuItem("檢示標籤");
+		item.addActionListener(new QueryActionListener(item) {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actPerformed(ActionEvent e) {
 				Long rcsid = (Long) table.getSelectValueAt("RCSID");
 				String ver = (String) table.getSelectValueAt("版號");
 				String filename = (String) table.getSelectValueAt("檔案名稱");
@@ -266,25 +292,26 @@ public class QueryPageLogic {
 		
 		// 檢示版本樹
 		item = new JMenuItem("檢示版本樹");
-		item.addActionListener(new ActionListener() {
+		item.addActionListener(new QueryActionListener(item) {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actPerformed(ActionEvent e) {
 				Long rcsid = (Long) table.getSelectValueAt("RCSID");
 				String filename = (String) table.getSelectValueAt("檔案名稱");
-				doQueryVerTree(rcsid, filename);
+				String module = (String) table.getSelectValueAt("模組名稱");
+				doQueryVerTree(rcsid, filename, module);
 			} });
 		popup.add(item);
 		popup.addSeparator();
 		
 		// 修改註記
 		item = new JMenuItem("修改註記");
-		item.addActionListener(new ActionListener() {
+		item.addActionListener(new QueryActionListener(item) {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actPerformed(ActionEvent e) {
 				Long rcsid = (Long) table.getSelectValueAt("RCSID");
 				String ver = (String) table.getSelectValueAt("版號");
 				String module = (String) table.getSelectValueAt("模組名稱");
-				doRetrieveVerInfo(rcsid, ver, module);
+				doRetrieveVerInfo(StartUI.getInstance().getFrame(), rcsid, ver, module);
 			} });
 		popup.add(item);
 		popup.addSeparator();
@@ -306,7 +333,6 @@ public class QueryPageLogic {
 				}
 			} });
 		popup.add(item);
-		
 		
 		Dimension size = popup.getPreferredSize();
 		popup.setPreferredSize(new Dimension((int) (size.width * 1.4), size.height));

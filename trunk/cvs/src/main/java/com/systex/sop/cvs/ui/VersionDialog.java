@@ -9,11 +9,13 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -24,15 +26,17 @@ import com.systex.sop.cvs.ui.customize.comp.SSSJDialogBase;
 import com.systex.sop.cvs.ui.customize.comp.SSSJLabel;
 import com.systex.sop.cvs.ui.customize.comp.SSSJTable;
 import com.systex.sop.cvs.ui.customize.comp.SSSJTextField;
+import com.systex.sop.cvs.ui.logic.QueryPageLogic;
 import com.systex.sop.cvs.ui.tableClass.VerTreeDO;
 import com.systex.sop.cvs.util.PropReader;
-import javax.swing.border.MatteBorder;
-import javax.swing.ImageIcon;
 
 @SuppressWarnings("serial")
 public class VersionDialog extends SSSJDialogBase {
 	private SSSJTable table;
 	private SSSJTextField filename_jTxtF;
+	private QueryPageLogic logic = new QueryPageLogic();
+	private SSSJTextField rcsid_jTxtF;
+	private SSSJTextField module_jTxtF;
 	
 	/** Constructor **/
 	public VersionDialog() {
@@ -44,6 +48,10 @@ public class VersionDialog extends SSSJDialogBase {
 	private void initUI() {
 		setBounds(100, 100, 540, 500);
 		setTitle("CVS Version Tree");
+		getRcsid_jTxtF().setVisible(false);
+		getModule_jTxtF().setVisible(false);
+		logic.registerVerTreePopupMenu(getTable());		// 註冊POPUP MENU
+		
 		// 增加座標記憶功能
 		getTitleBar().addMouseListener(new MouseAdapter() {
 					public void mouseReleased(MouseEvent e) {
@@ -74,11 +82,15 @@ public class VersionDialog extends SSSJDialogBase {
 		panel.add(panel_1, "1, 1, fill, fill");
 		panel_1.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("40dlu"),
+				ColumnSpec.decode("37dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("120dlu"),
+				ColumnSpec.decode("180dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("38dlu"),},
+				ColumnSpec.decode("30dlu"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("max(28dlu;default)"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("max(28dlu;default)"),},
 			new RowSpec[] {
 				RowSpec.decode("default:grow"),}));
 		
@@ -97,6 +109,12 @@ public class VersionDialog extends SSSJDialogBase {
 		label_1.setBorder(new LineBorder(new Color(204, 153, 102)));
 		label_1.setIcon(new ImageIcon(VersionDialog.class.getResource("/resource/symbolLarge.png")));
 		panel_1.add(label_1, "6, 1, right, center");
+		
+		rcsid_jTxtF = new SSSJTextField();
+		panel_1.add(rcsid_jTxtF, "8, 1, fill, default");
+		
+		module_jTxtF = new SSSJTextField();
+		panel_1.add(module_jTxtF, "10, 1, fill, default");
 		
 		Image img = null;
 		try {
@@ -137,5 +155,11 @@ public class VersionDialog extends SSSJDialogBase {
 	}
 	public SSSJTextField getFilename_jTxtF() {
 		return filename_jTxtF;
+	}
+	public SSSJTextField getRcsid_jTxtF() {
+		return rcsid_jTxtF;
+	}
+	public SSSJTextField getModule_jTxtF() {
+		return module_jTxtF;
 	}
 }

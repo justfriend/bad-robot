@@ -34,6 +34,7 @@ import com.systex.sop.cvs.ui.customize.other.QueryActionListener;
 import com.systex.sop.cvs.ui.customize.other.SSSDatePicker;
 import com.systex.sop.cvs.ui.logic.QueryPageLogic;
 import com.systex.sop.cvs.ui.tableClass.VerMapDO;
+import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.TimestampHelper;
 
 @SuppressWarnings("serial")
@@ -64,6 +65,9 @@ public class QueryClassicPage extends JPanel {
 		setBackground(new Color(127, 125, 123));
 		logic.registerPopupMenu(getTable());
 		logic.registerPopupMenu(getTable_1());
+		getBeginDate_1_jTxtF().setText(PropReader.getProperty("CVS.COMMENT_ERR_BEGINDATE"));
+		getAuthor_jTxtF().setText(PropReader.getProperty("CVS.DEFAULT_AUTHOR"));
+		getAuthor_1_jTxtF().setText(PropReader.getProperty("CVS.DEFAULT_AUTHOR"));
 	}
 	
 	private void initial() {
