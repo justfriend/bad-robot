@@ -148,6 +148,8 @@ public class CommonDAO {
 	}
 	
 	public void saveDTO(List<? extends Object> dtoList, final int batch) {
+		if (dtoList == null || dtoList.size() < 1) return;
+		
 		Session session = null;
 		Transaction txn = null;
 		try {
@@ -172,6 +174,8 @@ public class CommonDAO {
 	}
 	
 	public void updateDTO(List<? extends Object> dtoList, int batch) {
+		if (dtoList == null || dtoList.size() < 1) return;
+		
 		Session session = null;
 		Transaction txn = null;
 		try {

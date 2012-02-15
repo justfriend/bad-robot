@@ -2,17 +2,15 @@ package com.systex.sop.cvs.dto;
 
 // Generated Jan 11, 2012 3:55:55 PM by Hibernate Tools 3.3.0.GA
 
-import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -32,10 +30,6 @@ public class Tbsoptcvsmap implements java.io.Serializable {
 	private String module;
 	private Character clientserver;
 	private String versionhead;
-	private String creator;
-	private Timestamp createtime;
-	private String modifier;
-	private Timestamp lastupdate;
 	private Set<Tbsoptcvsver> tbsoptcvsvers = new HashSet<Tbsoptcvsver>(0);
 
 	public Tbsoptcvsmap() {
@@ -47,25 +41,6 @@ public class Tbsoptcvsmap implements java.io.Serializable {
 		this.rcsfile = rcsfile;
 		this.filename = filename;
 		this.versionhead = versionhead;
-	}
-
-	public Tbsoptcvsmap(Long MSid, String rcsfile, String filename,
-			String programid, String module, Character clientserver,
-			String versionhead, String creator, Timestamp createtime,
-			String modifier, Timestamp lastupdate,
-			Set<Tbsoptcvsver> tbsoptcvsvers) {
-		this.MSid = MSid;
-		this.rcsfile = rcsfile;
-		this.filename = filename;
-		this.programid = programid;
-		this.module = module;
-		this.clientserver = clientserver;
-		this.versionhead = versionhead;
-		this.creator = creator;
-		this.createtime = createtime;
-		this.modifier = modifier;
-		this.lastupdate = lastupdate;
-		this.tbsoptcvsvers = tbsoptcvsvers;
 	}
 
 	@Id
@@ -130,44 +105,6 @@ public class Tbsoptcvsmap implements java.io.Serializable {
 
 	public void setVersionhead(String versionhead) {
 		this.versionhead = versionhead;
-	}
-
-	@Column(name = "CREATOR", length = 50)
-	public String getCreator() {
-		return this.creator;
-	}
-
-	public void setCreator(String creator) {
-		this.creator = creator;
-	}
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATETIME")
-	public Timestamp getCreatetime() {
-		return this.createtime;
-	}
-
-	public void setCreatetime(Timestamp createtime) {
-		this.createtime = createtime;
-	}
-
-	@Column(name = "MODIFIER", length = 50)
-	public String getModifier() {
-		return this.modifier;
-	}
-
-	public void setModifier(String modifier) {
-		this.modifier = modifier;
-	}
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "LASTUPDATE")
-	public Timestamp getLastupdate() {
-		return this.lastupdate;
-	}
-
-	public void setLastupdate(Timestamp lastupdate) {
-		this.lastupdate = lastupdate;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "tbsoptcvsmap")

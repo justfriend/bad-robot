@@ -19,17 +19,5 @@
             <column name="M_SID" precision="10" scale="0" not-null="true" />
             <column name="VERSION" length="20" not-null="true" />
         </many-to-one>
-        <property name="creator" type="string">
-            <column name="CREATOR" length="50" />
-        </property>
-        <property name="createtime" type="java.sql.Timestamp">
-            <column name="CREATETIME" />
-        </property>
-        <property name="modifier" type="string">
-            <column name="MODIFIER" length="50" />
-        </property>
-        <property name="lastupdate" type="java.sql.Timestamp">
-            <column name="LASTUPDATE" />
-        </property>
     </class>
 </hibernate-mapping>

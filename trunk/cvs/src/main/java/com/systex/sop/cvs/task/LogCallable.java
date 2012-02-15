@@ -67,12 +67,12 @@ public class LogCallable implements Callable<TaskSyncResult> {
 			p = pb.start();
 			is = p.getInputStream();
 			isr = new InputStreamReader(is, CVSConst.ENCODING_IN);
-			br = new BufferedReader(isr);
+			br = new BufferedReader(isr, 32 * 1024);
 			result.setTotalLines(-1);													// 陸陸續讀入故無法取得總行數
 			
 			os = new FileOutputStream(new File(CVSFunc.fxLogFilePath(module, edate)));
 			osw = new OutputStreamWriter(os, CVSConst.ENCODING_OUT);
-			wr = new BufferedWriter(osw);
+			wr = new BufferedWriter(osw, 64 * 1024);
 			
 			while ((line = br.readLine()) != null) {
 				if (StringUtil.isEmpty(line) || line.startsWith("?")) continue;

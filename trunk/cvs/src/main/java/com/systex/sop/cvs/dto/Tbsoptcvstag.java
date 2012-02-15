@@ -2,7 +2,6 @@ package com.systex.sop.cvs.dto;
 
 // Generated Jan 11, 2012 3:55:55 PM by Hibernate Tools 3.3.0.GA
 
-import java.sql.Timestamp;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
@@ -13,8 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -28,10 +25,6 @@ public class Tbsoptcvstag implements java.io.Serializable {
 
 	private TbsoptcvstagId id;
 	private Tbsoptcvsver tbsoptcvsver;
-	private String creator;
-	private Timestamp createtime;
-	private String modifier;
-	private Timestamp lastupdate;
 
 	public Tbsoptcvstag() {
 	}
@@ -39,17 +32,6 @@ public class Tbsoptcvstag implements java.io.Serializable {
 	public Tbsoptcvstag(TbsoptcvstagId id, Tbsoptcvsver tbsoptcvsver) {
 		this.id = id;
 		this.tbsoptcvsver = tbsoptcvsver;
-	}
-
-	public Tbsoptcvstag(TbsoptcvstagId id, Tbsoptcvsver tbsoptcvsver,
-			String creator, Timestamp createtime, String modifier,
-			Timestamp lastupdate) {
-		this.id = id;
-		this.tbsoptcvsver = tbsoptcvsver;
-		this.creator = creator;
-		this.createtime = createtime;
-		this.modifier = modifier;
-		this.lastupdate = lastupdate;
 	}
 
 	@EmbeddedId
@@ -76,45 +58,7 @@ public class Tbsoptcvstag implements java.io.Serializable {
 	public void setTbsoptcvsver(Tbsoptcvsver tbsoptcvsver) {
 		this.tbsoptcvsver = tbsoptcvsver;
 	}
-
-	@Column(name = "CREATOR", length = 50)
-	public String getCreator() {
-		return this.creator;
-	}
-
-	public void setCreator(String creator) {
-		this.creator = creator;
-	}
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATETIME")
-	public Timestamp getCreatetime() {
-		return this.createtime;
-	}
-
-	public void setCreatetime(Timestamp createtime) {
-		this.createtime = createtime;
-	}
-
-	@Column(name = "MODIFIER", length = 50)
-	public String getModifier() {
-		return this.modifier;
-	}
-
-	public void setModifier(String modifier) {
-		this.modifier = modifier;
-	}
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "LASTUPDATE")
-	public Timestamp getLastupdate() {
-		return this.lastupdate;
-	}
-
-	public void setLastupdate(Timestamp lastupdate) {
-		this.lastupdate = lastupdate;
-	}
-
+	
 	@Override
 	public String toString() {
 		return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);

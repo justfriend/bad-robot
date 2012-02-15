@@ -74,7 +74,7 @@ public class WriteCallable implements Callable<TaskSyncResult> {
 			/** 進行寫入 **/
 			fis = new FileInputStream(f);
 			isr = new InputStreamReader(fis, CVSConst.ENCODING_OUT);
-			br = new BufferedReader(isr);
+			br = new BufferedReader(isr, 64 * 1024);
 			List<String> tmpList = new ArrayList<String>();
 			while ((line = br.readLine()) != null) {
 				if (StringUtil.isEmpty(line)) continue;

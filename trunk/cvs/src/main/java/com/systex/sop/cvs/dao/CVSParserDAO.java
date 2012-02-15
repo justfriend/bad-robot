@@ -1,20 +1,19 @@
 package com.systex.sop.cvs.dao;
 
-import java.math.BigDecimal;
+import java.sql.PreparedStatement;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
 import com.systex.sop.cvs.dto.Tbsoptcvsmap;
-import com.systex.sop.cvs.dto.Tbsoptcvsver;
+import com.systex.sop.cvs.dto.Tbsoptcvstag;
 import com.systex.sop.cvs.helper.CVSLog;
+import com.systex.sop.cvs.util.JDBCResCloseHelper;
 import com.systex.sop.cvs.util.SessionUtil;
-import com.systex.sop.cvs.util.StringUtil;
 
-@SuppressWarnings("unchecked")
 public class CVSParserDAO {
 	
 	public Tbsoptcvsmap queryMapByRcsfile(String rcsfile) {
@@ -32,22 +31,30 @@ public class CVSParserDAO {
 		}
 	}
 	
-	public Tbsoptcvsver queryVerByVer(Long m_SID, BigDecimal version) {
+	public void saveTAG(List<Tbsoptcvstag> dtoList) {
+		if (dtoList == null || dtoList.size() < 1) return;
+		
 		Session session = null;
+		Transaction txn = null;
+		PreparedStatement stmt = null;
 		try {
 			session = SessionUtil.openSession();
-			String hql = StringUtil.concat("from Tbsoptcvsver where m_sid = ", m_SID, " and version = ", version);
-			Query query = session.createQuery(hql);
-			query.setMaxResults(1);
-			List<Tbsoptcvsver> list = query.list();
-			if (list != null && list.size() > 0) return list.get(0);
+			txn = session.beginTransaction();
+			stmt = session.connection().prepareStatement("INSERT INTO tbsoptcvstag(m_sid, version, tagname) VALUES(?, ?, ?)");
+			for (Tbsoptcvstag tag : dtoList) {
+				stmt.setLong(1, tag.getId().getMSid());
+				stmt.setString(2, tag.getId().getVersion());
+				stmt.setString(3, tag.getId().getTagname());
+				stmt.addBatch();
+			}
+			stmt.executeBatch();
+			SessionUtil.commit(txn);
 		}catch(Exception e){
-			CVSLog.getLogger().error(this, e);
+			SessionUtil.rollBack(txn);
 			throw new RuntimeException(e);
 		}finally{
+			JDBCResCloseHelper.closeStatement(stmt);
 			SessionUtil.closeSession(session);
 		}
-		
-		return null;
 	}
 }

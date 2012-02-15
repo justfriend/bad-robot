@@ -90,6 +90,10 @@ public class StartUI {
 	
 	private void checkDBConn() {
 		dbResult = CMD_RESULT.FAILURE;
+		int checkAfter = 3000;
+		if ("true".equalsIgnoreCase(PropReader.getProperty("CVS.WELCOMELOGO"))) {
+			checkAfter = 6000;
+		}
 		
 		// BEGIN TEST DB CONNECTION
 		new Thread(new Runnable() {
@@ -109,7 +113,7 @@ public class StartUI {
 					System.exit(0);
 				}
 			}
-		}, 5000);
+		}, checkAfter);
 	}
 	
 	/** 顯示歡迎畫面 **/
