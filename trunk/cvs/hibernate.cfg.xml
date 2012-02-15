@@ -12,7 +12,7 @@
         <property name="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</property>
         <property name="hibernate.show_sql">false</property>
         <property name="hibernate.jdbc.fetch_size">1000</property>
-        <property name="hibernate.jdbc.batch_size">500</property>
+        <property name="hibernate.jdbc.batch_size">200</property>
         
 		<!-- C3P0 Connection pool -->
         <property name="hibernate.connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>

@@ -85,12 +85,9 @@ public class VersionDialog extends SSSJDialogBase {
 				ColumnSpec.decode("37dlu"),
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("180dlu"),
-				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("30dlu"),
-				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("max(28dlu;default)"),
-				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("max(28dlu;default)"),},
+				ColumnSpec.decode("5dlu"),
+				ColumnSpec.decode("5dlu"),
+				ColumnSpec.decode("26dlu"),},
 			new RowSpec[] {
 				RowSpec.decode("default:grow"),}));
 		
@@ -108,13 +105,13 @@ public class VersionDialog extends SSSJDialogBase {
 		SSSJLabel label_1 = new SSSJLabel();
 		label_1.setBorder(new LineBorder(new Color(204, 153, 102)));
 		label_1.setIcon(new ImageIcon(VersionDialog.class.getResource("/resource/symbolLarge.png")));
-		panel_1.add(label_1, "6, 1, right, center");
+		panel_1.add(label_1, "7, 1, right, center");
 		
 		rcsid_jTxtF = new SSSJTextField();
-		panel_1.add(rcsid_jTxtF, "8, 1, fill, default");
+		panel_1.add(rcsid_jTxtF, "5, 1, fill, default");
 		
 		module_jTxtF = new SSSJTextField();
-		panel_1.add(module_jTxtF, "10, 1, fill, default");
+		panel_1.add(module_jTxtF, "6, 1, fill, default");
 		
 		Image img = null;
 		try {

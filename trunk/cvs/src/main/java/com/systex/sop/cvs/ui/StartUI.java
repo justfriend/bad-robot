@@ -290,6 +290,10 @@ public class StartUI {
 				Workspace.changePage(PAGE.SYNC_CVS);
 			}
 			
+			// TODO
+			getInstance().getEnvChk_jBtn().setEnabled(false);
+			getInstance().getSysInfo_jBtn().setEnabled(false);
+			
 			// 定位主畫面
 			window.frame.setBounds(100, 100,
 					ScreenSize.getDynamicScreenWidth(window.frameWidthRate),
