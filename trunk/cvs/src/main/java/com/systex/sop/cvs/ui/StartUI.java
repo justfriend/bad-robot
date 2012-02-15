@@ -90,9 +90,9 @@ public class StartUI {
 	
 	private void checkDBConn() {
 		dbResult = CMD_RESULT.FAILURE;
-		int checkAfter = 3000;
+		int checkAfter = 1000;
 		if ("true".equalsIgnoreCase(PropReader.getProperty("CVS.WELCOMELOGO"))) {
-			checkAfter = 6000;
+			checkAfter = 2000;
 		}
 		
 		// BEGIN TEST DB CONNECTION
@@ -104,16 +104,18 @@ public class StartUI {
 		}).start();
 		
 		// GET THE TEST RESULT
-		Timer t = new Timer();
+		final Timer t = new Timer();
 		t.schedule(new TimerTask() {
+			int retry = 0;
 			@Override
 			public void run() {
-				if (CMD_RESULT.SUCCESS != dbResult) {
+				if (CMD_RESULT.SUCCESS != dbResult && retry >= 2) {
 					getFrame().showMessageBox("DB連線失敗..");
-					System.exit(0);
+				}else{
+					t.cancel();
 				}
 			}
-		}, checkAfter);
+		}, checkAfter, 5000);
 	}
 	
 	/** 顯示歡迎畫面 **/
@@ -271,9 +273,9 @@ public class StartUI {
 				Thread.sleep(4000);
 			}
 			
-			while (CMD_RESULT.SUCCESS != window.dbResult) {
-				ThreadHelper.sleep(1000);
-			}
+//			while (CMD_RESULT.SUCCESS != window.dbResult) {
+//				ThreadHelper.sleep(1000);
+//			}
 			
 			// 啟用框內警示訊息消費者 (收佇列訊息將之呈現在畫面中間)
 			new Thread(new CxtMessageConsumer(getInstance().getFrame())).start();

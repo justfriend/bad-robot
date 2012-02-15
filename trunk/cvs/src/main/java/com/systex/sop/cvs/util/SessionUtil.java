@@ -8,6 +8,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
+import com.systex.sop.cvs.helper.CVSLog;
+
 /**
  * Session Utility (Hibernate)
  * <p>
@@ -20,6 +22,7 @@ import org.hibernate.cfg.Configuration;
  */
 public class SessionUtil {
 	private static SessionFactory sessionFty = null;
+	private static int retry = 0;
 	
 	private static void buildSessionFactory() {
 		File f = new File(PropReader.getPropertyHome(), "hibernate.cfg.xml");
@@ -56,9 +59,10 @@ public class SessionUtil {
 	 * Call this before application shutdown
 	 */
 	public static void closeSessionFactory() {
-		if (sessionFty == null) {
+		if (sessionFty != null) {
 			try {
 				sessionFty.close();
+				sessionFty = null;
 			} catch(HibernateException e){
 				e.printStackTrace();
 			}
@@ -71,11 +75,29 @@ public class SessionUtil {
 	 * @return
 	 */
 	public synchronized static Session openSession() {
-		if (sessionFty == null) {
-			buildSessionFactory();
+		int retry = 0;
+		Session session = null;
+		
+		while (retry < 3) {
+			try {
+				if (sessionFty == null) buildSessionFactory();
+				session = sessionFty.openSession();
+//				session.createSQLQuery("SELECT 1 FROM dual").list();
+				return session;
+			}catch(HibernateException e){
+				CVSLog.getLogger().warn(e);
+				retry++;
+				if (retry == 2) {
+					throw e;
+				}else{
+					closeSessionFactory();
+					ThreadHelper.sleep(3000);
+					CVSLog.getLogger().warn("connection retrying...");
+				}
+			}
 		}
 		
-		return sessionFty.openSession();
+		return null;
 	}
 	
 	/**
