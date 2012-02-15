@@ -28,18 +28,6 @@
         <property name="versionhead" type="string">
             <column name="VERSIONHEAD" length="20" not-null="true" />
         </property>
-        <property name="creator" type="string">
-            <column name="CREATOR" length="50" />
-        </property>
-        <property name="createtime" type="java.sql.Timestamp">
-            <column name="CREATETIME" />
-        </property>
-        <property name="modifier" type="string">
-            <column name="MODIFIER" length="50" />
-        </property>
-        <property name="lastupdate" type="java.sql.Timestamp">
-            <column name="LASTUPDATE" />
-        </property>
         <set name="tbsoptcvsvers" table="TBSOPTCVSVER" inverse="true" lazy="true" fetch="select">
             <key>
                 <column name="M_SID" precision="10" scale="0" not-null="true" />
