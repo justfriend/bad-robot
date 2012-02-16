@@ -1,0 +1,22 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.ibm</groupId>
+	<artifactId>iwt</artifactId>
+	<version>0.1</version>
+	<packaging>jar</packaging>
+
+	<name>iwt</name>
+	<description>IFrame 是一种应用程序窗口体系结构，它可以有自定义颜色、自定义边框、自定义形状、自定义组件、甚至透明性。有了 JFrame，就不需要在应用程序中总是使用乏味的、老的 JFram 了。</description>
+	<url>http://www.ibm.com/developerworks/cn/java/j-iframe/</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<build>
+	</build>
+	<dependencies>
+	</dependencies>
+</project>
