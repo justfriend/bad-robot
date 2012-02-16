@@ -116,7 +116,7 @@ public class WriteFutureTask {
 				SwingUtilities.invokeAndWait(new java.lang.Runnable() {
 					@Override
 					public void run() {
-						if (PAGE.SYNC_CVS.equals(Workspace.getCurrentPage())) {
+						if (PAGE.SYNC_CVS.equals(Workspace.getCurrentPageEnum())) {
 							CxtMessageQueue.addCxtMessage(
 									((plusTotal >= 0)? "+": "") + plusTotal );
 						}

@@ -14,7 +14,6 @@ import java.awt.Rectangle;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
@@ -25,7 +24,10 @@ import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.hibernate.HibernateException;
+
 import com.ibm.iwt.IFrame;
+import com.ibm.iwt.event.WindowChangeEvent;
 import com.ibm.iwt.layout.GroupFlowLayoutConstraints;
 import com.ibm.iwt.util.IWTUtilities;
 import com.ibm.iwt.window.IWindowTitleBar;
@@ -36,6 +38,7 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.systex.sop.cvs.helper.CVSLog;
 import com.systex.sop.cvs.ui.customize.SSSPalette;
 import com.systex.sop.cvs.util.PropReader;
+import com.systex.sop.cvs.util.SessionUtil;
 import com.systex.sop.cvs.util.StringUtil;
 
 @SuppressWarnings({ "unchecked", "serial" })
@@ -150,7 +153,7 @@ public class SSSJFrameBase extends IFrame {
 		setIContentPaneBorder(new MatteBorder(0, 1, 1, 1, SSSPalette.FRAME_BD));
 		
 		setBounds(100, 100, 800, 600);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		/** 下方美化 (訊息狀態 + 拖拉圖示) **/
 		JPanel sPanel = new JPanel();
@@ -278,5 +281,16 @@ public class SSSJFrameBase extends IFrame {
 	
 	public void endProcess() {
 		getpBar().setVisible(false);
+	}
+	
+	@Override
+	public void windowClosed(WindowChangeEvent event) {
+		try {
+			SessionUtil.closeSessionFactory();
+		} catch (HibernateException e) {
+			CVSLog.getLogger().error(this, e);
+		} finally {
+			System.exit(0);
+		}
 	}
 }

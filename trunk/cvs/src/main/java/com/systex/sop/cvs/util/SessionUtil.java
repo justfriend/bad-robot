@@ -8,8 +8,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
-import com.systex.sop.cvs.helper.CVSLog;
-
 /**
  * Session Utility (Hibernate)
  * <p>
@@ -22,7 +20,6 @@ import com.systex.sop.cvs.helper.CVSLog;
  */
 public class SessionUtil {
 	private static SessionFactory sessionFty = null;
-	private static int retry = 0;
 	
 	private static void buildSessionFactory() {
 		File f = new File(PropReader.getPropertyHome(), "hibernate.cfg.xml");
@@ -70,37 +67,6 @@ public class SessionUtil {
 	}
 
 	/**
-	 * Get session
-	 * <p>
-	 * @return
-	 */
-	public synchronized static Session openSession() {
-		int retry = 0;
-		Session session = null;
-		
-		while (retry < 3) {
-			try {
-				if (sessionFty == null) buildSessionFactory();
-				session = sessionFty.openSession();
-//				session.createSQLQuery("SELECT 1 FROM dual").list();
-				return session;
-			}catch(HibernateException e){
-				CVSLog.getLogger().warn(e);
-				retry++;
-				if (retry == 2) {
-					throw e;
-				}else{
-					closeSessionFactory();
-					ThreadHelper.sleep(3000);
-					CVSLog.getLogger().warn("connection retrying...");
-				}
-			}
-		}
-		
-		return null;
-	}
-	
-	/**
 	 * Commit transaction
 	 * <p>
 	 * @param txn
@@ -117,6 +83,31 @@ public class SessionUtil {
 		}
 	}
 	
+	public static SessionFactory getSessionFty() {
+		return sessionFty;
+	}
+	
+	public static void main (String [] args) throws Exception {
+		SessionUtil.openSession().close();
+	}
+	
+	/**
+	 * Get session
+	 * <p>
+	 * @return
+	 */
+	public static Session openSession() {
+		Session session = null;
+		
+		try {
+			if (sessionFty == null) buildSessionFactory();
+			session = sessionFty.openSession();
+			return session;
+		}catch(HibernateException e){
+			throw e;
+		}
+	}
+
 	/**
 	 * Rollback transaction
 	 * <p>
@@ -130,10 +121,6 @@ public class SessionUtil {
 				e.printStackTrace();
 			}
 		}
-	}
-	
-	public static void main (String [] args) throws Exception {
-		SessionUtil.openSession().close();
 	}
 
 }

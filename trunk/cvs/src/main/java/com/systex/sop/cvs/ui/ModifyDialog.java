@@ -37,6 +37,11 @@ import com.systex.sop.cvs.ui.customize.other.QueryActionListener;
 import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.StringUtil;
 
+/**
+ * 修改註記對話框
+ * <P>
+ *
+ */
 @SuppressWarnings("serial")
 public class ModifyDialog extends SSSJDialogBase {
 	private Tbsoptcvsver currentVer = null;

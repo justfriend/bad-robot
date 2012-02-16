@@ -5,23 +5,31 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.JPanel;
 
+/**
+ * 管理頁面之控制類別
+ * <p>
+ *
+ */
 public class Workspace {
 	public enum PAGE { SYNC_CVS, RESET_LOGIN, QRY_CLASSIC, QRY_NORMAL, ENV_CHK, SYS_INFO };
 	private static JPanel body;
 	private static ConcurrentHashMap<PAGE, JPanel> pageMap = new ConcurrentHashMap<PAGE, JPanel>();
 	private static PAGE currentPage = null;
 	
+	/** 切換頁面 **/
 	public static void changePage(PAGE page) {
 		body.removeAll();
 		body.add(getPage(page), BorderLayout.CENTER);
 		body.updateUI();
 		currentPage = page;
 	}
-
-	public static PAGE getCurrentPage() {
+	
+	/** 取得當前頁面定義 **/
+	public static PAGE getCurrentPageEnum() {
 		return currentPage;
 	}
 	
+	/** 取得頁面 **/
 	public static JPanel getPage(PAGE page) {
 		if (!pageMap.containsKey(page)) {
 			registerPage(page);
@@ -30,6 +38,7 @@ public class Workspace {
 		return pageMap.get(page);
 	}
 	
+	/** 註記頁面的容器板 **/
 	public static void registerBody(JPanel panel) {
 		body = panel;
 		body.setLayout(new BorderLayout(0, 0));

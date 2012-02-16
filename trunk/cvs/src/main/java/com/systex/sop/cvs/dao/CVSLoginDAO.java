@@ -14,6 +14,18 @@ import com.systex.sop.cvs.util.TimestampHelper;
 
 public class CVSLoginDAO {
 	
+	public void selfTest() {
+		Session session = null;
+		try {
+			session = SessionUtil.openSession();
+			session.createSQLQuery("SELECT 1 FROM DUAL").list();
+		}catch(HibernateException e){
+			throw e;
+		}finally{
+			SessionUtil.closeSession(session);
+		}
+	}
+	
 	/**
 	 * 查詢登入資訊
 	 * <p>
@@ -33,7 +45,6 @@ public class CVSLoginDAO {
 				return oldObj;
 			}
 		}catch(HibernateException e){
-			CVSLog.getLogger().error(this, e);
 			throw e;
 		}finally{
 			SessionUtil.closeSession(session);
@@ -69,7 +80,6 @@ public class CVSLoginDAO {
 			}
 			SessionUtil.commit(txn);
 		}catch(HibernateException e){
-			CVSLog.getLogger().error(this, e);
 			SessionUtil.rollBack(txn);
 			throw e;
 		}finally{
@@ -124,7 +134,6 @@ public class CVSLoginDAO {
 			}
 			SessionUtil.commit(txn);
 		}catch(HibernateException e){
-			CVSLog.getLogger().error(this, e);
 			SessionUtil.rollBack(txn);
 			throw e;
 		}finally{
@@ -170,7 +179,6 @@ public class CVSLoginDAO {
 			}
 			SessionUtil.commit(txn);
 		}catch(HibernateException e){
-			CVSLog.getLogger().error(this, e);
 			SessionUtil.rollBack(txn);
 			throw e;
 		}finally{

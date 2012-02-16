@@ -1,7 +1,6 @@
 package com.systex.sop.cvs.task;
 
 import java.sql.Timestamp;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -12,7 +11,6 @@ public class TaskSyncResult {
 	 * Future task 只在處理結束時才能取得結果，在此將處理中的結果亦儲存起來
 	 */
 	private static ConcurrentHashMap<String, TaskSyncResult> resultMap = new ConcurrentHashMap<String, TaskSyncResult>();
-	private static ConcurrentHashMap<String, Callable> callableMap = new ConcurrentHashMap<String, Callable>();
 	private String module;				// 模組名稱
 	private Timestamp beginTime;		// 開始時間(LOG)
 	private Timestamp endedTime;		// 結束時間(LOG)

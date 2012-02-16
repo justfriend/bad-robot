@@ -8,7 +8,6 @@ import com.systex.sop.cvs.helper.CVSLog;
 import com.systex.sop.cvs.schedular.CVSJob;
 import com.systex.sop.cvs.schedular.CVSSchedularManager;
 import com.systex.sop.cvs.ui.StartUI;
-import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.TimestampHelper;
 
 /**
@@ -26,13 +25,15 @@ public class SyncPageLogic {
 				CVSSchedularManager.getInstance().start();
 				btn.setText("停止");
 				// 更新標題為同步中
-				StartUI.getInstance().getFrame().getFrameTitleBar().getTitle().setText(PropReader.getProperty("CVS.TITLE") + "  [自動同步中]");
+				StartUI.getInstance().getFrame().getFrameTitleBar().getTitle().setText(
+						StartUI.getInstance().getDefTitle() + "  [自動同步中]");
 			}else
 			if (CVSSchedularManager.getInstance().isStarted()) {
 				CVSSchedularManager.getInstance().suspend();
 				btn.setText("啟動");
 				// 標題更新回來
-				StartUI.getInstance().getFrame().getFrameTitleBar().getTitle().setText(PropReader.getProperty("CVS.TITLE"));
+				StartUI.getInstance().getFrame().getFrameTitleBar().getTitle().setText(
+						StartUI.getInstance().getDefTitle() );
 			}
 		}catch(Exception e){
 			CVSLog.getLogger().error(this, e);

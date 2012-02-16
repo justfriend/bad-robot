@@ -31,6 +31,7 @@ public class CVSParserDAO {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void saveTAG(List<Tbsoptcvstag> dtoList) {
 		if (dtoList == null || dtoList.size() < 1) return;
 		

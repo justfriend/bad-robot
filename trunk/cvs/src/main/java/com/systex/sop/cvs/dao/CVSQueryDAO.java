@@ -135,7 +135,7 @@ public class CVSQueryDAO {
 	
 	/** 一般查詢 **/
 	public List<VerMapDO> queryNormal(String author, boolean isIgnoreDel, Timestamp beginDate, Timestamp endedDate,
-			String filename, String program, String id, String desc, String tagName, PROG_TYPE type) 
+			String filename, String program, String id, String desc, String module, String tagName, PROG_TYPE type) 
 	{
 		List<VerMapDO> objList = new ArrayList<VerMapDO>();
 		Session session = null;
@@ -149,6 +149,7 @@ public class CVSQueryDAO {
 			CriteriaUtil.between(cri, "verdate", beginDate, endedDate);
 			CriteriaUtil.likeIgnoreCase(cri, "m.filename", filename);
 			CriteriaUtil.likeIgnoreCase(cri, "m.programid", program);
+			CriteriaUtil.likeIgnoreCase(cri, "m.module", module);
 			CriteriaUtil.likeIgnoreCase(cri, "descId", id);
 			CriteriaUtil.likeIgnoreCase(cri, "descDesc", desc);
 			if (isIgnoreDel) cri.add(Restrictions.ne("state", '1'));

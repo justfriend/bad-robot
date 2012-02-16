@@ -37,6 +37,11 @@ import com.systex.sop.cvs.ui.tableClass.VerMapDO;
 import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.TimestampHelper;
 
+/**
+ * 典型查詢頁面
+ * <P>
+ *
+ */
 @SuppressWarnings("serial")
 public class QueryClassicPage extends JPanel {
 	// 控制變數

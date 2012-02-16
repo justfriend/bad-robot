@@ -87,7 +87,6 @@
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.8.3</version>
 			<type>jar</type>
-
 		</dependency>
 		<dependency>
 			<groupId>commons-collections</groupId>
@@ -114,6 +113,19 @@
 			<type>jar</type>
 		</dependency>
 		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-proxool</artifactId>
+			<version>3.6.9.Final</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>com.jolbox</groupId>
+			<artifactId>bonecp</artifactId>
+			<version>0.7.1.RELEASE</version>
+			<type>jar</type>
+			<classifier>jdk5</classifier>
+		</dependency>
+		<dependency>
 			<groupId>com.jolbox</groupId>
 			<artifactId>bonecp-provider</artifactId>
 			<version>0.7.1.RELEASE</version>
@@ -121,9 +133,15 @@
 			<classifier>jdk5</classifier>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-proxool</artifactId>
-			<version>3.6.9.Final</version>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.4</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
+			<version>1.6</version>
 			<type>jar</type>
 		</dependency>
 	</dependencies>
