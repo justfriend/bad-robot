@@ -94,7 +94,7 @@ public class StartUI {
 			StartUI.getInstance().getFrame().setMessage("DB Connected");
 		}catch(Exception e){
 			CVSLog.getLogger().error(this, e);
-			StartUI.getInstance().getFrame().showMessageBox("無法取得DB連線");
+			StartUI.getInstance().getFrame().showMessageBox(null, "無法取得DB連線");
 			System.exit(-1);
 		}
 		
