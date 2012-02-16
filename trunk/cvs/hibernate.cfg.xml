@@ -12,9 +12,9 @@
     	 -->
     	<!-- DB Connection -->
         <property name="hibernate.connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
-        <property name="hibernate.connection.password">systex</property>
-        <property name="hibernate.connection.url">jdbc:oracle:thin:@localhost:1521/OM2</property>
         <property name="hibernate.connection.username">sopaadmin</property>
+        <property name="hibernate.connection.password">systex</property>
+        <property name="hibernate.connection.url">jdbc:oracle:thin:@10.10.56.119:1521/OM2ML</property>
         <property name="hibernate.default_schema">SOPAADMIN</property>
         
         <!-- DB Feature -->
@@ -24,15 +24,15 @@
         <property name="hibernate.show_sql">false</property>
         <property name="hibernate.formate_sql">false</property>
         
-        <!-- POOL - DBCP (Do not provide DBCP provider since Hibernate 3) 
+        <!-- POOL - DBCP (Do not provide DBCP provider since Hibernate 3) -->
         <property name="hibernate.connection.provider_class">com.systex.sop.cvs.util.DBCPConnectionProvider</property>
         <property name="hibernate.connection.autocommit">false</property>
 		<property name="hibernate.dbcp.initialSize">3</property>
 		<property name="hibernate.dbcp.maxActive">10</property>
 		<property name="hibernate.dbcp.minIdle">0</property>
 		<property name="hibernate.dbcp.maxIdle">10</property>
-		<property name="hibernate.dbcp.maxWait">10000</property>
-        -->
+		<property name="hibernate.dbcp.maxWait">30000</property>
+        
         
 		<!-- POOL - C3P0  
         <property name="hibernate.connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
@@ -60,7 +60,7 @@
 		-->
 	    
 		
-		<!-- POOL Proxool (Mark [DB Connection] block when POOL is Proxool) 
+		<!-- POOL Proxool (Mark [DB Connection] block when POOL is Proxool and config proxoolconf.xml) 
 		<property name="hibernate.proxool.pool_alias">pool1</property>
 		<property name="hibernate.proxool.xml">proxoolconf.xml</property>
 		<property name="hibernate.connection.provider_class">org.hibernate.connection.ProxoolConnectionProvider</property>
