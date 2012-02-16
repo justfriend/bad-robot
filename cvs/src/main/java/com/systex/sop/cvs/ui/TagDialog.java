@@ -19,6 +19,11 @@ import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.StringUtil;
 import com.systex.sop.cvs.util.TableUtil;
 
+/**
+ * 版本標籤對話框
+ * <p>
+ *
+ */
 @SuppressWarnings("serial")
 public class TagDialog extends SSSJDialogBase {
 	private SSSJTable table;

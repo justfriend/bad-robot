@@ -18,6 +18,11 @@ import com.systex.sop.cvs.ui.customize.comp.SSSJButton;
 import com.systex.sop.cvs.ui.customize.comp.SSSJLabel;
 import com.systex.sop.cvs.ui.logic.ResetPageLogic;
 
+/**
+ * 重置登入頁面
+ * <P>
+ *
+ */
 @SuppressWarnings("serial")
 public class ResetPage extends JPanel {
 	// 控制變數

@@ -4,19 +4,37 @@
 		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-    	<!-- -->
+    	<!-- ABOUT CONFIG XML (more config property detail)
+    	     1. org.hibernate.cfg.Environment						[HIBERNATE]
+    	     2. org.apache.commons.dbcp.BasicDataSourceFactory		[DBCP]
+    	        http://commons.apache.org/dbcp/configuration.html	[DBCP]
+    	     3. 
+    	 -->
+    	<!-- DB Connection -->
         <property name="hibernate.connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
         <property name="hibernate.connection.password">systex</property>
-        <property name="hibernate.connection.url">jdbc:oracle:thin:@10.10.56.119:1521:OM2ML</property>
+        <property name="hibernate.connection.url">jdbc:oracle:thin:@localhost:1521/OM2</property>
         <property name="hibernate.connection.username">sopaadmin</property>
         <property name="hibernate.default_schema">SOPAADMIN</property>
         
-        <property name="hibernate.jdbc.fetch_size">100</property>
-        <property name="hibernate.jdbc.batch_size">200</property>
+        <!-- DB Feature -->
+        <property name="hibernate.jdbc.fetch_size">200</property>
+        <property name="hibernate.jdbc.batch_size">300</property>
         <property name="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</property>
         <property name="hibernate.show_sql">false</property>
+        <property name="hibernate.formate_sql">false</property>
         
-		<!-- C3P0 Connection pool 
+        <!-- POOL - DBCP (Do not provide DBCP provider since Hibernate 3) 
+        <property name="hibernate.connection.provider_class">com.systex.sop.cvs.util.DBCPConnectionProvider</property>
+        <property name="hibernate.connection.autocommit">false</property>
+		<property name="hibernate.dbcp.initialSize">3</property>
+		<property name="hibernate.dbcp.maxActive">10</property>
+		<property name="hibernate.dbcp.minIdle">0</property>
+		<property name="hibernate.dbcp.maxIdle">10</property>
+		<property name="hibernate.dbcp.maxWait">10000</property>
+        -->
+        
+		<!-- POOL - C3P0  
         <property name="hibernate.connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
         <property name="hibernate.c3p0.max_size">100</property>
         <property name="hibernate.c3p0.min_size">10</property>
@@ -28,7 +46,7 @@
         <property name="hibernate.c3p0.unreturnedConnectionTimeout">180</property>
         -->
 
-		<!-- bonecp -->
+		<!-- POOL - BoneCP  
 		<property name="hibernate.connection.provider_class">com.jolbox.bonecp.provider.BoneCPConnectionProvider</property>
 		<property name="bonecp.idleMaxAgeInMinutes">10</property>
 		<property name="bonecp.idleConnectionTestPeriodInMinutes">3</property>
@@ -36,18 +54,19 @@
 		<property name="bonecp.acquireIncrement">1</property>
 		<property name="bonecp.maxConnectionsPerPartition">60</property>
 		<property name="bonecp.minConnectionsPerPartition">20</property>
-		<property name="bonecp.statementsCacheSize">0</property>
+		<property name="bonecp.statementsCacheSize">30</property>
 		<property name="bonecp.releaseHelperThreads">3</property>
 		<property name="bonecp.connectionTestStatement">SELECT 1 FROM DUAL</property>
+		-->
 	    
 		
-		<!-- Proxool 
+		<!-- POOL Proxool (Mark [DB Connection] block when POOL is Proxool) 
 		<property name="hibernate.proxool.pool_alias">pool1</property>
 		<property name="hibernate.proxool.xml">proxoolconf.xml</property>
 		<property name="hibernate.connection.provider_class">org.hibernate.connection.ProxoolConnectionProvider</property>
 		-->
 		
-        <!-- Mapping resource -->
+        <!-- Hibernate mapping resource -->
     	<mapping resource="com/systex/sop/cvs/dto/Tbsoptcvsmap.hbm.xml"/>
     	<mapping resource="com/systex/sop/cvs/dto/Tbsoptcvsver.hbm.xml"/>
     	<mapping resource="com/systex/sop/cvs/dto/Tbsoptcvstag.hbm.xml"/>

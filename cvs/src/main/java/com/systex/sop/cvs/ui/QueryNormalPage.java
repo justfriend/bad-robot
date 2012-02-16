@@ -66,6 +66,7 @@ public class QueryNormalPage extends JPanel {
 	private SSSJTextField tag_jTxtF;
 	private SSSJCheckBox tag_jChkB;
 	private SSSJComboBox type_jCmbB;
+	private SSSJTextField module_jTxtF;
 	
 	/** Constructor **/
 	public QueryNormalPage() {
@@ -281,10 +282,18 @@ public class QueryNormalPage extends JPanel {
 						getProgram_jTxtF().getText(),
 						getId_jTxtF().getText(),
 						getDesc_jTxtF().getText(),
+						getModule_jTxtF().getText(),
 						(getTag_jChkB().isSelected())? getTag_jTxtF().getText(): null,
 						type);
 			}
 		});
+		
+		SSSJLabel label_8 = new SSSJLabel();
+		label_8.setText("模組");
+		panel_2.add(label_8, "6, 4, right, default");
+		
+		module_jTxtF = new SSSJTextField();
+		panel_2.add(module_jTxtF, "8, 4, fill, default");
 		
 		SSSJLabel label_2 = new SSSJLabel();
 		label_2.setText("檔案名稱");
@@ -366,5 +375,8 @@ public class QueryNormalPage extends JPanel {
 	}
 	public SSSJComboBox getType_jCmbB() {
 		return type_jCmbB;
+	}
+	public SSSJTextField getModule_jTxtF() {
+		return module_jTxtF;
 	}
 }

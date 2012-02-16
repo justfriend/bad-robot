@@ -1,6 +1,5 @@
 package com.systex.sop.cvs.constant;
 
-import com.systex.sop.cvs.ui.customize.comp.SSSTrafficLabel.LIGHT;
 
 public class CVSConst {
 	public static final String ENCODING_IN = "MS950";
@@ -39,19 +38,6 @@ public class CVSConst {
 		CHK_CVS, CHK_MODULE, CHK_LOGPATH, CHK_DBCONN, CHK_CRON,
 		CHK_SCHEDULAR
 	};
-	
-	public enum CMD_RESULT {
-		SUCCESS(LIGHT.GREEN), FAILURE(LIGHT.RED), WARNING(LIGHT.YELLOW);
-		private LIGHT light;
-
-		private CMD_RESULT(LIGHT light) {
-			this.light = light;
-		}
-
-		public LIGHT getLight() {
-			return light;
-		}
-	}
 
 	public enum LOGIN_FLAG {
 		SESSION('S'), LOG('L');

@@ -8,31 +8,32 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Hashtable;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
+
+import org.hibernate.cfg.Environment;
+import org.hibernate.engine.SessionFactoryImplementor;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
-import com.systex.sop.cvs.constant.CVSConst.CMD_RESULT;
+import com.systex.sop.cvs.dao.CVSLoginDAO;
+import com.systex.sop.cvs.helper.CVSLog;
 import com.systex.sop.cvs.message.CxtMessageConsumer;
 import com.systex.sop.cvs.ui.Workspace.PAGE;
-import com.systex.sop.cvs.ui.command.ChkDBConnCommand;
 import com.systex.sop.cvs.ui.customize.comp.SSSJButton;
 import com.systex.sop.cvs.ui.customize.comp.SSSJFrameBase;
 import com.systex.sop.cvs.ui.customize.comp.SSSJSplitPane;
 import com.systex.sop.cvs.util.PropReader;
 import com.systex.sop.cvs.util.ScreenSize;
-import com.systex.sop.cvs.util.ThreadHelper;
+import com.systex.sop.cvs.util.SessionUtil;
+import com.systex.sop.cvs.util.StringUtil;
 
 /**
  * CVS 主程式
@@ -44,7 +45,6 @@ public class StartUI {
 	// 控制變數
 	private final float frameWidthRate = 0.8f;	// 框架起始的大小比率 (寬)
 	private final float frameHeightRate = 0.7f;	// 框架起始的大小比率 (高)
-	CMD_RESULT dbResult = CMD_RESULT.FAILURE;
 	ServerSocket socket;
 	
 	// 幫助項目
@@ -89,33 +89,37 @@ public class StartUI {
 	}
 	
 	private void checkDBConn() {
-		dbResult = CMD_RESULT.FAILURE;
-		int checkAfter = 1000;
-		if ("true".equalsIgnoreCase(PropReader.getProperty("CVS.WELCOMELOGO"))) {
-			checkAfter = 2000;
+		try {
+			new CVSLoginDAO().selfTest();
+			StartUI.getInstance().getFrame().setMessage("DB Connected");
+		}catch(Exception e){
+			CVSLog.getLogger().error(this, e);
+			StartUI.getInstance().getFrame().showMessageBox("無法取得DB連線");
+			System.exit(-1);
 		}
 		
 		// BEGIN TEST DB CONNECTION
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				dbResult = new ChkDBConnCommand(null).execute();
-			}
-		}).start();
+//		new Thread(new Runnable() {
+//			@Override
+//			public void run() {
+//				dbResult = new ChkDBConnCommand(null).execute();
+//			}
+//		}).start();
 		
 		// GET THE TEST RESULT
-		final Timer t = new Timer();
-		t.schedule(new TimerTask() {
-			int retry = 0;
-			@Override
-			public void run() {
-				if (CMD_RESULT.SUCCESS != dbResult && retry >= 2) {
-					getFrame().showMessageBox("DB連線失敗..");
-				}else{
-					t.cancel();
-				}
-			}
-		}, checkAfter, 5000);
+//		final Timer t = new Timer();
+//		t.schedule(new TimerTask() {
+//			@Override
+//			public void run() {
+//				CVSLog.getLogger().fatal("KKK");
+//				if (CMD_RESULT.SUCCESS != dbResult) {
+//					getFrame().showMessageBox("DB連線失敗..");
+//					
+//				}else{
+//					t.cancel();
+//				}
+//			}
+//		}, checkAfter, 3000);
 	}
 	
 	/** 顯示歡迎畫面 **/
@@ -125,6 +129,14 @@ public class StartUI {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public String getDefTitle() {
+		Object url = ((SessionFactoryImplementor) SessionUtil.getSessionFty()).getProperties().get(Environment.URL);
+		return StringUtil.concat(
+				PropReader.getProperty("CVS.TITLE"),
+				(StringUtil.isEmpty(url)? "": " - "),
+				url );
 	}
 
 	/**
@@ -141,7 +153,7 @@ public class StartUI {
 		}
 
 		frame = new SSSJFrameBase(frameIcon, titleIcon, PropReader.getProperty("CVS.TITLE"), true, true, true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		UIManager.put("SplitPane.dividerSize", 3);
 		contentSplitPane = new SSSJSplitPane();
@@ -264,6 +276,7 @@ public class StartUI {
 			
 			// 檢查DB連線
 			window.checkDBConn();
+			StartUI.getInstance().getFrame().getFrameTitleBar().getTitle().setText(StartUI.getInstance().getDefTitle());
 			
 			if ("true".equalsIgnoreCase(PropReader.getProperty("CVS.WELCOMELOGO"))) {
 				// 呈現歡迎畫面 (淡入後即關閉)
@@ -355,5 +368,4 @@ public class StartUI {
 	public VersionDialog getVersionDialog() {
 		return versionDialog;
 	}
-	
 }

@@ -94,13 +94,13 @@ public class QueryPageLogic {
 	
 	/** 一般查詢 **/
 	public  void doQueryNormal(JTable table, String author, boolean isIgnoreDel, Timestamp beginTime, Timestamp endedTime,
-			String filename, String program, String id, String desc, String tagname, PROG_TYPE type) {
+			String filename, String program, String id, String desc, String module, String tagname, PROG_TYPE type) {
 		try {
 			// 進行查詢
 			StopWatch s = new StopWatch();
 			s.start();
 			List<VerMapDO> result = dao.queryNormal(
-					author, isIgnoreDel, beginTime, endedTime, filename, program, id, desc, tagname, type
+					author, isIgnoreDel, beginTime, endedTime, filename, program, id, desc, module, tagname, type
 			);
 			s.stop();
 			

@@ -30,6 +30,11 @@ import com.systex.sop.cvs.ui.logic.QueryPageLogic;
 import com.systex.sop.cvs.ui.tableClass.VerTreeDO;
 import com.systex.sop.cvs.util.PropReader;
 
+/**
+ * 版本樹對話框
+ * <p>
+ * 
+ */
 @SuppressWarnings("serial")
 public class VersionDialog extends SSSJDialogBase {
 	private SSSJTable table;

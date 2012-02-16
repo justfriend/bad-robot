@@ -50,7 +50,7 @@ public class CriteriaUtil {
 	
 	public static Criteria like(Criteria cri, String column, String value) {
 		if (StringUtil.isNotEmpty(value)) {
-			return cri.add(Restrictions.like(column, value));
+			return cri.add(Restrictions.like(column, StringUtil.concat("%", value, "%")));
 		}else{
 			return cri;
 		}
@@ -58,7 +58,7 @@ public class CriteriaUtil {
 	
 	public static Criteria likeIgnoreCase(Criteria cri, String column, String value) {
 		if (StringUtil.isNotEmpty(value)) {
-			return cri.add(Restrictions.like(column, value).ignoreCase());
+			return cri.add(Restrictions.like(column, StringUtil.concat("%", value, "%")).ignoreCase());
 		}else{
 			return cri;
 		}
