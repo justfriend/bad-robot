@@ -47,7 +47,11 @@ public class DBCPConnectionProvider implements ConnectionProvider {
 	private static final Log log = LogFactory.getLog(DBCPConnectionProvider.class);
 	private static final String PREFIX = "hibernate.dbcp.";
 	private BasicDataSource ds;
-
+	private boolean isTraceConn = false;
+	
+	/** 追蹤連線使用狀態 (true or false) **/
+	private static final String DBCP_TRACE_CONN = "hibernate.dbcp.traceConnection";
+	
 	// Old Environment property for backward-compatibility (property removed in Hibernate3)
 	private static final String DBCP_PS_MAXACTIVE = "hibernate.dbcp.ps.maxActive";
 
@@ -145,6 +149,13 @@ public class DBCPConnectionProvider implements ConnectionProvider {
 					dbcpProperties.put(property, value);
 				}
 			}
+			
+			/** trace db connection **/
+			if (props.getProperty(DBCP_TRACE_CONN) != null) {
+				if ("true".equalsIgnoreCase(props.getProperty(DBCP_TRACE_CONN))) {
+					isTraceConn = true;
+				}
+			}
 
 			// Backward-compatibility
 			if (props.getProperty(DBCP_PS_MAXACTIVE) != null) {
@@ -207,7 +218,7 @@ public class DBCPConnectionProvider implements ConnectionProvider {
 	}
 
 	protected void logStatistics() {
-		if (log.isInfoEnabled()) {
+		if (isTraceConn) {
 //			log.info("active: " + ds.getNumActive() + " (max: " + ds.getMaxActive() + ")   " + "idle: "
 //					+ ds.getNumIdle() + "(max: " + ds.getMaxIdle() + ")");
 			log.info(StringUtil.concat("Active[", ds.getNumActive(), ", ", ds.getMaxActive(), "], Idle[", ds.getNumIdle(), ", ", ds.getMaxIdle(), "]") );

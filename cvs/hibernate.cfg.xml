@@ -27,6 +27,7 @@
         <!-- POOL - DBCP (Do not provide DBCP provider since Hibernate 3) -->
         <property name="hibernate.connection.provider_class">com.systex.sop.cvs.util.DBCPConnectionProvider</property>
         <property name="hibernate.connection.autocommit">false</property>
+        <property name="hibernate.dbcp.traceConnection">false</property>
 		<property name="hibernate.dbcp.initialSize">3</property>
 		<property name="hibernate.dbcp.maxActive">10</property>
 		<property name="hibernate.dbcp.minIdle">0</property>
