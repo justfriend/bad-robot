@@ -14,14 +14,14 @@
         <property name="hibernate.connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
         <property name="hibernate.connection.username">sopaadmin</property>
         <property name="hibernate.connection.password">systex</property>
-        <property name="hibernate.connection.url">jdbc:oracle:thin:@10.10.56.119:1521/OM2ML</property>
+        <property name="hibernate.connection.url">jdbc:oracle:thin:@localhost:1521/OM2</property>
         <property name="hibernate.default_schema">SOPAADMIN</property>
         
         <!-- DB Feature -->
         <property name="hibernate.jdbc.fetch_size">200</property>
         <property name="hibernate.jdbc.batch_size">300</property>
         <property name="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</property>
-        <property name="hibernate.show_sql">false</property>
+        <property name="hibernate.show_sql">true</property>
         <property name="hibernate.formate_sql">false</property>
         
         <!-- POOL - DBCP (Do not provide DBCP provider since Hibernate 3) -->
@@ -35,7 +35,7 @@
 		<property name="hibernate.dbcp.maxWait">30000</property>
         
         
-		<!-- POOL - C3P0  
+		<!-- POOL - C3P0 
         <property name="hibernate.connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
         <property name="hibernate.c3p0.max_size">100</property>
         <property name="hibernate.c3p0.min_size">10</property>

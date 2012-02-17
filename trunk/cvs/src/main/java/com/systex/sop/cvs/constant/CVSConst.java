@@ -80,6 +80,13 @@ public class CVSConst {
 			}
 			return null;
 		}
+		
+		public static CLIENTSERVER findByFlag(String flagStr) {
+			for (CLIENTSERVER e : CLIENTSERVER.values()) {
+				if (e.getFlag() == flagStr.charAt(0)) return e;
+			}
+			return null;
+		}
 	}
 	
 	public enum LOGIN_STATUS {

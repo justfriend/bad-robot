@@ -1,32 +1,33 @@
 package com.systex.sop.cvs.logic;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.HibernateException;
+
 import com.systex.sop.cvs.constant.CVSConst;
-import com.systex.sop.cvs.dao.CVSParserDAO;
-import com.systex.sop.cvs.dao.CommonDAO;
+import com.systex.sop.cvs.dao.CVSParserDAOTxn;
 import com.systex.sop.cvs.dto.Tbsoptcvsmap;
 import com.systex.sop.cvs.dto.Tbsoptcvstag;
 import com.systex.sop.cvs.dto.TbsoptcvstagId;
 import com.systex.sop.cvs.dto.Tbsoptcvsver;
 import com.systex.sop.cvs.dto.TbsoptcvsverId;
 import com.systex.sop.cvs.helper.CVSLog;
+import com.systex.sop.cvs.task.TaskSyncResult;
+import com.systex.sop.cvs.task.WriteFutureTask;
+import com.systex.sop.cvs.util.StreamCloseHelper;
 import com.systex.sop.cvs.util.StringUtil;
 import com.systex.sop.cvs.util.TimestampHelper;
 
 public class CVSParserLogic {
-	private CommonDAO commonDAO = new CommonDAO();
-	private CVSParserDAO dao = new CVSParserDAO();
-	
-	/** the structure that collects tags **/
-	class VERTAG {
-		public String version;
-		public String tagname;
-	}
+	private CVSParserDAOTxn daoTxn = new CVSParserDAOTxn();
 	
 	/** the structure that collects version description **/
 	public static class VERDESC {
@@ -83,6 +84,12 @@ public class CVSParserLogic {
 		}
 	}
 	
+	/** the structure that collects tags **/
+	class VERTAG {
+		public String version;
+		public String tagname;
+	}
+	
 	/** verify date **/
 	private void checkParserData(List<String> lineList) {
 		if (lineList == null || lineList.size() < 1) {
@@ -99,22 +106,6 @@ public class CVSParserLogic {
 		}
 	}
 	
-	private String fxProgramID(String rcsfile) {
-		String programid = null;
-		String [] pArray = rcsfile.split("/");
-		for (int i=0; i<pArray.length; i++) {
-			if ("view".equalsIgnoreCase(pArray[i]) || "model".equalsIgnoreCase(pArray[i])) {
-				programid = pArray[i+1];
-				if (!StringUtil.isEmpty(programid))  {
-					if (!programid.toUpperCase().startsWith("SOP")) {
-						programid = null;
-					}
-				}
-			}
-		}
-		return (programid == null)? " ": programid;
-	}
-	
 	private char fxClientServer(String module) {
 		char csCode = CVSConst.CLIENTSERVER.CLIENT.getFlag();
 		String cs = module.split("-")[2];
@@ -129,20 +120,6 @@ public class CVSParserLogic {
 		}
 		
 		return csCode;
-	}
-	
-	private List<VERTAG> fxCollectTagList(List<String> lineList, int beginLine) {
-		List<VERTAG> tagList = new ArrayList<VERTAG>();
-		for (int i = beginLine; i < lineList.size(); i++) {
-			String line = lineList.get(i);
-			if (line.startsWith("keyword") || line.startsWith("total")) { break; }
-			VERTAG tag = new VERTAG();
-			tag.tagname = line.split(": ")[0].trim();
-			tag.version = line.split(": ")[1];
-			tagList.add(tag);
-		}
-		
-		return tagList;
 	}
 	
 	private List<VERDESC> fxCollectDescList(List<String> lineList, int beginLine) {
@@ -197,12 +174,91 @@ public class CVSParserLogic {
 		return verdescList;
 	}
 	
-	public Tbsoptcvsmap parser(String hostname, String module, List<String> lineList, boolean isFullSync) {
-//		CVSLog.getLogger().info(StringUtil.concat("Parsing... [module]", module, ", [lineList]", lineList.size(), ", [isFullSync]", isFullSync));
+	private List<VERTAG> fxCollectTagList(List<String> lineList, int beginLine) {
+		List<VERTAG> tagList = new ArrayList<VERTAG>();
+		for (int i = beginLine; i < lineList.size(); i++) {
+			String line = lineList.get(i);
+			if (line.startsWith("keyword") || line.startsWith("total")) { break; }
+			VERTAG tag = new VERTAG();
+			tag.tagname = line.split(": ")[0].trim();
+			tag.version = line.split(": ")[1];
+			tagList.add(tag);
+		}
 		
+		return tagList;
+	}
+	
+	private String fxProgramID(String rcsfile) {
+		String programid = null;
+		String [] pArray = rcsfile.split("/");
+		for (int i=0; i<pArray.length; i++) {
+			if ("view".equalsIgnoreCase(pArray[i]) || "model".equalsIgnoreCase(pArray[i])) {
+				programid = pArray[i+1];
+				if (!StringUtil.isEmpty(programid))  {
+					if (!programid.toUpperCase().startsWith("SOP")) {
+						programid = null;
+					}
+				}
+			}
+		}
+		return (programid == null)? " ": programid;
+	}
+	
+	/** 處理整個檔案的解析及寫入資料庫 **/
+	public void parserPerFile(TaskSyncResult result, String hostname, String module, File f, boolean isFullSync) {
+		FileInputStream fis = null;
+		InputStreamReader isr = null;
+		BufferedReader br = null;
+		String line = null;
+		int currentLine = 0;
+		try {
+			daoTxn.beginTxn();															/** BEGIN TXN **/
+			fis = new FileInputStream(f);
+			isr = new InputStreamReader(fis, CVSConst.ENCODING_OUT);
+			br = new BufferedReader(isr, 64 * 1024);
+			List<String> tmpList = new ArrayList<String>();
+			int nnn = 0;
+			while ((line = br.readLine()) != null) {
+				if (StringUtil.isEmpty(line)) continue;
+				result.setCurrentLine2(++currentLine);
+				tmpList.add(line);
+				if (line.startsWith(CVSConst.BLOCK_END)) {								// 每次遇換筆行時檢查執行服務是否已要求中斷
+					nnn++;
+					try {
+						parserPerRecord(hostname, module, tmpList, isFullSync);
+						result.setSuccessFiles(result.getSuccessFiles() + 1);
+					}catch(HibernateException e){
+						result.setFailureFiles(result.getFailureFiles() + 1);
+						throw e;
+					}finally{
+						tmpList.clear();
+						if (WriteFutureTask.getInstance().getService().isShutdown() ||
+							WriteFutureTask.getInstance().getService().isTerminated()) {
+							CVSLog.getLogger().info( module + " 已中斷");
+							return;
+						}
+					}
+					daoTxn.addBatchCheck();												// 進行批次提交量是否已達至的檢查
+				} // if
+			} // while
+			
+			daoTxn.addBatchCheck(1);													// 將未達批次提量的部份全部提交
+			daoTxn.commit();															/** COMMIT **/
+		}catch(Exception e){
+			CVSLog.getLogger().error(this, e);
+			daoTxn.rollback();															/** ROLLBACK **/
+		}finally{
+			daoTxn.close();																/** CLOSE **/
+			StreamCloseHelper.closeReader(br, isr);
+			StreamCloseHelper.closeInputStream(fis);
+			f = null;
+			result.setEndedTime2(new Timestamp(System.currentTimeMillis()));			// [ENDED]
+		}
+	}
+	
+	private void parserPerRecord(String hostname, String module, List<String> lineList, boolean isFullSync) {
 		/** Check DATA **/
 		checkParserData(lineList);
-		
 		
 		/** Parse DATA **/
 		// RCS file
@@ -231,26 +287,27 @@ public class CVSParserLogic {
 		
 		/** Convert to DTO and SAVE into DB **/
 		Tbsoptcvsmap map = null;
-		if (!isFullSync) {
-			map = dao.queryMapByRcsfile(rcsfile);
+		if (!isFullSync) {																// 若為完整同步則不需再查舊資料 (必為新增)
+			map = daoTxn.selectMap(rcsfile);
 		}
 		if (map == null) {
 			map = new Tbsoptcvsmap();
+			map.setMSid(daoTxn.nextvalMap());
 			map.setRcsfile(rcsfile);
 			map.setFilename(filename);
 			map.setProgramid(programid);
 			map.setModule(moduleName);
 			map.setClientserver(csCode);
 			map.setVersionhead(head);
-			commonDAO.saveDTO(map);
+			daoTxn.insertAddBatch(map);
 		}else{
 			map.setVersionhead(head);
-			commonDAO.updateDTO(map);
+			daoTxn.updateMap(rcsfile, head);
 		}
 		
-		if (!isFullSync) {
+		if (!isFullSync) {																// 若為完整同步則不需再刪除舊TAG
 			synchronized (CVSParserLogic.class) {
-				commonDAO.executeHQL(StringUtil.concat("delete from Tbsoptcvstag where m_sid = ", map.getMSid()));
+				daoTxn.deleteTag(map.getMSid());
 			}
 		}
 		
@@ -260,7 +317,7 @@ public class CVSParserLogic {
 			tag.setId(new TbsoptcvstagId(map.getMSid(), vertag.version, vertag.tagname));
 			tagList.add(tag);
 		}
-		dao.saveTAG(tagList);
+		daoTxn.inserTagtAddBatch(tagList);
 		
 		List<Tbsoptcvsver> insertVerList = new ArrayList<Tbsoptcvsver>();
 		List<Tbsoptcvsver> updateVerList = new ArrayList<Tbsoptcvsver>();
@@ -268,8 +325,8 @@ public class CVSParserLogic {
 		Tbsoptcvsver ver = null;
 		for (VERDESC verdesc : verdescList) {
 			verId = new TbsoptcvsverId(map.getMSid(), verdesc.revision);
-			if (!isFullSync) {
-				ver = (Tbsoptcvsver) commonDAO.getDTO(Tbsoptcvsver.class, verId);
+			if (!isFullSync) {															// 若為完整同步則不需再查已存在之VER (必為新增)
+				ver = (Tbsoptcvsver) daoTxn.selectVer(verId);
 			}
 			ver = (ver == null)? new Tbsoptcvsver(): ver;
 			ver.setAuthor(verdesc.author);
@@ -293,9 +350,7 @@ public class CVSParserLogic {
 			}
 			ver = null;
 		}
-		commonDAO.saveDTO(insertVerList, 500);
-		commonDAO.updateDTO(updateVerList, 500);
-		
-		return map;
+		daoTxn.insertVerAddBatch(insertVerList);
+		daoTxn.updateVer(updateVerList);
 	}
 }

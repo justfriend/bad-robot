@@ -61,7 +61,7 @@ public class SessionUtil {
 				sessionFty.close();
 				sessionFty = null;
 			} catch(HibernateException e){
-				e.printStackTrace();
+				throw e;
 			}
 		}
 	}
@@ -75,11 +75,7 @@ public class SessionUtil {
 		if (txn == null) {
 			throw new RuntimeException ("Transaction is null");
 		} else {
-			try {
-				txn.commit();
-			} catch (HibernateException e) {
-				e.printStackTrace();
-			}
+			txn.commit();
 		}
 	}
 	
@@ -97,15 +93,8 @@ public class SessionUtil {
 	 * @return
 	 */
 	public static Session openSession() {
-		Session session = null;
-		
-		try {
-			if (sessionFty == null) buildSessionFactory();
-			session = sessionFty.openSession();
-			return session;
-		}catch(HibernateException e){
-			throw e;
-		}
+		if (sessionFty == null) buildSessionFactory();
+		return sessionFty.openSession();
 	}
 
 	/**
@@ -118,7 +107,7 @@ public class SessionUtil {
 			try {
 				txn.rollback();
 			} catch (HibernateException e) {
-				e.printStackTrace();
+				e.printStackTrace(); // ignore
 			}
 		}
 	}
