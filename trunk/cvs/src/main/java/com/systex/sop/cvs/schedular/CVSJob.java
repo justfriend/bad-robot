@@ -94,6 +94,22 @@ public class CVSJob implements Job {
 					}
 				}
 				
+				// 刪除TAG-INDEX
+				if (isFullSync) {
+					try {
+						StartUI.getInstance().getFrame().setMessage("刪除TAG索引中...");
+						commonDAO.executeSQL("drop index INX_TAG");
+						msg = "刪除TAG索引完成";
+						StartUI.getInstance().getFrame().setMessage(msg);
+						CxtMessageQueue.addCxtMessage(msg);
+					}catch(Exception e){
+						CVSLog.getLogger().warn(this, e);
+						msg = "刪除TAG索引失敗";
+						StartUI.getInstance().getFrame().setMessage(msg);
+						CxtMessageQueue.addCxtMessage(msg);
+					}
+				}
+				
 				WriteFutureTask.getInstance().newService();
 				StartUI.getInstance().getFrame().setMessage("寫入紀錄檔中...");
 				if (WriteFutureTask.getInstance().execute(date, isFullSync)) {
@@ -104,6 +120,22 @@ public class CVSJob implements Job {
 					msg = "寫入紀錄檔失敗";
 					StartUI.getInstance().getFrame().setMessage(msg);
 					CxtMessageQueue.addCxtMessage(msg);
+				}
+				
+				// 重建TAG-INDEX
+				if (isFullSync) {
+					try {
+						StartUI.getInstance().getFrame().setMessage("重建TAG索引中...");
+						commonDAO.executeSQL("create index INX_TAG on TBSOPTCVSTAG(M_SID) tablespace SOPA_INDEX");
+						msg = "重建TAG索引完成";
+						StartUI.getInstance().getFrame().setMessage(msg);
+						CxtMessageQueue.addCxtMessage(msg);
+					}catch(Exception e){
+						CVSLog.getLogger().warn(this, e);
+						msg = "重建TAG索引失敗";
+						StartUI.getInstance().getFrame().setMessage(msg);
+						CxtMessageQueue.addCxtMessage(msg);
+					}
 				}
 			}
 			
