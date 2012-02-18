@@ -27,13 +27,21 @@
         <!-- POOL - DBCP (Do not provide DBCP provider since Hibernate 3) -->
         <property name="hibernate.connection.provider_class">com.systex.sop.cvs.util.DBCPConnectionProvider</property>
         <property name="hibernate.connection.autocommit">false</property>
-        <property name="hibernate.dbcp.traceConnection">false</property>
+        <property name="hibernate.dbcp.traceConnection">true</property>
 		<property name="hibernate.dbcp.initialSize">3</property>
 		<property name="hibernate.dbcp.maxActive">10</property>
-		<property name="hibernate.dbcp.minIdle">0</property>
+		<property name="hibernate.dbcp.minIdle">3</property>
 		<property name="hibernate.dbcp.maxIdle">10</property>
 		<property name="hibernate.dbcp.maxWait">30000</property>
-        
+		<property name="hibernate.dbcp.poolPreparedStatements">true</property>
+		<property name="hibernate.dbcp.maxOpenPreparedStatements">10</property>
+        <property name="hibernate.dbcp.validationQuery">SELECT 1 FROM DUAL</property>
+        <property name="hibernate.dbcp.testOnBorrow">true</property>
+        <property name="hibernate.dbcp.testOnReturn">true</property>
+        <property name="hibernate.dbcp.testWhileIdle">true</property>
+        <property name="hibernate.dbcp.timeBetweenEvictionRunsMillis">60000</property>
+        <property name="hibernate.dbcp.numTestsPerEvictionRun">10</property>
+        <property name="hibernate.dbcp.minEvictableIdleTimeMillis">180000</property>
         
 		<!-- POOL - C3P0 
         <property name="hibernate.connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
