@@ -316,7 +316,7 @@ public class QueryNormalPage extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() >= 2) {
 					Long rcsid = (Long) getTable().getSelectValueAt("RCSID");
-					String ver = (String) getTable().getSelectValueAt("最新版號");
+					String ver = (String) getTable().getSelectValueAt("版號");
 					String filename = (String) getTable().getSelectValueAt("檔案名稱");
 					logic.doRetrieveTagInfo(rcsid, ver, filename);
 				}

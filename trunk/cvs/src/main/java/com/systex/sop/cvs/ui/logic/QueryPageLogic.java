@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JMenuItem;
@@ -201,6 +202,7 @@ public class QueryPageLogic {
 			StartUI.getInstance().getFrame().setMessage(StringUtil.concat("查詢筆數：", tList.size(), ", 耗時：" + CVSFunc.fxElapseTime(s.getTime())));
 			
 			// 更新至Table
+			Collections.sort(tList);
 			TableUtil.addRows(StartUI.getInstance().getTagDialog().getTable(), tList);
 		}catch(Exception e){
 			CVSLog.getLogger().error(this, e);
