@@ -3,7 +3,7 @@ package com.systex.sop.cvs.ui.tableClass;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-public class TagDO extends CVSBaseDO {
+public class TagDO extends CVSBaseDO implements Comparable<TagDO> {
 	private String tagname;
 	
 	private static final String [] columnName;
@@ -47,6 +47,11 @@ public class TagDO extends CVSBaseDO {
 	public int[] getColumnWidth() {
 //		"TAGNAME"
 		return new int[] { 120 };
+	}
+
+	@Override
+	public int compareTo(TagDO o) {
+		return getTagname().compareTo(o.getTagname());
 	}
 
 }

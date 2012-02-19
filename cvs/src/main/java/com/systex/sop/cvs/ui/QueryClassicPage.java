@@ -161,7 +161,7 @@ public class QueryClassicPage extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() >= 2) {
 					Long rcsid = (Long) getTable().getSelectValueAt("RCSID");
-					String ver = (String) getTable().getSelectValueAt("最新版號");
+					String ver = (String) getTable().getSelectValueAt("版號");
 					String filename = (String) getTable().getSelectValueAt("檔案名稱");
 					logic.doRetrieveTagInfo(rcsid, ver, filename);
 				}
@@ -272,7 +272,7 @@ public class QueryClassicPage extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() >= 2) {
 					Long rcsid = (Long) getTable_1().getSelectValueAt("RCSID");
-					String ver = (String) getTable_1().getSelectValueAt("最新版號");
+					String ver = (String) getTable_1().getSelectValueAt("版號");
 					String filename = (String) getTable_1().getSelectValueAt("檔案名稱");
 					logic.doRetrieveTagInfo(rcsid, ver, filename);
 				}
