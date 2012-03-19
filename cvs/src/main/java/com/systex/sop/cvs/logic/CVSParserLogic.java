@@ -100,9 +100,17 @@ public class CVSParserLogic {
 			for (String line : lineList) CVSLog.getLogger().info(line);
 			throw new RuntimeException("解析資料的行數至少應有13行");
 		}
+		/*
+		 *  log紀錄中會出現 cvs server: nothing known about 的額外訊息，須排除。 	
+		 * 	[20120319 bu wmy]  
+		 */
+		while(lineList.get(0).startsWith("cvs server: nothing known about")){
+			lineList.remove(0);
+		}
+		
 		
 		if (lineList.get(0).startsWith("RCS file") == false) {
-			throw new RuntimeException("解析資料的第一行應為「RCS file」開頭");
+			throw new RuntimeException("解析資料的第一行應為「RCS file」開頭"+lineList.get(0));
 		}
 	}
 	
