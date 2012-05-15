@@ -10,6 +10,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -396,27 +397,36 @@ public class QueryNormalPage extends JPanel {
 						FormFactory.DEFAULT_ROWSPEC, }));
 
 		SSSJLabel lbltag = new SSSJLabel();
+		lbltag.setFont(new Font("微軟正黑體", Font.BOLD, 14));
 		lbltag.setText("START TAG");
 		panel_3.add(lbltag, "2, 3");
 
+		Calendar c = Calendar.getInstance();
+				
 		startTag_jTxtF = new SSSJTextField();
+		this.startTag_jTxtF.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+		startTag_jTxtF.setText("SOPA_01_03_"+c.get(Calendar.YEAR));
 		panel_3.add(startTag_jTxtF, "4, 3, fill, default");
-
+		
 		SSSJLabel lbltag_1 = new SSSJLabel();
+		lbltag_1.setFont(new Font("微軟正黑體", Font.BOLD, 14));
 		lbltag_1.setText("END TAG");
 		panel_3.add(lbltag_1, "2, 5");
 
 		endTag_jTxtF = new SSSJTextField();
+		this.endTag_jTxtF.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+		endTag_jTxtF.setText("SOPA_01_03_"+c.get(Calendar.YEAR));
 		panel_3.add(endTag_jTxtF, "4, 5, fill, default");
 
 		SSSJLabel label_9 = new SSSJLabel();
+		label_9.setFont(new Font("微軟正黑體", Font.BOLD, 14));
 		label_9.setText("排除的模組(可多選)");
 		panel_3.add(label_9, "2, 7, right, default");
 
 		module_jL = new JList();
 		this.module_jL.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		module_jL.setVisibleRowCount(2);
-		module_jL.setFont(new Font("微軟正黑體", Font.PLAIN, 14));
+		module_jL.setFont(new Font("微軟正黑體", Font.BOLD, 14));
 		module_jL.setModel(new AbstractListModel() {
 			String[] values = new String[] { "dbxml", "util", "qfi", "sbl",
 					"bus", "buk", "bas", "cus", "emm", "cmo", "smt", "stk",
@@ -436,6 +446,7 @@ public class QueryNormalPage extends JPanel {
 		splitPane_1.setRightComponent(scrollPane_1);
 
 		table2 = new SSSJTable(new TagDiffDO());
+		this.table2.setFont(new Font("微軟正黑體", Font.PLAIN, 14));
 
 		scrollPane_1.setViewportView(table2);
 
