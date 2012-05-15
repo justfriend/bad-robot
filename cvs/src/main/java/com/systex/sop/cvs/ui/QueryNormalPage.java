@@ -402,12 +402,12 @@ public class QueryNormalPage extends JPanel {
 		panel_3.add(lbltag, "2, 3");
 
 		Calendar c = Calendar.getInstance();
-				
+
 		startTag_jTxtF = new SSSJTextField();
 		this.startTag_jTxtF.setFont(new Font("微軟正黑體", Font.BOLD, 14));
-		startTag_jTxtF.setText("SOPA_01_03_"+c.get(Calendar.YEAR));
+		startTag_jTxtF.setText("SOPA_01_03_" + c.get(Calendar.YEAR));
 		panel_3.add(startTag_jTxtF, "4, 3, fill, default");
-		
+
 		SSSJLabel lbltag_1 = new SSSJLabel();
 		lbltag_1.setFont(new Font("微軟正黑體", Font.BOLD, 14));
 		lbltag_1.setText("END TAG");
@@ -415,20 +415,20 @@ public class QueryNormalPage extends JPanel {
 
 		endTag_jTxtF = new SSSJTextField();
 		this.endTag_jTxtF.setFont(new Font("微軟正黑體", Font.BOLD, 14));
-		endTag_jTxtF.setText("SOPA_01_03_"+c.get(Calendar.YEAR));
+		endTag_jTxtF.setText("SOPA_01_03_" + c.get(Calendar.YEAR));
 		panel_3.add(endTag_jTxtF, "4, 5, fill, default");
 
-		SSSJLabel label_9 = new SSSJLabel();
-		label_9.setFont(new Font("微軟正黑體", Font.BOLD, 14));
-		label_9.setText("排除的模組(可多選)");
-		panel_3.add(label_9, "2, 7, right, default");
+		SSSJLabel lblctrl = new SSSJLabel();
+		lblctrl.setFont(new Font("微軟正黑體", Font.BOLD, 14));
+		lblctrl.setText("排除的模組(可多選-Ctrl點選)");
+		panel_3.add(lblctrl, "2, 7, right, default");
 
 		module_jL = new JList();
 		this.module_jL.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		module_jL.setVisibleRowCount(2);
 		module_jL.setFont(new Font("微軟正黑體", Font.BOLD, 14));
 		module_jL.setModel(new AbstractListModel() {
-			String[] values = new String[] { "dbxml", "util", "qfi", "sbl",
+			String[] values = new String[] { "", "dbxml", "util", "qfi", "sbl",
 					"bus", "buk", "bas", "cus", "emm", "cmo", "smt", "stk",
 					"tmap", "sg", "mstl", "ml", "bnp", "cgmi" };
 
@@ -459,7 +459,9 @@ public class QueryNormalPage extends JPanel {
 
 				List<String> module = new ArrayList<String>();
 				for (Object o : module_jL.getSelectedValues()) {
-					module.add(o.toString());
+					if (o.toString().length() > 0) {
+						module.add(o.toString());
+					}
 				}
 
 				logic.doQueryTagDiff(table2, startTag_jTxtF.getText(),
