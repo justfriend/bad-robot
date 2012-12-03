@@ -1,8 +1,10 @@
 package com.systex.sop.cvs.dao;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -299,16 +301,22 @@ public class CVSQueryDAO {
 	}
 
 	/**
-	 * 
+	 * @throws SQLException
+	 *
 	 */
 	public List<TagDiffDO> queryTagDiff(String startTag, String endTag,
 			List<String> module) {
 		List<TagDiffDO> objList = null;
 		Session session = null;
-		StringBuffer sql = StringUtil
+		Date date = new Date();
+		String tableName = "A" + String.valueOf(date.getTime());
+		StringBuffer createSql = StringUtil
 				.concatBuf(
-						//--起始TAG沒有的檔案(新增)
-						"SELECT DESC_ID, FULLDESC ,AUTHOR ,VERDATE, FILENAME ,PROGRAMID ,MODULE, VERSION ,VERSIONHEAD ",
+						"CREATE TABLE " + tableName
+								+ " AS "
+								+
+								// --起始TAG沒有的檔案(新增)
+								"SELECT DESC_ID, FULLDESC ,AUTHOR ,VERDATE, FILENAME ,PROGRAMID ,MODULE, VERSION ,VERSIONHEAD ",
 						"FROM (( SELECT H.DESC_ID ,H.FULLDESC,H.AUTHOR,H.VERDATE,X.ENDTAG_FILENAME AS FILENAME,X.ENDTAG_PROGRAMID AS PROGRAMID,X.ENDTAG_MODULE AS MODULE,H.VERSION,X.ENDTAG_VERSIONHEAD AS VERSIONHEAD ",
 						"        FROM TBSOPTCVSVER H ",
 						"            INNER JOIN (SELECT ENDTAG.* ",
@@ -340,7 +348,7 @@ public class CVSQueryDAO {
 						"        WHERE INSTR(H.VERSION,'.',1,2) = 0 AND TO_NUMBER(SUBSTR(H.VERSION,INSTR(H.VERSION,'.',1,1)+1,3)) <= TO_NUMBER(SUBSTR(X.ENDTAG_VERSION,INSTR(X.ENDTAG_VERSION,'.',1,1)+1,3)) ",
 						"    )",
 						"    UNION ",
-						//      --ENDTAG沒有的檔案(被刪除)
+						// --ENDTAG沒有的檔案(被刪除)
 						"        (   SELECT H.DESC_ID ,H.FULLDESC,H.AUTHOR,H.VERDATE,X.STARTTAG_FILENAME AS FILENAME,X.STARTTAG_PROGRAMID AS PROGRAMID,X.STARTTAG_MODULE AS MODULE,H.VERSION,X.STARTTAG_VERSIONHEAD AS VERSIONHEAD ",
 						"            FROM TBSOPTCVSVER H ",
 						"                INNER JOIN (SELECT STARTTAG.* ",
@@ -372,7 +380,7 @@ public class CVSQueryDAO {
 						"            WHERE INSTR(H.VERSION,'.',1,2) = 0 AND TO_NUMBER(SUBSTR(H.VERSION,INSTR(H.VERSION,'.',1,1)+1,3)) > TO_NUMBER(SUBSTR(X.STARTTAG_VERSION,INSTR(X.STARTTAG_VERSION,'.',1,1)+1,3)) ",
 						"        )",
 						"    UNION ",
-						//        --兩TAG間有異動過的
+						// --兩TAG間有異動過的
 						"        (   SELECT H.DESC_ID ,H.FULLDESC,H.AUTHOR,H.VERDATE,X.ENDTAG_FILENAME AS FILENAME,X.ENDTAG_PROGRAMID AS PROGRAMID,X.ENDTAG_MODULE AS MODULE,H.VERSION,X.ENDTAG_VERSIONHEAD AS VERSIONHEAD ",
 						"            FROM TBSOPTCVSVER H ",
 						"                INNER JOIN (SELECT STARTTAG.*,ENDTAG.* ",
@@ -399,14 +407,19 @@ public class CVSQueryDAO {
 						"                                )",
 						"                                X ON H.M_SID = X.STARTTAG_M_SID ",
 						"                            WHERE INSTR(H.VERSION,'.',1,2) = 0 AND TO_NUMBER(SUBSTR(H.VERSION,INSTR(H.VERSION,'.',1,1)+1,3)) > TO_NUMBER(SUBSTR(X.STARTTAG_VERSION,INSTR(X.STARTTAG_VERSION,'.',1,1)+1,3)) AND TO_NUMBER(SUBSTR(H.VERSION,INSTR(H.VERSION,'.',1,1)+1,3)) <= TO_NUMBER(SUBSTR(X.ENDTAG_VERSION,INSTR(X.ENDTAG_VERSION,'.',1,1)+1,3)) ",
-						"                )", "        ) WHERE 1=1");
+						"                )", "        ) ");
+
+		StringBuffer querySql = StringUtil.concatBuf("select * from "
+				+ tableName + " where 1=1 ");
 
 		if (module.size() > 0) {
 			for (String m : module) {
-				sql.append("AND MODULE != '" + m + "' ");
-				CVSConst.CUSTOMIZED_MODULE customized_module = CVSConst.CUSTOMIZED_MODULE.findByModule(m);
+				querySql.append("AND MODULE != '" + m + "' ");
+				CVSConst.CUSTOMIZED_MODULE customized_module = CVSConst.CUSTOMIZED_MODULE
+						.findByModule(m);
 				if (customized_module != null) {
-					sql.append("AND INSTR(FILENAME ,'"+customized_module.getBrk()+"',1,1) = 0 ");
+					querySql.append("AND INSTR(FILENAME ,'"
+							+ customized_module.getBrk() + "',1,1) = 0 ");
 				}
 			}
 
@@ -414,10 +427,14 @@ public class CVSQueryDAO {
 
 		try {
 			session = SessionUtil.openSession();
-			SQLQuery query = session.createSQLQuery(sql.toString());
+
+			dao.executeSQL(createSql.toString());
+
+			SQLQuery query = session.createSQLQuery(querySql.toString());
 			query.setResultTransformer(Transformers
 					.aliasToBean(TagDiffDO.class));
 			objList = query.list();
+			dao.executeSQL("drop table " + tableName);
 		} catch (HibernateException e) {
 			throw e;
 		} finally {
